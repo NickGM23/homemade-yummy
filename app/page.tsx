@@ -17,12 +17,11 @@ const result = PRODUCTS;
 export default function Home() {
   return (
     <main className="mb-4 min-h-screen rounded-3xl bg-white">
-      <Container className="mt-5">
-        <Title text="Всі смаколики" size="lg" className="font-extrabold" />
-      </Container>
-
-      <div className="sticky top-0 z-[1] bg-white py-5 sm:shadow-lg sm:shadow-black/5">
-        <Container className="relative flex gap-2">
+      <div className="sticky top-0 z-[1] bg-white py-5 max-sm:hidden max-sm:opacity-0 sm:shadow-lg sm:shadow-black/5">
+        <Container className="mt-2">
+          <Title text="Всі смаколики" size="lg" className="font-extrabold" />
+        </Container>
+        <Container className="relative mt-5 flex gap-2">
           <Categories />
           <SortPopup />
         </Container>
