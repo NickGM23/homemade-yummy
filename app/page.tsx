@@ -12,7 +12,7 @@ import { PRODUCTS } from '@/data/products';
 //   if (a['price'] < b['price']) return -1;
 // });
 
-let result = PRODUCTS;
+const result = PRODUCTS;
 
 export default function Home() {
   return (
