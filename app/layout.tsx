@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={nunito.variable}>
         <main className="min-h-screen">
-          <Header className="z-[1] max-sm:sticky max-sm:top-0" />
+          <Header className="z-[1] bg-white max-sm:sticky max-sm:top-0" />
           {children}
         </main>
       </body>

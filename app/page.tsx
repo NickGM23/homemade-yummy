@@ -28,7 +28,11 @@ export default function Home() {
       </div>
 
       <Container className="mt-4">
-        <Title text="Вареники" size="lg" className="mb-4 font-extrabold" />
+        <Title
+          text="Вареники"
+          size="lg"
+          className="sticky top-[112px] mb-4 bg-white font-extrabold"
+        />
         <div className="relation flex flex-wrap gap-4">
           {result
             .filter((pr) => pr.idProductGroup === 1)
@@ -47,7 +51,11 @@ export default function Home() {
         </div>
       </Container>
       <Container className="mt-4">
-        <Title text="Пельмені" size="lg" className="mb-4 font-extrabold" />
+        <Title
+          text="Пельмені"
+          size="lg"
+          className="sticky top-[112px] mb-4 bg-white font-extrabold"
+        />
         <div className="relation flex flex-wrap gap-4">
           {result.map(
             (product, index) =>
