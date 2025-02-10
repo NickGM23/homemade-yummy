@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Container } from './container';
 import { Button } from '../ui';
 import { SearchInput } from './search-input';
-import { ArrowRight, ShoppingCart, User } from 'lucide-react';
+import { ArrowRight, ShoppingCart, User, Menu } from 'lucide-react';
 import { CartDrawer } from './cart-drawer';
 
 interface Props {
@@ -16,11 +16,11 @@ interface Props {
 export const Header: React.FC<Props> = ({ className }) => {
   return (
     <header className={cn('border-b border-gray-100', className)}>
-      <Container className="flex items-center justify-between py-8">
-        <div className="m-2 flex items-center gap-2">
-          <Image src="/logo/80n80_3.png" width={55} height={35} alt="Logo" />
-
-          <Image src="/logo/LogoDS.png" width={155} height={55} alt="Logo" />
+      <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">
+        <div className="flex flex-1 items-center gap-2">
+          <Menu size={32} className="mr-2 sm:mr-6" />
+          <Image src="/logo/80n80_2.png" width={48} height={48} alt="Logo" />
+          <Image src="/logo/LogoDS.png" width={165} height={65} alt="Logo" />
         </div>
 
         {/* <div className="mx-10 flex-1">
@@ -28,7 +28,10 @@ export const Header: React.FC<Props> = ({ className }) => {
                 </div> */}
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-2 font-bold">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 font-bold max-sm:hidden [@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300"
+          >
             <User size={16} />
             Увійти
           </Button>

@@ -1,40 +1,45 @@
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import React from "react";
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import React from 'react';
 
 interface Props {
   className?: string;
 }
 
 const cats = [
-  "Вареники",
-  "Пельмені",
-  "Котлети",
-  "Крученики",
-  "Фрикадельки",
-  "Зрази картопляні",
-  "Налисники",
-  "Сирники",
-  "Тефтелі",
-  "Голубці",
-  "Готові страви",
+  'Вареники',
+  'Пельмені',
+  'Котлети',
+  'Крученики',
+  'Фрикадельки',
+  'Зрази картопляні',
+  'Налисники',
+  'Сирники',
+  'Тефтелі',
+  'Голубці',
+  'Готові страви',
 ];
 const activeIndex = 0;
 
 export const Categories: React.FC<Props> = ({ className }) => {
   return (
-    <div className={cn("flex-col gap-1 bg-gray-50 p-1 rounded-2xl", className)}>
-      {cats.map((name, i) => (
+    <div
+      className={cn(
+        'flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-1 max-sm:flex-col',
+        className,
+      )}
+    >
+      {cats.map((cat, index) => (
         <Link
-          key={name}
+          key={index}
           className={cn(
-            "flex items-center font-bold h-11 rounded-2xl px-5",
-            activeIndex === i &&
-              "bg-white shadow-md shadow-gray-200 text-primary",
+            'flex h-11 items-center rounded-2xl border px-5 font-bold',
+            '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
+            activeIndex === index && 'bg-white text-primary shadow-md shadow-gray-200',
           )}
           href=""
         >
-          {name}
+          {cat}
         </Link>
       ))}
     </div>
