@@ -69,7 +69,7 @@ const catsInfo = [
 export const Categories: React.FC<Props> = ({ className }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const categoryOnClick = (e: MouseEvent, index: number, category: string) => {
+  const categoryOnClick = (e, index: number, category: string) => {
     e.preventDefault();
     //console.log(e.target);
     // console.log(index);
@@ -116,7 +116,7 @@ export const Categories: React.FC<Props> = ({ className }) => {
       )}
     >
       {cats.map((cat, index) => (
-        <Link
+        <a
           data-goto={'.' + catsInfo[index]}
           key={index}
           className={cn(
@@ -125,11 +125,11 @@ export const Categories: React.FC<Props> = ({ className }) => {
             '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
             activeIndex === index && 'bg-white text-primary shadow-md shadow-gray-200',
           )}
-          href=""
+          href="javascript: false"
           onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
         >
           {cat}
-        </Link>
+        </a>
       ))}
     </div>
   );
