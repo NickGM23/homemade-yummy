@@ -69,7 +69,11 @@ const catsInfo = [
 export const Categories: React.FC<Props> = ({ className }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const categoryOnClick = (e, index: number, category: string) => {
+  const categoryOnClick = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+    category: string,
+  ) => {
     e.preventDefault();
     //console.log(e.target);
     // console.log(index);
