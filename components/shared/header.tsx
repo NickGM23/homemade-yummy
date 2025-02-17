@@ -19,7 +19,7 @@ export const Header: React.FC<Props> = ({ className }) => {
         <div className="flex flex-1 items-center gap-2">
           <Menu size={32} className="mr-2 sm:mr-6" />
           <Image src="/logo/80n80_2.png" width={48} height={48} alt="Logo" />
-          <Image src="/logo/LogoDS.png" width={165} height={65} alt="Logo" />
+          <Image src="/logo/LogoDS.png" width={220} height={60} alt="Logo" />
         </div>
 
         {/* <div className="mx-10 flex-1">

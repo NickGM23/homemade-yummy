@@ -29,7 +29,7 @@ export const ProductCard: React.FC<Props> = ({
       className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
     >
       <div className="flex justify-center">
-        <img className="h-48 w-96 max-w-full object-cover" src={imageUrl} alt="Logo" />
+        <img className="h-[225px] w-96 max-w-full object-cover" src={imageUrl} alt="Logo" />
       </div>
       <span title={name} className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold">
         {name}
