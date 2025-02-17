@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import React from 'react';
+import React, { ReactElement, ReactEventHandler } from 'react';
 import { useState } from 'react';
 
 interface Props {
@@ -69,7 +69,7 @@ const catsInfo = [
 export const Categories: React.FC<Props> = ({ className }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const categoryOnClick = (e, index: number, category: string) => {
+  const categoryOnClick = (e: MouseEvent, index: number, category: string) => {
     e.preventDefault();
     //console.log(e.target);
     // console.log(index);
