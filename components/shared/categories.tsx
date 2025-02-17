@@ -75,7 +75,7 @@ export const Categories: React.FC<Props> = ({ className }) => {
     // console.log(index);
     //console.log(activeIndex);
     if (activeIndex === index) return;
-    const gotoBlock = document.querySelector(category);
+    const gotoBlock = document.querySelector(category) as HTMLDivElement;
     if (gotoBlock) {
       //console.log(gotoBlock);
 
