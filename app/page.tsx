@@ -18,7 +18,7 @@ export default function Home() {
   //   console.log('render');
   // });
   return (
-    <main className="mb-4 min-h-screen rounded-3xl bg-white">
+    <section className="mb-4 min-h-screen rounded-3xl bg-white">
       <div className="top-0 z-[1] bg-white py-5 max-sm:hidden max-sm:opacity-0 sm:sticky sm:shadow-lg sm:shadow-black/5">
         <Container className="mt-2">
           <Title text="Всі смаколики" size="lg" className="font-extrabold" />
@@ -98,6 +98,52 @@ export default function Home() {
           )}
         </div>
       </Container>
-    </main>
+      <Container className="kruchenyk mt-4">
+        <Title
+          text="Крученики з свинного битка"
+          size="lg"
+          className="sticky top-[112px] mb-4 bg-white font-extrabold"
+        />
+        <div className="relation flex flex-wrap gap-4">
+          {result.map(
+            (product, index) =>
+              product.idProductGroup === 4 && (
+                <ProductCard
+                  key={index}
+                  className="duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                  groupName="Крученики"
+                  price={product.price}
+                  name={product.name}
+                  unitWeight={product.unitWeight}
+                  imageUrl={product.imageUrl}
+                />
+              ),
+          )}
+        </div>
+      </Container>
+      <Container className="frykadelka mt-4">
+        <Title
+          text="Фрикадельки"
+          size="lg"
+          className="sticky top-[112px] mb-4 bg-white font-extrabold"
+        />
+        <div className="relation flex flex-wrap gap-4">
+          {result.map(
+            (product, index) =>
+              product.idProductGroup === 5 && (
+                <ProductCard
+                  key={index}
+                  className="duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                  groupName="Фрикадельки"
+                  price={product.price}
+                  name={product.name}
+                  unitWeight={product.unitWeight}
+                  imageUrl={product.imageUrl}
+                />
+              ),
+          )}
+        </div>
+      </Container>
+    </section>
   );
 }

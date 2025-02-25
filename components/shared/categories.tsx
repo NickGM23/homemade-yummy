@@ -7,6 +7,8 @@ import { useState } from 'react';
 
 interface Props {
   className?: string;
+  isShowByBurgerMenu?: boolean;
+  onChange?: () => void;
 }
 
 const cats = [
@@ -66,7 +68,7 @@ const catsInfo = [
 //   }
 // };
 
-export const Categories: React.FC<Props> = ({ className }) => {
+export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onChange }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
@@ -83,7 +85,7 @@ export const Categories: React.FC<Props> = ({ className }) => {
 
       const gotoBlockValue = gotoBlock.getBoundingClientRect().top;
       window.scrollTo({
-        top: gotoBlock.offsetTop - 250,
+        top: isShowByBurgerMenu ? gotoBlock.offsetTop - 140 : gotoBlock.offsetTop - 240,
         behavior: 'smooth',
       });
 
@@ -104,7 +106,11 @@ export const Categories: React.FC<Props> = ({ className }) => {
       //     behavior: 'smooth',
       //   });
       // }
+      //console.log(index);
       setActiveIndex(index);
+      if (onChange) {
+        onChange();
+      }
     }
   };
 
@@ -125,7 +131,7 @@ export const Categories: React.FC<Props> = ({ className }) => {
             '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
             activeIndex === index && 'bg-white text-primary shadow-md shadow-gray-200',
           )}
-          href="javascript: false"
+          href=""
           onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
         >
           {cat}
