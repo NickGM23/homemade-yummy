@@ -108,6 +108,7 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
       // }
       //console.log(index);
       setActiveIndex(index);
+
       if (onChange) {
         onChange();
       }

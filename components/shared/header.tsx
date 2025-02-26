@@ -12,6 +12,7 @@ import { ArrowRight, ShoppingCart, User, Menu } from 'lucide-react';
 import { Categories } from '@/components/shared/categories';
 
 import { useState, useEffect } from 'react';
+import { BackDrop } from './back-drop';
 
 interface Props {
   className?: string;
@@ -39,11 +40,17 @@ export const Header: React.FC<Props> = ({ className }) => {
     });
   };
 
-  const handleChange = () => {
-    setIsOpen(false);
-    setHideOfShort(() => {
-      return {};
-    });
+  const handleMenu = () => {
+    setIsOpen((prev) => !prev);
+    if (isOpen) {
+      setHideOfShort(() => {
+        return {};
+      });
+    } else {
+      setHideOfShort(() => {
+        return { display: 'block' };
+      });
+    }
   };
 
   return (
@@ -80,16 +87,22 @@ export const Header: React.FC<Props> = ({ className }) => {
             />
           </Button>
         </div>
+        {isOpen ? (
+          <BackDrop
+            handelMenu={handleMenu}
+            className="fixed bottom-0 left-0 right-0 top-0 z-20 bg-gray-300 opacity-50"
+          />
+        ) : null}
         <div
           style={hideOrShow}
-          className="fixed bottom-0 left-0 right-0 top-0 z-20 hidden w-[100%] overflow-auto bg-gray-100/90 p-10 transition-transform delay-1000 duration-1000 ease-in-out sm:max-w-[320px]"
+          className="fixed bottom-0 left-0 right-0 top-0 z-30 hidden w-[100%] overflow-auto bg-gray-100/90 p-10 transition-transform delay-1000 duration-1000 ease-in-out sm:max-w-[320px]"
         >
           <div className="left-0 right-0 top-0 flex flex-col">
             <Button onClick={closeMenu}>Close menu</Button>
             <Categories
               isShowByBurgerMenu={true}
-              onChange={handleChange}
-              className="w-[220px] flex-col sm:opacity-0"
+              onChange={closeMenu}
+              className="w-[220px] flex-col sm:hidden"
             />
           </div>
         </div>
