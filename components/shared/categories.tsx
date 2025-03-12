@@ -71,6 +71,7 @@ const catsInfo = [
 
 export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onChange }) => {
   const idProductGroup = useCategoryStore((state) => state.activeId);
+  const setActiveIdProductGroup = useCategoryStore((state) => state.setActiveId);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
@@ -110,6 +111,7 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
       // }
       //console.log(index);
       setActiveIndex(index);
+      setActiveIdProductGroup(index + 1);
 
       if (onChange) {
         onChange();
