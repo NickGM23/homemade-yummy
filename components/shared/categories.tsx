@@ -76,40 +76,15 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
     e.preventDefault();
-    //console.log(e.target);
-    // console.log(index);
-    //console.log(activeIndex);
-    if ((activeIndex === index || index + 1) === idProductGroup) return;
+    //if ((activeIndex === index || index + 1) === idProductGroup) return;
     const gotoBlock = document.querySelector(category) as HTMLDivElement;
     if (gotoBlock) {
-      //console.log(gotoBlock);
-
-      //gotoBlock.scrollIntoView();
-
       const gotoBlockValue = gotoBlock.getBoundingClientRect().top;
       window.scrollTo({
         top: isShowByBurgerMenu ? gotoBlock.offsetTop - 140 : gotoBlock.offsetTop - 240,
         behavior: 'smooth',
       });
 
-      //window.scrollBy(0, 100);
-
-      // if (activeIndex < index) {
-      //   gotoBlock.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      // } else {
-      //   let gotoBlockValue = 0;
-      //   if (gotoBlock.getBoundingClientRect().top > 0) {
-      //     gotoBlockValue = gotoBlock.getBoundingClientRect().top + 210;
-      //   } else {
-      //     gotoBlockValue = 210;
-      //   }
-      //   console.log(gotoBlockValue);
-      //   window.scrollTo({
-      //     top: gotoBlockValue,
-      //     behavior: 'smooth',
-      //   });
-      // }
-      //console.log(index);
       setActiveIndex(index);
       setActiveIdProductGroup(index + 1);
 
