@@ -79,7 +79,7 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
     //console.log(e.target);
     // console.log(index);
     //console.log(activeIndex);
-    if (activeIndex === index) return;
+    if ((activeIndex === index || index + 1) === idProductGroup) return;
     const gotoBlock = document.querySelector(category) as HTMLDivElement;
     if (gotoBlock) {
       //console.log(gotoBlock);
