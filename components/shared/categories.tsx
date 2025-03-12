@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import React, { ReactElement, ReactEventHandler } from 'react';
 import { useState } from 'react';
+import { useCategoryStore } from '@/store/category';
 
 interface Props {
   className?: string;
@@ -69,6 +70,7 @@ const catsInfo = [
 // };
 
 export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onChange }) => {
+  const idProductGroup = useCategoryStore((state) => state.activeId);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
@@ -130,9 +132,9 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
             'menu__link',
             'flex h-11 items-center rounded-2xl border px-5 font-bold',
             '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
-            activeIndex === index && 'bg-white text-primary shadow-md shadow-gray-200',
+            idProductGroup === index + 1 && 'bg-white text-primary shadow-md shadow-gray-200',
           )}
-          href=""
+          // href={`/#${catsInfo[index]}`}
           onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
         >
           {cat}

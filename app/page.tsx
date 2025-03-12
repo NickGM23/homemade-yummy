@@ -8,6 +8,8 @@ import { Categories } from '@/components/shared/categories';
 import { ProductCard } from '@/components/shared/product-card';
 import { SortPopup } from '@/components/shared/sort-popup';
 import { PRODUCTS } from '@/data/products';
+import React from 'react';
+import { ProductsGroupList } from '@/components/shared/products-group-list';
 
 //import { useEffect } from 'react';
 
@@ -17,6 +19,7 @@ export default function Home() {
   // useEffect(() => {
   //   console.log('render');
   // });
+
   return (
     <section className="mb-4 min-h-screen rounded-3xl bg-white">
       <div className="top-0 z-[1] bg-white py-5 max-sm:hidden max-sm:opacity-0 sm:sticky sm:shadow-lg sm:shadow-black/5">
@@ -29,7 +32,23 @@ export default function Home() {
         </Container>
       </div>
 
-      <Container className="varenik mt-4">
+      <Container className="varenik mt-10">
+        <ProductsGroupList idProductGroup={1} />
+      </Container>
+      <Container className="pelmen mt-10">
+        <ProductsGroupList idProductGroup={2} />
+      </Container>
+      <Container className="kotleta mt-10">
+        <ProductsGroupList idProductGroup={3} />
+      </Container>
+      <Container className="kruchenyk mt-10">
+        <ProductsGroupList idProductGroup={4} />
+      </Container>
+      <Container className="frykadelka mb-28 mt-10">
+        <ProductsGroupList idProductGroup={5} />
+      </Container>
+
+      {/* <Container className="varenik mt-4">
         <Title
           text="Вареники"
           size="lg"
@@ -143,7 +162,7 @@ export default function Home() {
               ),
           )}
         </div>
-      </Container>
+      </Container> */}
     </section>
   );
 }
