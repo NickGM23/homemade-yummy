@@ -1,11 +1,11 @@
+import { NextRequest, NextResponse } from 'next/server';
+//import { prisma } from '@/prisma/prisma';
+
 import { redirect } from 'next/navigation';
 
 export async function GET(request: Request) {
   redirect('https://google.com/');
 }
-
-// import { NextRequest, NextResponse } from 'next/server';
-// import { prisma } from '@/prisma/prisma';
 
 // export async function GET() {
 //   const users = await prisma.user.findMany();
