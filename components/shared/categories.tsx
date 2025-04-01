@@ -12,18 +12,18 @@ interface Props {
   onChange?: () => void;
 }
 
-const cats = [
-  'Вареники',
-  'Пельмені',
-  'Котлети',
-  'Крученики',
-  'Фрикадельки',
-  'Зрази картопляні',
-  'Налисники',
-  'Сирники',
-  'Тефтелі',
-  'Голубці',
-  'Готові страви',
+const productGroups = [
+  { id: 1, idGroup: 'varenik', name: 'Вареники' },
+  { id: 2, idGroup: 'pelmen', name: 'Пельмені' },
+  { id: 3, idGroup: 'kotleta', name: 'Котлети' },
+  { id: 4, idGroup: 'kruchenyk', name: 'Крученики' },
+  { id: 5, idGroup: 'frykadelka', name: 'Фрикадельки' },
+  { id: 6, idGroup: 'zrazy', name: 'Зрази картопляні' },
+  { id: 7, idGroup: 'nalysnyky', name: 'Налисники' },
+  { id: 8, idGroup: 'syrmyky', name: 'Сирники' },
+  { id: 9, idGroup: 'tefteli', name: 'Тефтелі' },
+  { id: 10, idGroup: 'golubzi', name: 'Голубці' },
+  { id: 11, idGroup: 'gotoviStruvy', name: 'Готові страви' },
 ];
 
 const catsInfo = [
@@ -96,25 +96,22 @@ export const Categories: React.FC<Props> = ({ className, isShowByBurgerMenu, onC
 
   return (
     <div
-      className={cn(
-        'flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-1 max-sm:flex-col',
-        className,
-      )}
+      className={cn('flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-1', className)}
     >
-      {cats.map((cat, index) => (
+      {productGroups.map(({ id, idGroup, name }, index) => (
         <a
           data-goto={'.' + catsInfo[index]}
           key={index}
           className={cn(
             'menu__link',
-            'flex h-11 items-center rounded-2xl border px-5 font-bold',
+            'flex h-11 cursor-pointer items-center rounded-2xl border px-5 font-bold',
             '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
-            idProductGroup === index + 1 && 'bg-white text-primary shadow-md shadow-gray-200',
+            idProductGroup === id && 'bg-white text-primary shadow-md shadow-gray-200',
           )}
           // href={`/#${catsInfo[index]}`}
           onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
         >
-          {cat}
+          {name}
         </a>
       ))}
     </div>

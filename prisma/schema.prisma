@@ -1,0 +1,92 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id Int @id @default(autoincrement())
+
+    fullName String @unique
+    email    String @unique
+    password String
+
+    cart Cart?
+
+    isAdmin   Boolean @default(false)
+    isDeleted Boolean @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model ProductGroup {
+    id Int @id @default(autoincrement())
+
+    codeGroup String @unique
+    name      String @unique
+
+    products       Product[]
+    positionNumber Int
+
+    isDeleted Boolean @default(false)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Product {
+    id Int @id @default(autoincrement())
+
+    productGroupId Int
+    productGroup   ProductGroup @relation(fields: [productGroupId], references: [id])
+
+    name            String
+    price           Decimal @db.Decimal(9, 2)
+    unitWeight      String
+    minPartQuantity Decimal @db.Decimal(9, 1)
+    minQuantity     Decimal @db.Decimal(9, 1)
+    imageUrl        String
+    positionNumber  Int
+
+    isDeleted Boolean @default(false)
+
+    cartItem CartItem?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Cart {
+    id Int @id @default(autoincrement())
+
+    userId Int?  @unique
+    user   User? @relation(fields: [userId], references: [id])
+
+    totalAmount Int @default(0)
+
+    token String
+
+    items CartItem[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+    id Int @id @default(autoincrement())
+
+    cartId Int
+    cart   Cart @relation(fields: [cartId], references: [id])
+
+    quantity Int
+
+    productId Int     @unique
+    product   Product @relation(fields: [productId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
