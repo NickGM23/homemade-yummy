@@ -3,15 +3,15 @@ import { prisma } from '@/prisma/prisma';
 
 import { redirect } from 'next/navigation';
 
-export async function GET(request: Request) {
-  redirect('https://google.com/');
+//export async function GET(request: Request) {
+//  redirect('https://google.com/');
+//}
+
+export async function GET() {
+  const users = await prisma.user.findMany();
+
+  return NextResponse.json(users);
 }
-
-// export async function GET() {
-//   const users = await prisma.user.findMany();
-
-//   return NextResponse.json(users);
-// }
 
 // export async function POST(req: NextRequest) {
 //   const data = await req.json();
