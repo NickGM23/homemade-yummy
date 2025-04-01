@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/libs/prisma';
 import { redirect } from 'next/navigation';
 
-export async function GET() {
+export async function GET(request: Request) {
   const users = await prisma.user.findMany();
 
   return NextResponse.json(users);
