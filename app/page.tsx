@@ -32,19 +32,19 @@ export default function Home() {
         </Container>
       </div>
 
-      <Container className="varenik mt-10">
+      <Container className="varenik mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={1} />
       </Container>
-      <Container className="pelmen mt-10">
+      <Container className="pelmen mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={2} />
       </Container>
-      <Container className="kotleta mt-10">
+      <Container className="kotleta mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={3} />
       </Container>
-      <Container className="kruchenyk mt-10">
+      <Container className="kruchenyk mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={4} />
       </Container>
-      <Container className="frykadelka mb-28 mt-10">
+      <Container className="frykadelka mb-28 mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={5} />
       </Container>
 
