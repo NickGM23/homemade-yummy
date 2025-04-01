@@ -132,7 +132,7 @@ export const PRODUCTS = [
     price: 250.0,
     unitWeight: 'грн/кг',
     count: 0,
-    imageUrl: '/products/kotletu/kotletu1.jpg',
+    imageUrl: '/products/kotletu/kotletu_ruba.jpg',
   },
   {
     id: 16,
@@ -150,7 +150,7 @@ export const PRODUCTS = [
     price: 330.0,
     unitWeight: 'грн/кг',
     count: 0,
-    imageUrl: '/products/kotletu/kotletu1.jpg',
+    imageUrl: '/products/kotletu/kotletu_po_kuevski.jpg',
   },
   {
     id: 18,
