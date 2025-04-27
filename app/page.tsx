@@ -1,4 +1,4 @@
-//'use client';
+'use client';
 
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -10,12 +10,42 @@ import { SortPopup } from '@/components/shared/sort-popup';
 import { PRODUCTS } from '@/data/products';
 import React from 'react';
 import { ProductsGroupList } from '@/components/shared/products-group-list';
+import { useState, useEffect } from 'react';
 
 //import { useEffect } from 'react';
 
 const result = PRODUCTS;
 
 export default function Home() {
+  const [isAtTop, setIsAtTop] = useState(true);
+
+  const handleScroll = () => {
+    // Перевіряємо, чи находимося в верхній частині вікна
+    if (window.scrollY === 0) {
+      setIsAtTop(true);
+    } else {
+      setIsAtTop(false);
+    }
+  };
+
+  useEffect(() => {
+    // Додаємо подію прокрутки
+    window.addEventListener('scroll', handleScroll);
+
+    // Очищаємо подію при відмонтованні компонента
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    // Прокручування до верхньої частини сторінки
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth', // забезпечує плавну анімацію прокрутки
+    });
+  };
+
   // useEffect(() => {
   //   console.log('render');
   // });
@@ -163,6 +193,15 @@ export default function Home() {
           )}
         </div>
       </Container> */}
+
+      {isAtTop === false && (
+        <div
+          onClick={scrollToTop}
+          className="fixed bottom-16 right-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-slate-200"
+        >
+          <img className="z-30" src="/footer/arrow_up.svg" alt=""></img>
+        </div>
+      )}
     </section>
   );
 }

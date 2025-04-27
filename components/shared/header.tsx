@@ -13,6 +13,7 @@ import { Categories } from '@/components/shared/categories';
 
 import { useState, useEffect } from 'react';
 import { BackDrop } from './back-drop';
+import Link from 'next/link';
 
 interface Props {
   className?: string;
@@ -62,14 +63,18 @@ export const Header: React.FC<Props> = ({ className }) => {
             className="mr-2 cursor-pointer sm:mr-6 [@media(any-hover:hover){&:hover}]:bg-gray-100"
             onClick={openMenu}
           />
-          <Image src="/logo/80n80_2.png" width={48} height={48} alt="Logo" />
-          <Image
-            className="max-sm:h-[50px] max-sm:w-[180px]"
-            src="/logo/LogoDS.png"
-            width={220}
-            height={60}
-            alt="Logo"
-          />
+          <Link href="/">
+            <Image src="/logo/80n80_2.png" width={48} height={48} alt="Logo" />
+          </Link>
+          <Link href="/">
+            <Image
+              className="max-sm:h-[50px] max-sm:w-[180px]"
+              src="/logo/LogoDS.png"
+              width={220}
+              height={60}
+              alt="Logo"
+            />
+          </Link>
         </div>
 
         <div className="mx-2 hidden flex-1 sm:block lg:mx-6">
