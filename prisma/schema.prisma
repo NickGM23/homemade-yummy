@@ -26,8 +26,9 @@ model User {
 model ProductGroup {
     id Int @id @default(autoincrement())
 
-    codeGroup String @unique
-    name      String @unique
+    codeGroup      String @unique
+    name           String @unique
+    aliasForSearch String @default("")
 
     products       Product[]
     positionNumber Int
@@ -45,6 +46,7 @@ model Product {
     productGroup   ProductGroup @relation(fields: [productGroupId], references: [id])
 
     name            String
+    aliasForSearch  String  @default("")
     price           Decimal @db.Decimal(9, 2)
     unitWeight      String
     minPartQuantity Decimal @db.Decimal(9, 1)
