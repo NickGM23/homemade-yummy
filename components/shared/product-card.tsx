@@ -1,6 +1,8 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Title } from './title';
+import { Button } from '../ui';
+import { ShoppingCart } from 'lucide-react';
 
 interface Props {
   groupName: string;
@@ -34,9 +36,15 @@ export const ProductCard: React.FC<Props> = ({
       <span title={name} className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold">
         {name}
       </span>
-      <div className="inline-flex items-center gap-4 px-4 py-2 pb-4">
-        <p className="m-0 text-2xl font-bold text-primary">{price}</p>
-        <p className="m-0 text-xl font-medium">{unitWeight}</p>
+      <div className="flex items-center justify-between gap-4 px-4 py-2 pb-4">
+        <div className="inline-flex gap-2">
+          <p className="m-0 text-2xl font-bold text-primary">{price}</p>
+          <p className="m-0 text-xl font-medium">{unitWeight}</p>
+        </div>
+        <Button>
+          <span className="h-ful mx-1"> Додати </span>
+          <ShoppingCart size={16} className="relative" strokeWidth={2} />
+        </Button>
       </div>
     </div>
   );
