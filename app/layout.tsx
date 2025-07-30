@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import './globals.css';
+import { Providers } from '@/components/shared/providers';
 import { Header } from '@/components/shared/header';
 
 const nunito = Nunito({
@@ -23,8 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={nunito.variable}>
         <main className="min-h-screen">
-          <Header className="z-[1] bg-white max-sm:sticky max-sm:top-0" />
-          {children}
+          <Providers>{children}</Providers>
         </main>
       </body>
     </html>
