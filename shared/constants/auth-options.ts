@@ -53,6 +53,7 @@ export const authOptions: AuthOptions = {
           email: findUser.email,
           name: findUser.fullName,
           //role: findUser.role,
+          //image: null
         };
       },
     }),
@@ -139,6 +140,7 @@ export const authOptions: AuthOptions = {
       if (session?.user) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.email = String(token.email);
       }
 
       return session;
