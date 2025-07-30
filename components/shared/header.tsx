@@ -14,18 +14,42 @@ import { Categories } from '@/components/shared/categories';
 import { useState, useEffect } from 'react';
 import { BackDrop } from './back-drop';
 import Link from 'next/link';
+import { ProductGroup, Product } from '@prisma/client';
+import { Api } from '@/services/api-client';
+import { useSession, signIn } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { ProfileButton } from './profile-button';
+import { signOut } from 'next-auth/react';
+import { AuthModal } from './modals/auth-modal';
 
 interface Props {
   className?: string;
 }
 
+type ProductGroupWithProducts = ProductGroup & {
+  products: Product[];
+};
+
 export const Header: React.FC<Props> = ({ className }) => {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [hideOrShow, setHideOfShort] = useState({});
+  const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
+  const [openAuthModal, setOpenAuthModal] = React.useState(false);
+
+  console.log(session, 991);
 
   useEffect(() => {
     isOpen ? (document.body.style.overflow = 'hidden') : (document.body.style.overflow = 'auto');
   }, [isOpen]);
+
+  useEffect(() => {
+    async function fetchStories() {
+      Api.product_groups.GetAllProductGroups().then((items) => setProductGroups(items));
+    }
+
+    fetchStories();
+  }, []);
 
   const closeMenu = () => {
     setIsOpen(false);
@@ -52,6 +76,11 @@ export const Header: React.FC<Props> = ({ className }) => {
         return { display: 'block' };
       });
     }
+  };
+  const onClickSignOut = () => {
+    signOut({
+      callbackUrl: '/',
+    });
   };
 
   return (
@@ -82,13 +111,21 @@ export const Header: React.FC<Props> = ({ className }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button
+          <AuthModal open={openAuthModal} onClose={() => setOpenAuthModal(false)} />
+          <ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
+          {/* <Button
+            onClick={() => signIn('github', { callbackUrl: '/', redirect: true })}
             variant="outline"
             className="hidden items-center gap-2 font-bold max-sm:hidden lg:flex [@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300"
           >
             <User size={16} />
             Увійти
           </Button>
+
+          <Button onClick={onClickSignOut} variant="secondary" className="text-base" type="button">
+            Вийти
+          </Button> */}
+
           <Button className="group relative hidden sm:flex">
             <b>0 ₴</b>
             <span className="mx-1 h-full w-[1px] bg-white/30" />
@@ -150,7 +187,11 @@ export const Header: React.FC<Props> = ({ className }) => {
             <div className="border-b border-gray-400 py-4">
               <b>Каталог товарів</b>
               <div className="flex w-[100%] flex-row pt-2">
-                <Categories isShowByBurgerMenu={true} onChange={closeMenu} />
+                <Categories
+                  isShowByBurgerMenu={true}
+                  onChange={closeMenu}
+                  productGroupsWithProducts={productGroups}
+                />
               </div>
             </div>
             <div className="flex items-center gap-5 border-b border-gray-400 py-4">
@@ -170,25 +211,35 @@ export const Header: React.FC<Props> = ({ className }) => {
             </div>
             <div className="border-b border-gray-400 py-4">
               <b>Особистий кабінет</b>
-              <div className="mt-2 flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-4">
-                <p>
-                  Увійдіть, щоб мати можливість переглядати історію ваших заказів. Отримувати
-                  рекомендації та персональні знижки.
-                </p>
-                <div className="pt-2">
-                  <a
-                    className={cn(
-                      'menu__link',
-                      'flex h-11 cursor-pointer items-center rounded-2xl border px-5 font-bold',
-                      '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
-                    )}
-                    // href={`/#${catsInfo[index]}`}
-                    //onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
-                  >
-                    Увійдіть в особистий кабінет
-                  </a>
+              {!session ? (
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-gray-50 p-4">
+                  <p className="min-w-[200px] flex-1">
+                    Увійдіть, щоб мати можливість переглядати історію ваших заказів. Отримувати
+                    рекомендації та персональні знижки.
+                  </p>
+                  <div className="pt-2">
+                    <ProfileButton
+                      onClickSignIn={() => setOpenAuthModal(true)}
+                      signButtonText="Увійдіть в особистий кабінет"
+                      isVisibleAll={true}
+                    />
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="flex h-full items-center justify-center pt-2">
+                  <div className="w-full rounded-2xl bg-gray-50 p-4">
+                    <p className="font-bold">{session.user?.name}</p>
+                    <p>{session.user?.email}</p>
+                  </div>
+                  <div className="m-2">
+                    <ProfileButton
+                      onClickSignIn={() => setOpenAuthModal(true)}
+                      onClickProfile={() => closeMenu()}
+                      isVisibleAll={true}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="py-4">
               <b>Ми в соціальних мережах</b>

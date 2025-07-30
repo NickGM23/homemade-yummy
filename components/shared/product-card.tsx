@@ -38,7 +38,7 @@ export const ProductCard: React.FC<Props> = ({
       </span>
       <div className="flex items-center justify-between gap-4 px-4 py-2 pb-4">
         <div className="inline-flex gap-2">
-          <p className="m-0 text-2xl font-bold text-primary">{price}</p>
+          <p className="m-0 text-2xl font-bold text-primary">{price.toString()}</p>
           <p className="m-0 text-xl font-medium">{unitWeight}</p>
         </div>
         <Button>
