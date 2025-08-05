@@ -55,15 +55,23 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
   return (
     <Container className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <FormProvider {...form}>
-        <form className="mt-2 flex w-96 flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <Title text={`Особисті дані | #${data.id}`} size="md" className="font-bold" />
+        <form
+          className="mt-2 flex w-96 flex-col gap-3 md:gap-5"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          {/*<Title text={`Особисті дані | #${data.id}`} size="md" className="font-bold" />*/}
+          <Title text={`Особисті дані`} size="md" className="font-bold" />
           <FormInput name="email" label="E-Mail" required />
           <FormInput name="fullName" label="Ім'я" required />
 
           <FormInput type="password" name="password" label="Новий пароль" required />
           <FormInput type="password" name="confirmPassword" label="Повторіть пароль" required />
 
-          <Button disabled={form.formState.isSubmitting} className="mt-10 text-base" type="submit">
+          <Button
+            disabled={form.formState.isSubmitting}
+            className="mt-6 text-base md:mt-10"
+            type="submit"
+          >
             Зберегти
           </Button>
 
