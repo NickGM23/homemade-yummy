@@ -56,7 +56,7 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
     <Container className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <FormProvider {...form}>
         <form
-          className="mt-2 flex w-96 flex-col gap-3 md:gap-5"
+          className="mt-2 flex w-96 flex-col gap-3 md:mt-10 md:gap-5"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           {/*<Title text={`Особисті дані | #${data.id}`} size="md" className="font-bold" />*/}
