@@ -37,7 +37,7 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = React.useState(false);
 
-  console.log(session, 991);
+  //console.log(session, 991);
 
   useEffect(() => {
     isOpen ? (document.body.style.overflow = 'hidden') : (document.body.style.overflow = 'auto');
@@ -181,7 +181,7 @@ export const Header: React.FC<Props> = ({ className }) => {
             <div className="border-b border-gray-400 py-4">
               <b>Пошук</b>
               <div className="pt-2">
-                <SearchInput />
+                <SearchInput onAfterSelectItem={closeMenu} />
               </div>
             </div>
             <div className="border-b border-gray-400 py-4">

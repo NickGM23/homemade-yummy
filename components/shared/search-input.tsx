@@ -10,9 +10,10 @@ import { Product } from '@prisma/client';
 
 interface Props {
   className?: string;
+  onAfterSelectItem?: () => void;
 }
 
-export const SearchInput: React.FC<Props> = ({ className }) => {
+export const SearchInput: React.FC<Props> = ({ className, onAfterSelectItem }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [focused, setFocused] = React.useState(false);
   const [products, setProducts] = React.useState<Product[]>([]);
@@ -34,6 +35,7 @@ export const SearchInput: React.FC<Props> = ({ className }) => {
     setFocused(false);
     setSearchQuery('');
     setProducts([]);
+    onAfterSelectItem?.();
   };
 
   return (

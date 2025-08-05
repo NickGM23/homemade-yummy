@@ -24,7 +24,7 @@ const productGroups = [
   // { id: 6, idGroup: 'zrazy', name: 'Зрази картопляні' },
   // { id: 7, idGroup: 'nalysnyky', name: 'Налисники' },
   //{ id: 8, idGroup: 'syrmyky', name: 'Сирники' },
-  { id: 9, idGroup: 'tefteli', name: 'Тефтелі' },
+  //{ id: 9, idGroup: 'tefteli', name: 'Тефтелі' },
   // { id: 10, idGroup: 'golubzi', name: 'Голубці' },
   // { id: 11, idGroup: 'gotoviStruvy', name: 'Готові страви' },
 ];
@@ -38,7 +38,7 @@ const catsInfo = [
   // 'zrazy',
   //  'nalysnyky',
   //'syrmyky',
-  'tefteli',
+  //'tefteli',
   //'golubzi',
   //  'gotoviStruvy',
 ];
