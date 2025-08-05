@@ -44,6 +44,7 @@ export const ProductGroupItem: React.FC<Props> = ({ productGroup, className }) =
                 name={product.name}
                 unitWeight={product.unitWeight}
                 imageUrl={product.imageUrl}
+                productId={product.id}
               />
             ))}
           </div>

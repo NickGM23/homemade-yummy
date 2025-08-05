@@ -38,6 +38,7 @@ type ProductGroupWithProducts = ProductGroup & {
 
 export default function Home() {
   const [isAtTop, setIsAtTop] = useState(true);
+  const [isShowSortPopup, setIsShowSortPopup] = useState(false);
   const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
 
   const handleScroll = () => {
@@ -102,7 +103,7 @@ export default function Home() {
         </Container>
         <Container className="relative mt-5 flex gap-2">
           <Categories productGroupsWithProducts={productGroups} />
-          <SortPopup />
+          {isShowSortPopup && <SortPopup />}
         </Container>
       </div>
 

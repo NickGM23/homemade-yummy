@@ -5,6 +5,7 @@ import { Button } from '../ui';
 import { ShoppingCart } from 'lucide-react';
 
 interface Props {
+  productId?: number;
   groupName: string;
   name: string;
   price: number;
@@ -19,6 +20,7 @@ interface Props {
 // }
 
 export const ProductCard: React.FC<Props> = ({
+  productId,
   name,
   price,
   unitWeight,
@@ -31,7 +33,9 @@ export const ProductCard: React.FC<Props> = ({
       className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
     >
       <div className="flex justify-center">
-        <img className="h-[225px] w-96 max-w-full object-cover" src={imageUrl} alt={name} />
+        <a href={`/product/${productId || 35}`}>
+          <img className="h-[225px] w-96 max-w-full object-cover" src={imageUrl} alt={name} />
+        </a>
       </div>
       <span title={name} className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold">
         {name}
