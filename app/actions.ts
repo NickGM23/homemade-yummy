@@ -60,6 +60,7 @@ export async function registerUser(body: Prisma.UserCreateInput) {
         fullName: body.fullName,
         email: body.email,
         password: hashSync(body.password, 10),
+        provider: 'credentials',
       },
     });
 
@@ -72,13 +73,13 @@ export async function registerUser(body: Prisma.UserCreateInput) {
     //  },
     //});
 
-    await sendEmail(
-      createdUser.email,
-      'Next Pizza / 📝 Подтверждение регистрации',
-      VerificationUserTemplate({
-        code,
-      }),
-    );
+    //await sendEmail(
+    //  createdUser.email,
+    //  'Next Pizza / 📝 Подтверждение регистрации',
+    //  VerificationUserTemplate({
+    //    code,
+    //  }),
+    //);
   } catch (err) {
     console.log('Error [CREATE_USER]', err);
     throw err;

@@ -4,6 +4,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare, hashSync } from 'bcrypt';
 import { prisma } from '@/prisma/prisma-client';
 import type { AuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
+import { UserRole } from '@/@types/user';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -48,11 +50,13 @@ export const authOptions: AuthOptions = {
         //    return null;
         //  }
 
+        const role: UserRole = findUser.isAdmin ? 'admin' : 'user';
+
         return {
           id: String(findUser.id),
           email: findUser.email,
-          name: findUser.fullName,
-          //role: findUser.role,
+          fullName: findUser.fullName,
+          role: role,
           //image: null
         };
       },
@@ -61,6 +65,10 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
+    maxAge: 60 * 60 * 48,
+  },
+  jwt: {
+    maxAge: 60 * 60 * 48,
   },
   callbacks: {
     async signIn({ user, account }) {
@@ -73,7 +81,7 @@ export const authOptions: AuthOptions = {
           return false;
         }
 
-        console.log(user);
+        console.log('account');
         console.log(account);
         const findUser = await prisma.user.findFirst({
           where: {
@@ -84,6 +92,7 @@ export const authOptions: AuthOptions = {
           },
         });
 
+        console.log('findUser');
         console.log(findUser);
         if (findUser) {
           await prisma.user.update({
@@ -116,7 +125,7 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async jwt({ token }) {
+    async jwt({ token }: { token: JWT }) {
       if (!token.email) {
         return token;
       }
@@ -128,18 +137,22 @@ export const authOptions: AuthOptions = {
       });
 
       if (findUser) {
+        const role: UserRole = findUser.isAdmin ? 'admin' : 'user';
         token.id = String(findUser.id);
         token.email = findUser.email;
         token.fullName = findUser.fullName;
-        //token.role = findUser.role;
+        token.role = role;
       }
 
+      console.log('token');
+      console.log(token);
       return token;
     },
     session({ session, token }) {
       if (session?.user) {
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.fullName = token.fullName;
         session.user.email = String(token.email);
       }
 

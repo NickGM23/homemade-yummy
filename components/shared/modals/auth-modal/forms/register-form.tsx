@@ -37,6 +37,10 @@ export const RegisterForm: React.FC<Props> = ({ onClose, onClickLogin }) => {
         icon: '✅',
       });
 
+      //toast.error('Реєстрація успішна 📝. Підтвердіть свою пошту', {
+      //  icon: '✅',
+      //});
+
       onClose?.();
     } catch (error) {
       return toast.error('Невірний E-Mail або пароль', {
