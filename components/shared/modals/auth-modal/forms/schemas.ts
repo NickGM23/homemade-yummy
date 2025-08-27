@@ -9,6 +9,11 @@ export const formLoginSchema = z.object({
   password: passwordSchema,
 });
 
+export const formProfileSchemaWithoutPassword = z.object({
+  email: z.string().email({ message: 'Введіть коректний email' }),
+  fullName: z.string().min(2, { message: "Введіть ім'я" }),
+});
+
 export const formRegisterSchema = formLoginSchema
   .merge(
     z.object({
@@ -21,5 +26,29 @@ export const formRegisterSchema = formLoginSchema
     path: ['confirmPassword'],
   });
 
+export const getProfileSchema = (isCredentialsUser: boolean) => {
+  if (isCredentialsUser) {
+    return z
+      .object({
+        email: z.string().email({ message: 'Введіть коректний email' }),
+        fullName: z.string().min(2, { message: "Введіть ім'я" }),
+        password: passwordSchema,
+        confirmPassword: passwordSchema,
+      })
+      .refine((data) => data.password === data.confirmPassword, {
+        message: 'Паролі не співпадають',
+        path: ['confirmPassword'],
+      });
+  } else {
+    return z.object({
+      email: z.string().email({ message: 'Введіть коректний email' }),
+      fullName: z.string().min(2, { message: "Введіть ім'я" }),
+      password: z.string().optional(),
+      confirmPassword: z.string().optional(),
+    });
+  }
+};
+
 export type TFormLoginValues = z.infer<typeof formLoginSchema>;
 export type TFormRegisterValues = z.infer<typeof formRegisterSchema>;
+export type TFormProfileValues = z.infer<ReturnType<typeof getProfileSchema>>;

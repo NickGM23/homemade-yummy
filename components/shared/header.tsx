@@ -228,7 +228,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               ) : (
                 <div className="flex h-full items-center justify-center pt-2">
                   <div className="w-full rounded-2xl bg-gray-50 p-4">
-                    <p className="font-bold">{session.user?.name}</p>
+                    <p className="font-bold">{session.user?.fullName}</p>
                     <p>{session.user?.email}</p>
                   </div>
                   <div className="m-2">
