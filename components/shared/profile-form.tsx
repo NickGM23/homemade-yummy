@@ -12,6 +12,9 @@ import { Title } from './title';
 import { FormInput } from './form';
 import { Button } from '../ui';
 import { updateUserInfo } from '@/app/actions';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
   data: User;
@@ -20,6 +23,7 @@ interface Props {
 export const ProfileForm: React.FC<Props> = ({ data }) => {
   const isCredentialsUser = data.provider === 'credentials';
   const provider = data.provider;
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(getProfileSchema(isCredentialsUser)),
@@ -39,11 +43,13 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
         password: data.password || undefined,
       });
 
-      toast.error('Дані поновлено 📝', {
+      toast.error('Дані профілю поновлено 📝', {
         icon: '✅',
       });
+
+      router.push('/');
     } catch (error) {
-      return toast.error('Помилка при поновленні даних', {
+      return toast.error('Помилка при поновленні даних профілю', {
         icon: '❌',
       });
     }
@@ -88,13 +94,19 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
 
           <Button
             onClick={onClickSignOut}
-            variant="secondary"
+            variant="outline"
             disabled={form.formState.isSubmitting}
             className="text-base"
             type="button"
           >
-            Вийти
+            Вийти з аккаунта
           </Button>
+          <Link href="/" className="w-full">
+            <Button variant="outline" className="w-full gap-2">
+              <ArrowLeft />
+              На головну
+            </Button>
+          </Link>
         </form>
       </FormProvider>
     </Container>
