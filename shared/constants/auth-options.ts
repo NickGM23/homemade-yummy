@@ -86,7 +86,7 @@ export const authOptions: AuthOptions = {
         const findUser = await prisma.user.findFirst({
           where: {
             OR: [
-              { provider: account?.provider, providerId: account?.providerAccountId },
+              { provider: account?.provider, providerAccountId: account?.providerAccountId },
               { email: user.email },
             ],
           },
@@ -101,7 +101,7 @@ export const authOptions: AuthOptions = {
             },
             data: {
               provider: account?.provider,
-              providerId: account?.providerAccountId,
+              providerAccountId: account?.providerAccountId,
             },
           });
 
@@ -115,7 +115,7 @@ export const authOptions: AuthOptions = {
             password: hashSync(user.id.toString(), 10),
             verified: new Date(),
             provider: account?.provider,
-            providerId: account?.providerAccountId,
+            providerAccountId: account?.providerAccountId,
           },
         });
 

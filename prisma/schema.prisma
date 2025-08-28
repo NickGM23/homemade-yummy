@@ -16,8 +16,8 @@ model User {
 
     verified DateTime?
 
-    provider   String?
-    providerId String?
+    provider          String?
+    providerAccountId String?
 
     cart Cart?
 
