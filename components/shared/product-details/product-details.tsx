@@ -35,13 +35,13 @@ export const ProductDetails: React.FC<Props> = ({ className, product }) => {
 
       <img
         onClick={toggleImage}
-        className={`cursor-pointer object-cover transition-all duration-300 ${
-          isFullScreen
-            ? 'fixed left-1/2 top-1/2 z-50 h-full max-h-full w-full max-w-full -translate-x-1/2 -translate-y-1/2'
-            : 'h-[225px] w-96 max-w-full'
-        }`}
         src={product.imageUrl}
         alt={product.name}
+        className={`cursor-pointer transition-all duration-300 ${
+          isFullScreen
+            ? 'max-w-screen h-auto max-h-screen w-auto object-contain p-4'
+            : 'h-[225px] w-96 max-w-full object-cover'
+        }`}
       />
     </div>
   );
