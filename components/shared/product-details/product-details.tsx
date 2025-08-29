@@ -12,14 +12,21 @@ interface Props {
 export const ProductDetails: React.FC<Props> = ({ className, product }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  // Визначаємо чи пристрій великий (через matchMedia)
+  const isLargeScreen =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(min-width: 768px)').matches // Tailwind md breakpoint
+      : false;
+
   const toggleImage = () => {
+    if (!isLargeScreen) return; // на мобілці не розгортаємо
     setIsFullScreen((prev) => !prev);
   };
 
   return (
     <div
       className={`relative my-10 flex flex-col items-center justify-center gap-5 px-4 ${
-        isFullScreen ? 'fixed inset-0 z-50 bg-black/90' : ''
+        isFullScreen ? 'fixed inset-0 z-50 bg-white/80' : ''
       }`}
     >
       {!isFullScreen && (
