@@ -1,5 +1,6 @@
 generator client {
     provider = "prisma-client-js"
+    output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -51,13 +52,14 @@ model Product {
     productGroup   ProductGroup @relation(fields: [productGroupId], references: [id])
 
     name            String
-    aliasForSearch  String  @default("")
-    price           Decimal @db.Decimal(9, 2)
+    aliasForSearch  String      @default("")
+    price           Decimal     @db.Decimal(9, 2)
     unitWeight      String
-    minPartQuantity Decimal @db.Decimal(9, 1)
-    minQuantity     Decimal @db.Decimal(9, 1)
+    minPartQuantity Decimal     @db.Decimal(9, 1)
+    minQuantity     Decimal     @db.Decimal(9, 1)
     imageUrl        String
     positionNumber  Int
+    type            ProductType @default(SEMI_FINISHED)
 
     isDeleted Boolean @default(false)
 
@@ -96,4 +98,9 @@ model CartItem {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+enum ProductType {
+    READY_MEAL
+    SEMI_FINISHED
 }
