@@ -1,11 +1,15 @@
+'use client';
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Title } from './title';
 import { Button } from '../ui';
 import { ShoppingCart } from 'lucide-react';
+import { useCartStore } from '@/store/cart-store';
+import { toast } from 'react-hot-toast';
 
 interface Props {
-  productId?: number;
+  productId: number;
   groupName: string;
   name: string;
   price: number;
@@ -28,6 +32,7 @@ export const ProductCard: React.FC<Props> = ({
   imageUrl,
   className,
 }) => {
+  const { addToCart } = useCartStore();
   return (
     <div
       className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
@@ -45,7 +50,20 @@ export const ProductCard: React.FC<Props> = ({
           <p className="m-0 text-2xl font-bold text-primary">{price.toString()}</p>
           <p className="m-0 text-xl font-medium">{unitWeight}</p>
         </div>
-        <Button>
+        <Button
+          onClick={() => {
+            addToCart({
+              productId: productId?.toString(),
+              name,
+              quantity: 1,
+              price,
+            });
+
+            toast.success(`Товар "${name}" додано в кошик!`, {
+              icon: '✅',
+            });
+          }}
+        >
           <span className="h-ful mx-1"> Додати </span>
           <ShoppingCart size={16} className="relative" strokeWidth={2} />
         </Button>
@@ -53,28 +71,3 @@ export const ProductCard: React.FC<Props> = ({
     </div>
   );
 };
-
-{
-  /* <div className="flex justify-center p-6 bg-secondary rounded-lg h-[260px]">
-        <img className="w-[215px] h-[215px]" src={imageUrl} alt="Logo" />
-      </div>
-      <Title text={name} size="sm" className="mb-1 mt-3 font-bold" />
-      <p className="text-sm text-gray-400">
-        Цыпленок, моцарелла, сыры чеддер и пармезан, сырный соус, томаты, соус альфредо, чеснок
-      </p>
-
-      <div className="flex justify-between items-center mt-4">
-        <span className="text-[20px]">
-          от <b>{price} ₽</b>
-        </span>
-
-        {count ? (
-          <CountButton value={count} size="lg" />
-        ) : (
-          <Button variant="secondary">
-            <Plus className="w-4 h-4 mr-1" />
-            Добавить
-          </Button>
-        )}
-      </div> */
-}
