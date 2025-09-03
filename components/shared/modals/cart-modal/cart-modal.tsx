@@ -1,10 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart-store';
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Trash } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
 interface CartModalProps {
   open: boolean;
   onClose: () => void;
@@ -13,36 +16,68 @@ interface CartModalProps {
 export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
   const { cart, removeFromCart, totalItems, totalPrice, clearCart } = useCartStore();
 
+  // 👇 Додали перевірку, що компонент змонтовано
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="mt-0 flex h-screen w-full max-w-full flex-col overflow-y-auto rounded-none bg-white p-6 sm:mt-[10vh] sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8">
+      <DialogContent
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white px-6 py-6 sm:mt-[10vh] sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">🛒 Моя корзина</DialogTitle>
         </DialogHeader>
 
-        <div className="mt-4 flex flex-1 flex-col gap-4">
-          {cart.length === 0 ? (
-            <p className="text-center text-gray-500">Корзина порожня</p>
-          ) : (
-            cart.map((item) => (
-              <div key={item.productId} className="flex items-center justify-between border-b pb-2">
-                <div>
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {item.quantity} × {item.price.toFixed(2)} грн
-                  </p>
-                </div>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removeFromCart(item.productId)}
+        <TooltipProvider>
+          <div className="mt-4 flex flex-1 flex-col gap-4 overflow-y-auto">
+            {cart.length === 0 ? (
+              <p className="text-center text-gray-500">Корзина порожня</p>
+            ) : (
+              cart.map((item) => (
+                <div
+                  key={item.productId}
+                  className="flex items-center justify-between border-b pb-2 pr-4"
                 >
-                  Видалити
-                </Button>
-              </div>
-            ))
-          )}
-        </div>
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">
+                      {item.quantity} × {item.price.toFixed(2)} грн
+                    </p>
+                  </div>
+
+                  {/* 👇 Тільки якщо змонтовано */}
+                  {isMounted ? (
+                    <Tooltip delayDuration={200}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          tabIndex={-1}
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeFromCart(item.productId)}
+                        >
+                          <Trash size={16} />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">Видалити</TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeFromCart(item.productId)}
+                    >
+                      <Trash size={16} />
+                    </Button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </TooltipProvider>
 
         {cart.length > 0 && (
           <div className="mt-4 space-y-3 border-t pt-4">
@@ -59,7 +94,6 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
               <Button
                 className="w-full"
                 onClick={() => {
-                  // TODO: Navigate to checkout or open checkout modal
                   alert('Переходимо до оформлення...(буде реалізовано в наступних версіях)');
                 }}
               >
@@ -72,6 +106,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
             </div>
           </div>
         )}
+
         <Button variant="outline" className="mt-6 w-full" onClick={onClose}>
           <ArrowLeft />
           Продовжити покупки
