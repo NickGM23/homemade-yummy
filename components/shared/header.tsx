@@ -21,6 +21,8 @@ import { redirect } from 'next/navigation';
 import { ProfileButton } from './profile-button';
 import { signOut } from 'next-auth/react';
 import { AuthModal } from './modals/auth-modal';
+import { useCartStore } from '@/store/cart-store';
+import { CartModal } from './modals/cart-modal';
 
 interface Props {
   className?: string;
@@ -36,7 +38,14 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [hideOrShow, setHideOfShort] = useState({});
   const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = React.useState(false);
+  const totalItems = useCartStore((state) => state.totalItems());
+  const totalPrice = useCartStore((state) => state.totalPrice());
+  const [openCart, setOpenCart] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   //console.log(session, 991);
 
   useEffect(() => {
@@ -112,6 +121,7 @@ export const Header: React.FC<Props> = ({ className }) => {
 
         <div className="flex items-center gap-3">
           <AuthModal open={openAuthModal} onClose={() => setOpenAuthModal(false)} />
+          <CartModal open={openCart} onClose={() => setOpenCart(false)} />
           <ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
           {/* <Button
             onClick={() => signIn('github', { callbackUrl: '/', redirect: true })}
@@ -126,12 +136,21 @@ export const Header: React.FC<Props> = ({ className }) => {
             Вийти
           </Button> */}
 
-          <Button className="group relative hidden sm:flex">
-            <b>0 ₴</b>
+          <Button className="group relative hidden sm:flex" onClick={() => setOpenCart(true)}>
+            {mounted && (
+              <>
+                <b>{totalPrice}</b>
+              </>
+            )}
+
             <span className="mx-1 h-full w-[1px] bg-white/30" />
             <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
-              <b>0</b>
+              {mounted && (
+                <>
+                  <b>{totalItems}</b>
+                </>
+              )}
             </div>
             <ArrowRight
               size={20}
@@ -139,10 +158,14 @@ export const Header: React.FC<Props> = ({ className }) => {
             />
           </Button>
 
-          <Button className="group relative flex sm:hidden">
+          <Button className="group relative flex sm:hidden" onClick={() => setOpenCart(true)}>
             <div className="flex items-center gap-1">
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
-              <b>0</b>
+              {mounted && (
+                <>
+                  <b>{totalItems}</b>
+                </>
+              )}
             </div>
           </Button>
         </div>
@@ -196,12 +219,20 @@ export const Header: React.FC<Props> = ({ className }) => {
             </div>
             <div className="flex items-center gap-5 border-b border-gray-400 py-4">
               <b>Корзина</b>
-              <Button className="group relative flex">
-                <b>0 ₴</b>
+              <Button className="group relative flex" onClick={() => setOpenCart(true)}>
+                {mounted && (
+                  <>
+                    <b>{totalPrice}</b>
+                  </>
+                )}
                 <span className="mx-1 h-full w-[1px] bg-white/30" />
                 <div className="flex items-center gap-1 transition duration-300 group-hover:opacity-0">
                   <ShoppingCart size={16} className="relative" strokeWidth={2} />
-                  <b>0</b>
+                  {mounted && (
+                    <>
+                      <b>{totalItems}</b>
+                    </>
+                  )}
                 </div>
                 <ArrowRight
                   size={20}

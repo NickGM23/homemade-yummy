@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ProductWithProductGroup } from '@/@types/prisma';
+import { SerializedProductWithProductGroup } from '@/@types/prisma';
 import { Title } from '../title';
 
 interface Props {
   className?: string;
-  product: ProductWithProductGroup;
+  product: SerializedProductWithProductGroup;
 }
 
 export const ProductDetails: React.FC<Props> = ({ className, product }) => {
@@ -42,7 +42,7 @@ export const ProductDetails: React.FC<Props> = ({ className, product }) => {
 
       <img
         onClick={toggleImage}
-        src={product.imageUrl}
+        src={product.imageUrl ?? undefined}
         alt={product.name}
         className={`cursor-pointer transition-all duration-300 ${
           isFullScreen
