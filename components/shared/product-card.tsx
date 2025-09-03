@@ -38,7 +38,7 @@ export const ProductCard: React.FC<Props> = ({
       className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
     >
       <div className="flex justify-center">
-        <a href={`/product/${productId || 35}`}>
+        <a href={`/product/${productId}`}>
           <img className="h-[225px] w-96 max-w-full object-cover" src={imageUrl} alt={name} />
         </a>
       </div>
