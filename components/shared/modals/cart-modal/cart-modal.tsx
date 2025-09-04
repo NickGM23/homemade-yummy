@@ -123,7 +123,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
           </div>
         )}
 
-        <Button variant="outline" className="mt-6 w-full" onClick={onClose}>
+        <Button variant="outline" className="mt-2 w-full sm:mt-4" onClick={onClose}>
           <ArrowLeft />
           Продовжити покупки
         </Button>
