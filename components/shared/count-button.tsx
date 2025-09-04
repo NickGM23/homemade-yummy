@@ -16,7 +16,12 @@ export const CountButton: React.FC<CountButtonProps> = ({
   size = 'sm',
 }) => {
   return (
-    <div className={cn('inline-flex items-center justify-between gap-2', className)}>
+    <div
+      className={cn(
+        'inline-flex items-center justify-between gap-2 [tap-highlight-color:transparent]',
+        className,
+      )}
+    >
       <CountIconButton
         onClick={() => onClick?.('minus')}
         disabled={value === 1}
