@@ -53,7 +53,7 @@ export const ProductCard: React.FC<Props> = ({
         <Button
           onClick={() => {
             addToCart({
-              productId: productId?.toString(),
+              productId: productId,
               name,
               quantity: 1,
               price,
