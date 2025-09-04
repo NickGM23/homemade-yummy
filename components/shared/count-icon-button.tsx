@@ -16,6 +16,8 @@ export const CountIconButton: React.FC<IconButtonProps> = ({
   type,
   onClick,
 }) => {
+  const iconSizeClass = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
+
   return (
     <Button
       variant="outline"
@@ -23,14 +25,27 @@ export const CountIconButton: React.FC<IconButtonProps> = ({
       onClick={onClick}
       type="button"
       className={cn(
-        'p-0 hover:bg-primary hover:text-white disabled:border-gray-400 disabled:bg-white disabled:text-gray-400',
+        'group p-0 ' + // додаємо group, щоб стилізувати іконку всередині
+          'hover:bg-primary hover:text-white' +
+          'ring-0 focus:bg-transparent focus:ring-0 active:bg-transparent' +
+          'disabled:border-gray-400 disabled:bg-white disabled:text-gray-400',
         size === 'sm' ? 'h-[30px] w-[30px] rounded-[10px]' : 'h-[38px] w-[38px] rounded-md',
       )}
     >
       {type === 'plus' ? (
-        <Plus className={size === 'sm' ? 'h-4' : 'h-5'} />
+        <Plus
+          className={cn(
+            iconSizeClass,
+            'stroke-current text-gray-800 group-hover:text-white group-disabled:text-gray-400',
+          )}
+        />
       ) : (
-        <Minus className={size === 'sm' ? 'h-4' : 'h-5'} />
+        <Minus
+          className={cn(
+            iconSizeClass,
+            'stroke-current text-gray-800 group-hover:text-white group-disabled:text-gray-400',
+          )}
+        />
       )}
     </Button>
   );
