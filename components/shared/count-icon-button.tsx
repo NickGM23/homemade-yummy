@@ -25,29 +25,19 @@ export const CountIconButton: React.FC<IconButtonProps> = ({
       onClick={onClick}
       type="button"
       className={cn(
-        'group p-0 transition-colors duration-150 ease-in-out',
-        'hover:bg-primary hover:text-white',
-        'ring-0 focus:bg-transparent focus:ring-0 active:bg-transparent',
-        'disabled:border-gray-400 disabled:bg-white disabled:text-gray-400',
+        'bg-white p-0 text-black', // фон білий, текст чорний
+        'hover:bg-white hover:text-black', // hover: без змін
+        'focus:bg-white focus:text-black', // focus: без змін
+        'active:bg-white active:text-black', // active: без змін
+        'ring-0 focus:ring-0', // без обводки
+        'disabled:border-gray-400 disabled:bg-white disabled:text-gray-400', // стан disabled
         size === 'sm' ? 'h-[30px] w-[30px] rounded-[10px]' : 'h-[38px] w-[38px] rounded-md',
       )}
     >
       {type === 'plus' ? (
-        <Plus
-          stroke="currentColor"
-          className={cn(
-            iconSizeClass,
-            'stroke-[1.5] text-gray-800 group-hover:text-white group-disabled:text-gray-400',
-          )}
-        />
+        <Plus stroke="currentColor" className={cn(iconSizeClass, 'stroke-[1.5] text-current')} />
       ) : (
-        <Minus
-          stroke="currentColor"
-          className={cn(
-            iconSizeClass,
-            'stroke-[1.5] text-gray-800 group-hover:text-white group-disabled:text-gray-400',
-          )}
-        />
+        <Minus stroke="currentColor" className={cn(iconSizeClass, 'stroke-[1.5] text-current')} />
       )}
     </Button>
   );
