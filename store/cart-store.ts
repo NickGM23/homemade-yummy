@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type CartItem = {
-  productId: string;
+  productId: number;
   name: string;
   quantity: number;
   price: number;
@@ -11,7 +11,8 @@ export type CartItem = {
 type CartStore = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (productId: string) => void;
+  removeFromCart: (productId: number) => void;
+  updateItemQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
@@ -41,6 +42,16 @@ export const useCartStore = create<CartStore>()(
       removeFromCart: (productId) => {
         const filtered = get().cart.filter((i) => i.productId !== productId);
         set({ cart: filtered });
+      },
+
+      updateItemQuantity: (productId, quantity) => {
+        const cart = get().cart;
+
+        const updatedCart = cart.map((item) =>
+          item.productId === productId ? { ...item, quantity } : item,
+        );
+
+        set({ cart: updatedCart });
       },
 
       clearCart: () => set({ cart: [] }),
