@@ -16,7 +16,7 @@ export const CountButton: React.FC<CountButtonProps> = ({
   size = 'sm',
 }) => {
   return (
-    <div className={cn('inline-flex items-center justify-between gap-3', className)}>
+    <div className={cn('inline-flex items-center justify-between gap-2', className)}>
       <CountIconButton
         onClick={() => onClick?.('minus')}
         disabled={value === 1}
@@ -24,7 +24,7 @@ export const CountButton: React.FC<CountButtonProps> = ({
         type="minus"
       />
 
-      <b className={size === 'sm' ? 'text-sm' : 'text-md'}>{value}</b>
+      <b className={`select-none ${size === 'sm' ? 'text-sm' : 'text-md'}`}>{value}</b>
 
       <CountIconButton onClick={() => onClick?.('plus')} size={size} type="plus" />
     </div>

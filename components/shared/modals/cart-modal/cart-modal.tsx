@@ -7,6 +7,7 @@ import { useCartStore } from '@/store/cart-store';
 import React from 'react';
 import { ArrowLeft, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CountButton } from '../..';
 
 interface CartModalProps {
   open: boolean;
@@ -14,7 +15,8 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
-  const { cart, removeFromCart, totalItems, totalPrice, clearCart } = useCartStore();
+  const { cart, removeFromCart, totalItems, totalPrice, clearCart, updateItemQuantity } =
+    useCartStore();
 
   // 👇 Додали перевірку, що компонент змонтовано
   const [isMounted, setIsMounted] = useState(false);
@@ -22,11 +24,16 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
     setIsMounted(true);
   }, []);
 
+  const onClickCountButton = (id: number, quantity: number, type: 'plus' | 'minus') => {
+    const newQuantity = type === 'plus' ? quantity + 1 : quantity - 1;
+    updateItemQuantity(id, newQuantity);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white px-6 py-6 sm:mt-[10vh] sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8"
+        className="flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white px-6 py-6 sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8"
       >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">🛒 Моя корзина</DialogTitle>
@@ -40,39 +47,48 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
               cart.map((item) => (
                 <div
                   key={item.productId}
-                  className="flex items-center justify-between border-b pb-2 pr-4"
+                  className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
                 >
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-600">
-                      {item.quantity} × {item.price.toFixed(2)} грн
+                      {item.quantity} × {item.price.toFixed(2)} ={' '}
+                      {(item.quantity * item.price).toFixed(2)} грн
                     </p>
                   </div>
 
-                  {/* 👇 Тільки якщо змонтовано */}
-                  {isMounted ? (
-                    <Tooltip delayDuration={200}>
-                      <TooltipTrigger asChild>
-                        <Button
-                          tabIndex={-1}
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => removeFromCart(item.productId)}
-                        >
-                          <Trash size={16} />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">Видалити</TooltipContent>
-                    </Tooltip>
-                  ) : (
-                    <Button
-                      variant="destructive"
+                  <div className="flex items-center gap-3 sm:gap-6">
+                    <CountButton
                       size="sm"
-                      onClick={() => removeFromCart(item.productId)}
-                    >
-                      <Trash size={16} />
-                    </Button>
-                  )}
+                      value={item.quantity}
+                      onClick={(type) => onClickCountButton(item.productId, item.quantity, type)}
+                    />
+
+                    {/* 👇 Тільки якщо змонтовано */}
+                    {isMounted ? (
+                      <Tooltip delayDuration={200}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            tabIndex={-1}
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeFromCart(item.productId)}
+                          >
+                            <Trash size={16} />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">Видалити</TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removeFromCart(item.productId)}
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))
             )}
@@ -101,7 +117,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
               </Button>
 
               <Button className="w-full" variant="outline" onClick={() => clearCart()}>
-                Очистити
+                Очистити 🛒
               </Button>
             </div>
           </div>
