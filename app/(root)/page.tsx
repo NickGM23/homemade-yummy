@@ -119,9 +119,9 @@ export default function Home() {
       <Container className="kruchenyk mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={4} />
       </Container>
-      <Container className="frykadelka mb-10 mt-10 max-sm:mt-6">
+      {/*       <Container className="frykadelka mb-10 mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={5} />
-      </Container>
+      </Container> */}
       {productGroups &&
         productGroups.map(
           (productGroup, index) =>
