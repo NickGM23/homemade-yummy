@@ -106,8 +106,7 @@ export default function Home() {
           {isShowSortPopup && <SortPopup />}
         </Container>
       </div>
-
-      <Container className="varenik mt-10 max-sm:mt-6">
+      {/*  <Container className="varenik mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={1} />
       </Container>
       <Container className="pelmen mt-10 max-sm:mt-6">
@@ -119,6 +118,7 @@ export default function Home() {
       <Container className="kruchenyk mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={4} />
       </Container>
+      */}
       {/*       <Container className="frykadelka mb-10 mt-10 max-sm:mt-6">
         <ProductsGroupList idProductGroup={5} />
       </Container> */}
@@ -250,7 +250,6 @@ export default function Home() {
           )}
         </div>
       </Container> */}
-
       {isAtTop === false && (
         <div
           onClick={scrollToTop}

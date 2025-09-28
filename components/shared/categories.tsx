@@ -15,34 +15,6 @@ interface Props {
   onChange?: () => void;
 }
 
-const productGroups = [
-  { id: 1, idGroup: 'varenik', name: 'Вареники' },
-  { id: 2, idGroup: 'pelmen', name: 'Пельмені' },
-  { id: 3, idGroup: 'kotleta', name: 'Котлети' },
-  { id: 4, idGroup: 'kruchenyk', name: 'Крученики' },
-  //{ id: 5, idGroup: 'frykadelka', name: 'Фрикадельки' },
-  // { id: 6, idGroup: 'zrazy', name: 'Зрази картопляні' },
-  // { id: 7, idGroup: 'nalysnyky', name: 'Налисники' },
-  //{ id: 8, idGroup: 'syrmyky', name: 'Сирники' },
-  //{ id: 9, idGroup: 'tefteli', name: 'Тефтелі' },
-  // { id: 10, idGroup: 'golubzi', name: 'Голубці' },
-  // { id: 11, idGroup: 'gotoviStruvy', name: 'Готові страви' },
-];
-
-const catsInfo = [
-  'varenik',
-  'pelmen',
-  'kotleta',
-  'kruchenyk',
-  //'frykadelka',
-  // 'zrazy',
-  //  'nalysnyky',
-  //'syrmyky',
-  //'tefteli',
-  //'golubzi',
-  //  'gotoviStruvy',
-];
-
 // function onMenuLinkClick(e) {
 //   const menuLink = e.target;
 //   if (menuLink.dataset.goto && document.querySelector(menuLink.dataset.goto)) {
@@ -138,23 +110,6 @@ export const Categories: React.FC<Props> = ({
     <div
       className={cn('flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-1', className)}
     >
-      {productGroups.map(({ id, idGroup, name }, index) => (
-        <a
-          data-goto={'.' + catsInfo[index]}
-          key={index}
-          className={cn(
-            'menu__link',
-            'flex h-11 cursor-pointer items-center rounded-2xl border px-5 font-bold',
-            '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
-            idProductGroup === id && 'bg-white text-primary shadow-md shadow-gray-200',
-          )}
-          // href={`/#${catsInfo[index]}`}
-          onClick={(e) => categoryOnClick(e, index, '.' + catsInfo[index])}
-        >
-          {name}
-        </a>
-      ))}
-
       {productGroupsWithProducts &&
         productGroupsWithProducts.map(
           (productGroup, index) =>
