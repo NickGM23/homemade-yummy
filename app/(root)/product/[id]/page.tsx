@@ -1,5 +1,5 @@
 import { use } from 'react';
-import { prisma } from '@/prisma/prisma-client';
+import { prisma } from '@/libs/prisma';
 import { Container } from '@/components/shared/container';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/shared/product-details';

@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/prisma/prisma-client';
+import { prisma } from '@/libs/prisma';
 import { VerificationUserTemplate } from '@/components/shared/email-temapltes/verification-user';
 
 import { sendEmail } from '@/components/shared/lib';

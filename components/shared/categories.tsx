@@ -120,7 +120,7 @@ export const Categories: React.FC<Props> = ({
                 key={index}
                 className={cn(
                   'menu__link',
-                  'flex h-11 cursor-pointer items-center rounded-2xl border px-5 font-bold',
+                  'flex h-11 cursor-pointer select-none items-center rounded-2xl border px-5 font-bold',
                   '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
                   idProductGroup === productGroup.id * 100 &&
                     'bg-white text-primary shadow-md shadow-gray-200',

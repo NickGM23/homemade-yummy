@@ -2,7 +2,7 @@ import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare, hashSync } from 'bcrypt';
-import { prisma } from '@/prisma/prisma-client';
+import { prisma } from '@/libs/prisma';
 import type { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { UserRole } from '@/@types/user';

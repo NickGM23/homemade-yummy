@@ -4,6 +4,9 @@ import { CountIconButton } from './count-icon-button';
 
 export interface CountButtonProps {
   value?: number;
+  minValue?: number;
+  maxValue?: number;
+  minPartValue?: number;
   size?: 'sm' | 'lg';
   onClick?: (type: 'plus' | 'minus') => void;
   className?: string;
@@ -13,6 +16,9 @@ export const CountButton: React.FC<CountButtonProps> = ({
   className,
   onClick,
   value = 1,
+  minValue = 1,
+  maxValue = 8,
+  minPartValue = 1,
   size = 'sm',
 }) => {
   return (
@@ -24,14 +30,26 @@ export const CountButton: React.FC<CountButtonProps> = ({
     >
       <CountIconButton
         onClick={() => onClick?.('minus')}
-        disabled={value === 1}
+        disabled={value - minPartValue < minValue}
         size={size}
         type="minus"
       />
 
-      <b className={`select-none ${size === 'sm' ? 'text-sm' : 'text-md'}`}>{value}</b>
+      <b
+        className={cn(
+          'flex select-none items-center justify-center text-center',
+          size === 'sm' ? 'w-4 text-sm' : 'text-md w-10', // 👈 фіксована ширина
+        )}
+      >
+        {value}
+      </b>
 
-      <CountIconButton onClick={() => onClick?.('plus')} size={size} type="plus" />
+      <CountIconButton
+        disabled={value >= maxValue}
+        onClick={() => onClick?.('plus')}
+        size={size}
+        type="plus"
+      />
     </div>
   );
 };

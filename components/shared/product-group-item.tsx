@@ -45,6 +45,8 @@ export const ProductGroupItem: React.FC<Props> = ({ productGroup, className }) =
                 unitWeight={product.unitWeight}
                 imageUrl={product.imageUrl}
                 productId={product.id}
+                minQuantity={parseFloat(product.minQuantity.toString())}
+                minPartQuantity={parseFloat(product.minPartQuantity.toString())}
               />
             ))}
           </div>

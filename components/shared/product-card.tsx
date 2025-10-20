@@ -15,7 +15,9 @@ interface Props {
   price: number;
   unitWeight: string;
   count?: number;
-  imageUrl?: string;
+  imageUrl: string;
+  minPartQuantity: number;
+  minQuantity: number;
   className?: string;
 }
 
@@ -30,6 +32,8 @@ export const ProductCard: React.FC<Props> = ({
   unitWeight,
   count,
   imageUrl,
+  minPartQuantity,
+  minQuantity,
   className,
 }) => {
   const { addToCart } = useCartStore();
@@ -57,6 +61,9 @@ export const ProductCard: React.FC<Props> = ({
               name,
               quantity: 1,
               price,
+              minPartQuantity,
+              minQuantity,
+              imageUrl: imageUrl,
             });
 
             toast.success(`Товар "${name}" додано в кошик!`, {

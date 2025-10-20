@@ -79,6 +79,8 @@ export const ProductsGroupList: React.FC<Props> = ({ idProductGroup, className }
               unitWeight={product.unitWeight}
               imageUrl={product.imageUrl}
               productId={35}
+              minQuantity={0}
+              minPartQuantity={0}
             />
           ))}
       </div>
