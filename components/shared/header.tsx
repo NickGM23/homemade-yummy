@@ -38,7 +38,7 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [hideOrShow, setHideOfShort] = useState({});
   const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = React.useState(false);
-  const totalItems = useCartStore((state) => state.totalItems());
+  const countItem = useCartStore((state) => state.countItems());
   const totalPrice = useCartStore((state) => state.totalPrice());
   const [openCart, setOpenCart] = React.useState(false);
   const [mounted, setMounted] = useState(false);
@@ -148,7 +148,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
               {mounted && (
                 <>
-                  <b>{totalItems}</b>
+                  <b>{countItem}</b>
                 </>
               )}
             </div>
@@ -163,7 +163,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
               {mounted && (
                 <>
-                  <b>{totalItems}</b>
+                  <b>{countItem}</b>
                 </>
               )}
             </div>
@@ -230,7 +230,7 @@ export const Header: React.FC<Props> = ({ className }) => {
                   <ShoppingCart size={16} className="relative" strokeWidth={2} />
                   {mounted && (
                     <>
-                      <b>{totalItems}</b>
+                      <b>{countItem}</b>
                     </>
                   )}
                 </div>
@@ -274,14 +274,16 @@ export const Header: React.FC<Props> = ({ className }) => {
             </div>
             <div className="py-4">
               <b>Ми в соціальних мережах</b>
-              <a
-                title="Viber"
-                target="_blank"
-                className="cursor-pointer"
-                href="https://invite.viber.com/?g2=AQBI%2BqwSzGASd1PReIbHecaMp4g29XjuQbdKW%2FzGL0G9evTj%2FGgqunKZS5Ja%2FybE"
-              >
-                <Image className="mt-4" src="/logo/viber.svg" width={40} height={40} alt="Logo" />
-              </a>
+              <div>
+                <a
+                  title="Viber"
+                  target="_blank"
+                  className="inline-block cursor-pointer"
+                  href="https://invite.viber.com/?g2=AQBI%2BqwSzGASd1PReIbHecaMp4g29XjuQbdKW%2FzGL0G9evTj%2FGgqunKZS5Ja%2FybE"
+                >
+                  <Image className="mt-4" src="/logo/viber.svg" width={40} height={40} alt="Logo" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

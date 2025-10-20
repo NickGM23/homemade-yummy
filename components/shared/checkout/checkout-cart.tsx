@@ -1,35 +1,41 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useCartStore } from '@/store/cart-store';
-import React from 'react';
-import { ArrowLeft, Trash } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { WhiteBlock } from '../white-block';
+import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { CountButton } from '../..';
-import { useRouter } from 'next/navigation';
+import { CountButton } from '../count-button';
+import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
 
-interface CartModalProps {
-  open: boolean;
-  onClose: () => void;
+interface CartItem {
+  productId: number;
+  name: string;
+  price: number;
+  quantity: number;
+  minQuantity: number;
+  minPartQuantity: number;
 }
 
-export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
-  const {
-    cart,
-    removeFromCart,
-    totalItems,
-    countItems,
-    totalPrice,
-    clearCart,
-    updateItemQuantity,
-  } = useCartStore();
+interface Props {
+  cart: CartItem[];
+  removeFromCart: (id: number) => void;
+  updateItemQuantity: (id: number, quantity: number) => void;
+  clearCart?: () => void;
+  loading?: boolean;
+  className?: string;
+}
 
-  const router = useRouter();
-
-  // 👇 Додали перевірку, що компонент змонтовано
+export const CheckoutCart: React.FC<Props> = ({
+  cart,
+  removeFromCart,
+  updateItemQuantity,
+  clearCart,
+  loading,
+  className,
+}) => {
   const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -45,15 +51,8 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent
-        onOpenAutoFocus={(e) => e.preventDefault()}
-        className="flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white px-6 py-6 sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8 lg:w-[600px] lg:max-w-[600px]"
-      >
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">🛒 Моя корзина</DialogTitle>
-        </DialogHeader>
-
+    <WhiteBlock title="Ваші вибрані товари" className={cn(className)}>
+      <div className="flex flex-col gap-5">
         <TooltipProvider>
           <div className="mt-4 flex flex-1 flex-col gap-4 overflow-y-auto">
             {cart.length === 0 ? (
@@ -65,14 +64,6 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                   className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
                 >
                   <div>
-                    {item.imageUrl && (
-                      <div className="justify-left flex">
-                        <img
-                          className="h-[32px] w-[32px] max-w-full object-cover"
-                          src={item.imageUrl}
-                        ></img>
-                      </div>
-                    )}
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-600">
                       {item.quantity} × {item.price.toFixed(2)} ={' '}
@@ -96,7 +87,6 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                       }
                     />
 
-                    {/* 👇 Тільки якщо змонтовано */}
                     {isMounted ? (
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
@@ -126,40 +116,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
             )}
           </div>
         </TooltipProvider>
-
-        {cart.length > 0 && (
-          <div className="mt-4 space-y-3 border-t pt-4">
-            <div className="flex justify-between font-medium">
-              <span>Товарів:</span>
-              <span>{countItems()}</span>
-            </div>
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Сума:</span>
-              <span>{totalPrice().toFixed(2)} грн</span>
-            </div>
-
-            <div className="mt-4 flex gap-2">
-              <Button
-                className="w-full"
-                onClick={() => {
-                  router.push('/checkout');
-                }}
-              >
-                Оформити замовлення
-              </Button>
-
-              <Button className="w-full" variant="outline" onClick={() => clearCart()}>
-                Очистити 🛒
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <Button variant="outline" className="mt-2 w-full sm:mt-4" onClick={onClose}>
-          <ArrowLeft />
-          Продовжити покупки
-        </Button>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </WhiteBlock>
   );
 };

@@ -6,6 +6,9 @@ export type CartItem = {
   name: string;
   quantity: number;
   price: number;
+  minPartQuantity: number;
+  minQuantity: number;
+  imageUrl: string;
 };
 
 type CartStore = {
@@ -16,6 +19,7 @@ type CartStore = {
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
+  countItems: () => number;
 };
 
 export const useCartStore = create<CartStore>()(
@@ -57,6 +61,8 @@ export const useCartStore = create<CartStore>()(
       clearCart: () => set({ cart: [] }),
 
       totalItems: () => get().cart.reduce((sum, i) => sum + i.quantity, 0),
+
+      countItems: () => get().cart.length,
 
       totalPrice: () => get().cart.reduce((sum, i) => sum + i.price * i.quantity, 0),
     }),
