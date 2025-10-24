@@ -8,17 +8,18 @@ import { CountButton } from '../count-button';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 
-interface CartItem {
-  productId: number;
+type FullCartItem = {
+  id: number;
   name: string;
+  imageUrl: string;
   price: number;
-  quantity: number;
-  minQuantity: number;
   minPartQuantity: number;
-}
+  minQuantity: number;
+  quantity: number;
+};
 
 interface Props {
-  cart: CartItem[];
+  cart: FullCartItem[];
   removeFromCart: (id: number) => void;
   updateItemQuantity: (id: number, quantity: number) => void;
   clearCart?: () => void;
@@ -43,10 +44,12 @@ export const CheckoutCart: React.FC<Props> = ({
   const onClickCountButton = (
     id: number,
     quantity: number,
-    minPartQuantity: number,
+    minPartQuantity: number | string, // тимчасово допускаємо string
     type: 'plus' | 'minus',
   ) => {
-    const newQuantity = type === 'plus' ? quantity + minPartQuantity : quantity - minPartQuantity;
+    const minPart = Number(minPartQuantity);
+    const newQuantity = type === 'plus' ? quantity + minPart : quantity - minPart;
+
     updateItemQuantity(id, newQuantity);
   };
 
@@ -60,14 +63,13 @@ export const CheckoutCart: React.FC<Props> = ({
             ) : (
               cart.map((item) => (
                 <div
-                  key={item.productId}
+                  key={item.id}
                   className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
                 >
                   <div>
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-600">
-                      {item.quantity} × {item.price.toFixed(2)} ={' '}
-                      {(item.quantity * item.price).toFixed(2)} грн
+                      {item.quantity} × {item.price} = {item.quantity * item.price} грн
                     </p>
                   </div>
 
@@ -78,12 +80,7 @@ export const CheckoutCart: React.FC<Props> = ({
                       minValue={item.minQuantity}
                       minPartValue={item.minPartQuantity}
                       onClick={(type) =>
-                        onClickCountButton(
-                          item.productId,
-                          item.quantity,
-                          item.minPartQuantity,
-                          type,
-                        )
+                        onClickCountButton(item.id, item.quantity, item.minPartQuantity, type)
                       }
                     />
 
@@ -94,7 +91,7 @@ export const CheckoutCart: React.FC<Props> = ({
                             tabIndex={-1}
                             variant="destructive"
                             size="sm"
-                            onClick={() => removeFromCart(item.productId)}
+                            onClick={() => removeFromCart(item.id)}
                           >
                             <Trash size={16} />
                           </Button>
@@ -105,7 +102,7 @@ export const CheckoutCart: React.FC<Props> = ({
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => removeFromCart(item.productId)}
+                        onClick={() => removeFromCart(item.id)}
                       >
                         <Trash size={16} />
                       </Button>

@@ -3,12 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export type CartItem = {
   productId: number;
-  name: string;
   quantity: number;
-  price: number;
-  minPartQuantity: number;
-  minQuantity: number;
-  imageUrl: string;
 };
 
 type CartStore = {
@@ -17,8 +12,6 @@ type CartStore = {
   removeFromCart: (productId: number) => void;
   updateItemQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
-  totalItems: () => number;
-  totalPrice: () => number;
   countItems: () => number;
 };
 
@@ -55,6 +48,7 @@ export const useCartStore = create<CartStore>()(
           item.productId === productId ? { ...item, quantity } : item,
         );
 
+        console.log(cart);
         set({ cart: updatedCart });
       },
 
@@ -63,8 +57,6 @@ export const useCartStore = create<CartStore>()(
       totalItems: () => get().cart.reduce((sum, i) => sum + i.quantity, 0),
 
       countItems: () => get().cart.length,
-
-      totalPrice: () => get().cart.reduce((sum, i) => sum + i.price * i.quantity, 0),
     }),
     {
       name: 'cart-storage', // ключ у localStorage
