@@ -9,6 +9,7 @@ import { ArrowLeft, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CountButton } from '../..';
 import { useRouter } from 'next/navigation';
+import { useCartProducts } from '@/hooks/useCartProducts';
 
 interface CartModalProps {
   open: boolean;
@@ -16,15 +17,8 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
-  const {
-    cart,
-    removeFromCart,
-    totalItems,
-    countItems,
-    totalPrice,
-    clearCart,
-    updateItemQuantity,
-  } = useCartStore();
+  const { products, totalPrice, loading } = useCartProducts();
+  const { removeFromCart, clearCart, updateItemQuantity } = useCartStore();
 
   const router = useRouter();
 
@@ -37,10 +31,12 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
   const onClickCountButton = (
     id: number,
     quantity: number,
-    minPartQuantity: number,
+    minPartQuantity: number | string, // тимчасово допускаємо string
     type: 'plus' | 'minus',
   ) => {
-    const newQuantity = type === 'plus' ? quantity + minPartQuantity : quantity - minPartQuantity;
+    const minPart = Number(minPartQuantity);
+    const newQuantity = type === 'plus' ? quantity + minPart : quantity - minPart;
+
     updateItemQuantity(id, newQuantity);
   };
 
@@ -56,12 +52,12 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
 
         <TooltipProvider>
           <div className="mt-4 flex flex-1 flex-col gap-4 overflow-y-auto">
-            {cart.length === 0 ? (
+            {products.length === 0 ? (
               <p className="text-center text-gray-500">Корзина порожня</p>
             ) : (
-              cart.map((item) => (
+              products.map((item) => (
                 <div
-                  key={item.productId}
+                  key={item.id}
                   className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
                 >
                   <div>
@@ -75,8 +71,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                     )}
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-600">
-                      {item.quantity} × {item.price.toFixed(2)} ={' '}
-                      {(item.quantity * item.price).toFixed(2)} грн
+                      {item.quantity} × {item.price} = {item.quantity * item.price} грн
                     </p>
                   </div>
 
@@ -87,12 +82,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                       minValue={item.minQuantity}
                       minPartValue={item.minPartQuantity}
                       onClick={(type) =>
-                        onClickCountButton(
-                          item.productId,
-                          item.quantity,
-                          item.minPartQuantity,
-                          type,
-                        )
+                        onClickCountButton(item.id, item.quantity, item.minPartQuantity, type)
                       }
                     />
 
@@ -104,7 +94,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                             tabIndex={-1}
                             variant="destructive"
                             size="sm"
-                            onClick={() => removeFromCart(item.productId)}
+                            onClick={() => removeFromCart(item.id)}
                           >
                             <Trash size={16} />
                           </Button>
@@ -115,7 +105,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => removeFromCart(item.productId)}
+                        onClick={() => removeFromCart(item.id)}
                       >
                         <Trash size={16} />
                       </Button>
@@ -127,15 +117,15 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
           </div>
         </TooltipProvider>
 
-        {cart.length > 0 && (
+        {products.length > 0 && (
           <div className="mt-4 space-y-3 border-t pt-4">
             <div className="flex justify-between font-medium">
               <span>Товарів:</span>
-              <span>{countItems()}</span>
+              <span>{products.length}</span>
             </div>
             <div className="flex justify-between text-lg font-semibold">
               <span>Сума:</span>
-              <span>{totalPrice().toFixed(2)} грн</span>
+              <span>{totalPrice} грн</span>
             </div>
 
             <div className="mt-4 flex gap-2">

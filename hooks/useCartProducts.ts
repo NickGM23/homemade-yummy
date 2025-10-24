@@ -3,7 +3,7 @@ import { useCartStore } from '@/store/cart-store';
 import { Api } from '@/services/api-client';
 
 type FullCartItem = {
-  productId: number;
+  id: number;
   name: string;
   imageUrl: string;
   price: number;

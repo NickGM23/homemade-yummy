@@ -25,8 +25,10 @@ export const CheckoutSidebar: React.FC<Props> = ({
   loading,
   className,
 }) => {
-  const finalAmount =
-    totalCartAmount + (totalCartAmount >= freeShippingThreshold ? 0 : shippingPrice);
+  const shippingAmount =
+    totalCartAmount === 0 ? 0 : totalCartAmount >= freeShippingThreshold ? 0 : shippingPrice;
+  const finalAmount = totalCartAmount + shippingAmount;
+
   return (
     <WhiteBlock className={cn('sticky top-4 p-4', className)}>
       <div className="mb-2 flex items-center justify-between">
@@ -37,11 +39,7 @@ export const CheckoutSidebar: React.FC<Props> = ({
       </div>
       <div className="mb-2 flex items-center justify-between">
         <span className="text-sm text-gray-600">Вартість доставки</span>
-        <span className="text-sm text-gray-600">
-          {totalCartAmount >= freeShippingThreshold
-            ? 'Безкоштовно'
-            : `${shippingPrice.toFixed(2)} грн`}
-        </span>
+        <span className="text-sm text-gray-600">{`${shippingAmount.toFixed(2)} грн`}</span>
       </div>
       <div className="flex items-center justify-between">
         <span className="text-x-xl font-bold">Всього:</span>
@@ -49,6 +47,7 @@ export const CheckoutSidebar: React.FC<Props> = ({
       </div>
       <Button
         type="button"
+        disabled={finalAmount === 0}
         loading={loading}
         className="mt-6 h-14 w-full rounded-2xl text-base font-bold"
         onClick={() => {

@@ -21,8 +21,8 @@ import { redirect } from 'next/navigation';
 import { ProfileButton } from './profile-button';
 import { signOut } from 'next-auth/react';
 import { AuthModal } from './modals/auth-modal';
-import { useCartStore } from '@/store/cart-store';
 import { CartModal } from './modals/cart-modal';
+import { useCartProducts } from '@/hooks/useCartProducts';
 
 interface Props {
   className?: string;
@@ -38,8 +38,8 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [hideOrShow, setHideOfShort] = useState({});
   const [productGroups, setProductGroups] = React.useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = React.useState(false);
-  const countItem = useCartStore((state) => state.countItems());
-  const totalPrice = useCartStore((state) => state.totalPrice());
+  const { products, totalPrice, loading } = useCartProducts();
+  const countItem = products.reduce((acc, item) => acc + item.quantity, 0);
   const [openCart, setOpenCart] = React.useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -148,7 +148,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
               {mounted && (
                 <>
-                  <b>{countItem}</b>
+                  <b>{products.length}</b>
                 </>
               )}
             </div>
@@ -163,7 +163,7 @@ export const Header: React.FC<Props> = ({ className }) => {
               <ShoppingCart size={16} className="relative" strokeWidth={2} />
               {mounted && (
                 <>
-                  <b>{countItem}</b>
+                  <b>{products.length}</b>
                 </>
               )}
             </div>
@@ -230,7 +230,7 @@ export const Header: React.FC<Props> = ({ className }) => {
                   <ShoppingCart size={16} className="relative" strokeWidth={2} />
                   {mounted && (
                     <>
-                      <b>{countItem}</b>
+                      <b>{products.length}</b>
                     </>
                   )}
                 </div>

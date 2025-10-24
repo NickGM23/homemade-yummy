@@ -58,12 +58,7 @@ export const ProductCard: React.FC<Props> = ({
           onClick={() => {
             addToCart({
               productId: productId,
-              name,
               quantity: 1,
-              price,
-              minPartQuantity,
-              minQuantity,
-              imageUrl: imageUrl,
             });
 
             toast.success(`Товар "${name}" додано в кошик!`, {

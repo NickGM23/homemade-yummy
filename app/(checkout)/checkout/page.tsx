@@ -8,17 +8,11 @@ import toast from 'react-hot-toast';
 import React from 'react';
 import { CheckoutCart, CheckoutSidebar } from '@/components/shared/checkout';
 import { useCartStore } from '@/store/cart-store';
+import { useCartProducts } from '@/hooks/useCartProducts';
 
 export default function CheckoutPage() {
-  const {
-    cart,
-    removeFromCart,
-    totalItems,
-    totalPrice,
-    clearCart,
-    updateItemQuantity,
-    countItems,
-  } = useCartStore();
+  const { removeFromCart, clearCart, updateItemQuantity } = useCartStore();
+  const { products, totalPrice, loading } = useCartProducts();
   return (
     <Container className="mt-2">
       <Title
@@ -31,7 +25,7 @@ export default function CheckoutPage() {
           {/* ліва частина */}
           <div className="order-2 mb-10 flex flex-1 flex-col gap-6 lg:order-1">
             <CheckoutCart
-              cart={cart}
+              cart={products}
               removeFromCart={removeFromCart}
               updateItemQuantity={updateItemQuantity}
               clearCart={clearCart}
@@ -40,7 +34,7 @@ export default function CheckoutPage() {
 
           {/* права частина */}
           <div className="order-1 w-full lg:order-2 lg:w-[450px]">
-            <CheckoutSidebar totalCartAmount={totalPrice()} countCartItems={countItems()} />
+            <CheckoutSidebar totalCartAmount={totalPrice} countCartItems={products.length} />
           </div>
         </div>
       </form>
