@@ -1,10 +1,10 @@
 import { prisma } from '@/libs/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { withErrorHandling } from '@/libs/withErrorHandling';
 
-export async function GET(req: NextRequest) {
-  console.log(req.nextUrl.searchParams.get('query'));
-
-  const query = req.nextUrl.searchParams.get('query') || '';
+async function searchProducts(req: Request) {
+  const url = new URL(req.url);
+  const query = url.searchParams.get('query') || '';
 
   const products = await prisma.product.findMany({
     where: {
@@ -30,3 +30,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(products);
 }
+
+// Обгортаємо GET у новий хелпер
+export const { GET } = withErrorHandling({
+  GET: searchProducts,
+});

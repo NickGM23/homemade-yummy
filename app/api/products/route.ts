@@ -1,7 +1,9 @@
+// app/api/products/route.ts
 import { prisma } from '@/libs/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { withErrorHandling } from '@/libs/withErrorHandling';
 
-export async function GET(req: NextRequest) {
+async function getAllProducts(req: Request) {
   const products = await prisma.product.findMany({
     where: {
       isDeleted: false,
@@ -13,3 +15,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(products);
 }
+
+// Обгортаємо GET у новий хелпер
+export const { GET } = withErrorHandling({
+  GET: getAllProducts,
+});

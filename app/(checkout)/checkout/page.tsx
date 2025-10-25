@@ -9,10 +9,29 @@ import React from 'react';
 import { CheckoutCart, CheckoutSidebar } from '@/components/shared/checkout';
 import { useCartStore } from '@/store/cart-store';
 import { useCartProducts } from '@/hooks/useCartProducts';
+import { useSession } from 'next-auth/react';
+import { Api } from '@/services/api-client';
 
 export default function CheckoutPage() {
   const { removeFromCart, clearCart, updateItemQuantity } = useCartStore();
   const { products, totalPrice, loading } = useCartProducts();
+  const { data: session } = useSession();
+
+  React.useEffect(() => {
+    async function fetchUserInfo() {
+      const data = await Api.auth.getMe();
+
+      /*form.setValue('firstName', firstName);
+      form.setValue('lastName', lastName);
+      form.setValue('email', data.email);*/
+      console.log(data.fullName, data.email);
+    }
+
+    if (session) {
+      fetchUserInfo();
+    }
+  }, [session]);
+
   return (
     <Container className="mt-2">
       <Title
