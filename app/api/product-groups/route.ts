@@ -1,7 +1,8 @@
 import { prisma } from '@/libs/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { withErrorHandling } from '@/libs/withErrorHandling';
 
-export async function GET(req: NextRequest) {
+async function getProductGroups() {
   const productGroups = await prisma.productGroup.findMany({
     where: {
       isDeleted: false,
@@ -23,3 +24,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(productGroups);
 }
+
+// Обгортка через хелпер
+export const { GET } = withErrorHandling({
+  GET: getProductGroups,
+});

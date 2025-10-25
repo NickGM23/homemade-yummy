@@ -1,24 +1,26 @@
 import { prisma } from '@/libs/prisma';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import { withErrorHandling } from '@/libs/withErrorHandling';
 
-export async function POST(req: NextRequest) {
-  try {
-    const { ids } = await req.json();
-    if (!ids || !Array.isArray(ids)) {
-      return NextResponse.json({ error: 'Invalid ids' }, { status: 400 });
-    }
+async function postProductsByIds(req: Request) {
+  const { ids } = await req.json();
 
-    const products = await prisma.product.findMany({
-      where: {
-        id: { in: ids },
-        isDeleted: false,
-      },
-      include: { productGroup: true },
-    });
-
-    return NextResponse.json(products);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  if (!ids || !Array.isArray(ids)) {
+    return NextResponse.json({ message: 'Invalid ids' }, { status: 400 });
   }
+
+  const products = await prisma.product.findMany({
+    where: {
+      id: { in: ids },
+      isDeleted: false,
+    },
+    include: { productGroup: true },
+  });
+
+  return NextResponse.json(products);
 }
+
+// Використовуємо хелпер
+export const { POST } = withErrorHandling({
+  POST: postProductsByIds,
+});
