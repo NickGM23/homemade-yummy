@@ -46,13 +46,13 @@ export const CheckoutSidebar: React.FC<Props> = ({
         <span className="text-xl font-bold">{finalAmount.toFixed(2)} грн</span>
       </div>
       <Button
-        type="button"
+        type="submit"
         disabled={finalAmount === 0}
         loading={loading}
         className="mt-6 h-14 w-full rounded-2xl text-base font-bold"
-        onClick={() => {
+        /*</WhiteBlock>*onClick={() => {
           alert('обробка оформлення...(буде реалізовано в наступних версіях)');
-        }}
+        }}*/
       >
         Підтвердити замовлення
       </Button>
