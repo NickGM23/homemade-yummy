@@ -6,7 +6,13 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import React from 'react';
-import { CheckoutCart, CheckoutSidebar, CheckoutPersonalForm } from '@/components/shared/checkout';
+import {
+  CheckoutCart,
+  CheckoutSidebar,
+  CheckoutPersonalForm,
+  CheckoutDeliveryForm,
+  CheckoutCommentForm,
+} from '@/components/shared/checkout';
 import { useCartStore } from '@/store/cart-store';
 import { useCartProducts } from '@/hooks/useCartProducts';
 import { useSession } from 'next-auth/react';
@@ -26,6 +32,7 @@ export default function CheckoutPage() {
       phone: '',
       address: '',
       comment: '',
+      deliveryType: 'pickup',
     },
   });
 
@@ -45,12 +52,12 @@ export default function CheckoutPage() {
 
   const onSubmit = async (data: CheckoutFormValues) => {
     try {
-      toast.error('Заказ успешно оформлен! 📝 Переход на оплату... ', {
+      toast.error('Замовлення успішно сформоване 📝 і відправлене на обробку.... ', {
         icon: '✅',
       });
     } catch (err) {
       console.log(err);
-      toast.error('Не удалось создать заказ', {
+      toast.error('Помилка при оформленні замовлення', {
         icon: '❌',
       });
     }
@@ -74,6 +81,8 @@ export default function CheckoutPage() {
                 clearCart={clearCart}
               />
               <CheckoutPersonalForm />
+              <CheckoutDeliveryForm />
+              <CheckoutCommentForm />
             </div>
 
             {/* права частина */}

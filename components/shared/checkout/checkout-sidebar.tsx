@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Package, Percent, Truck } from 'lucide-react';
 import { getProductWord } from '@/lib/utils';
+import { useFormContext } from 'react-hook-form';
 
 interface Props {
   totalCartAmount: number;
@@ -25,8 +26,20 @@ export const CheckoutSidebar: React.FC<Props> = ({
   loading,
   className,
 }) => {
+  // ✅ отримуємо доступ до даних форми
+  const { watch } = useFormContext();
+  const deliveryType = watch('deliveryType'); // 'pickup' або 'address'
+
+  // ✅ логіка підрахунку доставки
   const shippingAmount =
-    totalCartAmount === 0 ? 0 : totalCartAmount >= freeShippingThreshold ? 0 : shippingPrice;
+    totalCartAmount === 0
+      ? 0
+      : deliveryType === 'pickup'
+        ? 0 // самовивіз — безкоштовно
+        : totalCartAmount >= freeShippingThreshold
+          ? 0 // перевищено поріг — теж безкоштовно
+          : shippingPrice;
+
   const finalAmount = totalCartAmount + shippingAmount;
 
   return (
