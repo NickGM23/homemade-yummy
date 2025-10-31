@@ -44,14 +44,14 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white px-6 py-6 sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:p-8 lg:w-[600px] lg:max-w-[600px]"
+        className="sm:px-4lg:w-[600px] flex max-h-[90vh] w-full max-w-full flex-col overflow-hidden rounded-none bg-white sm:h-auto sm:w-[500px] sm:max-w-[500px] sm:rounded-lg sm:px-6 lg:max-w-[600px]"
       >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">🛒 Моя корзина</DialogTitle>
         </DialogHeader>
 
         <TooltipProvider>
-          <div className="mt-4 flex flex-1 flex-col gap-4 overflow-y-auto">
+          <div className="mt-2 flex flex-1 flex-col gap-2 overflow-y-auto">
             {products.length === 0 ? (
               <p className="text-center text-gray-500">Корзина порожня</p>
             ) : (
@@ -118,7 +118,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
         </TooltipProvider>
 
         {products.length > 0 && (
-          <div className="mt-4 space-y-3 border-t pt-4">
+          <div className="space-y-3 border-t pt-2">
             <div className="flex justify-between font-medium">
               <span>Товарів:</span>
               <span>{products.length}</span>
@@ -128,7 +128,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
               <span>{totalPrice} грн</span>
             </div>
 
-            <div className="mt-4 flex gap-2">
+            <div className="mt-2 flex gap-2">
               <Button
                 className="w-full"
                 onClick={() => {
@@ -145,7 +145,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
           </div>
         )}
 
-        <Button variant="outline" className="mt-2 w-full sm:mt-4" onClick={onClose}>
+        <Button variant="outline" className="w-full" onClick={onClose}>
           <ArrowLeft />
           Продовжити покупки
         </Button>
