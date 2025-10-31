@@ -67,6 +67,14 @@ export const CheckoutCart: React.FC<Props> = ({
                   className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
                 >
                   <div>
+                    {item.imageUrl && (
+                      <div className="justify-left flex">
+                        <img
+                          className="h-[32px] w-[32px] max-w-full object-cover"
+                          src={item.imageUrl}
+                        ></img>
+                      </div>
+                    )}
                     <p className="font-medium">{item.name}</p>
                     <p className="text-sm text-gray-600">
                       {item.quantity} × {item.price} = {item.quantity * item.price} грн

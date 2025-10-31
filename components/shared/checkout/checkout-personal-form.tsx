@@ -12,7 +12,7 @@ export const CheckoutPersonalForm: React.FC<Props> = ({ className }) => {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <FormInput name="fullName" className="text-base" placeholder="Імя" />
         <FormInputWithMask name="phone" className="text-base" placeholder="Телефон" />
-        <FormInput name="email" className="text-base" placeholder="E-Mail" />
+        <FormInput name="email" className="text-base" placeholder="E-mail адреса (необов’язково)" />
       </div>
     </WhiteBlock>
   );
