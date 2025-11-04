@@ -1,6 +1,6 @@
 import React from 'react';
 import { WhiteBlock } from '../white-block';
-import { FormInput } from '../form';
+import { FormTextarea } from '../form';
 
 interface Props {
   className?: string;
@@ -9,10 +9,11 @@ interface Props {
 export const CheckoutCommentForm: React.FC<Props> = ({ className }) => {
   return (
     <WhiteBlock title="3. Додаткова інформація" className={className}>
-      <FormInput
+      <FormTextarea
         name="comment"
-        className="text-base"
         placeholder="Коментар до замовлення (необов’язково)"
+        minRows={3}
+        maxHeight={350}
       />
     </WhiteBlock>
   );

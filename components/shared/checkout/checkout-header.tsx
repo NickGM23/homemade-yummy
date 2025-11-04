@@ -14,7 +14,7 @@ interface Props {
 
 export const CheckoutHeader: React.FC<Props> = ({ className }) => {
   return (
-    <header className={cn('border-b border-gray-100', className)}>
+    <header className={cn('z-50 border-b border-gray-100', className)}>
       <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">
         <div className="flex items-center gap-2">
           <Link href="/">
