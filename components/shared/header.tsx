@@ -65,8 +65,9 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen }) 
     signOut({ callbackUrl: '/' });
   };
 
-  const countItem = products.reduce((acc, item) => acc + item.quantity, 0);
+  /*const countItem = products.reduce((acc, item) => acc + item.quantity, 0);*/
 
+  const countItem = products.length;
   return (
     <header className={cn('border-b border-gray-100', className)}>
       <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">

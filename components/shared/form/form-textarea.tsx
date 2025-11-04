@@ -47,7 +47,7 @@ export const FormTextarea: React.FC<Props> = ({
         </p>
       )}
 
-      <div className="relative w-full rounded-md border border-input">
+      <div className="relative w-full rounded-md">
         <Textarea
           {...register(name)}
           {...props}
