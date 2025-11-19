@@ -27,6 +27,8 @@ model User {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    orders Order[]
 }
 
 model ProductGroup {
@@ -63,7 +65,8 @@ model Product {
 
     isDeleted Boolean @default(false)
 
-    cartItem CartItem?
+    cartItem   CartItem?
+    orderItems OrderItem[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -100,7 +103,53 @@ model CartItem {
     updatedAt DateTime @updatedAt
 }
 
+model Order {
+    id Int @id @default(autoincrement())
+
+    userId Int?
+    user   User? @relation(fields: [userId], references: [id])
+
+    fullName     String  @db.VarChar(50)
+    email        String? @db.VarChar(100)
+    phone        String  @db.VarChar(12)
+    deliveryType String  @db.VarChar(20)
+    address      String? @db.VarChar(200)
+    comment      String? @db.VarChar(500)
+
+    shippingAmount Decimal     @db.Decimal(9, 2)
+    totalAmount    Decimal     @db.Decimal(9, 2)
+    items          OrderItem[]
+
+    status OrderStatus
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+    id Int @id @default(autoincrement())
+
+    orderId Int
+    order   Order @relation(fields: [orderId], references: [id])
+
+    productId Int
+    product   Product @relation(fields: [productId], references: [id])
+
+    quantity Decimal @db.Decimal(9, 2)
+    price    Decimal @db.Decimal(9, 2)
+    amount   Decimal @db.Decimal(9, 2)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 enum ProductType {
     READY_MEAL
     SEMI_FINISHED
+}
+
+enum OrderStatus {
+    PENDING
+    SUCCEEDED
+    CANCELLED
 }

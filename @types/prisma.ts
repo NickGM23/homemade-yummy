@@ -5,10 +5,10 @@ export interface SerializedProductWithProductGroup {
   productGroupId: number;
   name: string;
   aliasForSearch: string;
-  price: number; // number замість Decimal
+  price: number;
   unitWeight: string;
-  minPartQuantity: number; // number замість Decimal
-  minQuantity: number; // number замість Decimal
+  minPartQuantity: number;
+  minQuantity: number;
   imageUrl?: string | null;
   positionNumber: number;
   type: string;
