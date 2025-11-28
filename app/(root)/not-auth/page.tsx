@@ -2,7 +2,7 @@ import { InfoBlock } from '@/components/shared';
 
 export default function UnauthorizedPage() {
   return (
-    <div className="mt-40 flex flex-col items-center justify-center">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <InfoBlock
         title="Доступ заборонено"
         text="Цю сторінку можуть переглядати лише авторизовані користувачі"
