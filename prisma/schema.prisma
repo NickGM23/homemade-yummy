@@ -150,6 +150,7 @@ enum ProductType {
 
 enum OrderStatus {
     PENDING
+    ACCEPTED
     SUCCEEDED
     CANCELLED
 }
