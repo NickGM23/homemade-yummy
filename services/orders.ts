@@ -1,6 +1,8 @@
-import { ApiRoutes } from './constants';
+// services/orders.ts
 import { axiosInstance } from './instance';
+import { ApiRoutes } from './constants';
 import { OrderFilters, Order, CreateOrderBody } from '@/@types/order';
+import { fetchPaginatedOrders } from '@/libs/orderHelpers';
 
 export interface GetOrdersResponse {
   data: Order[];
@@ -16,22 +18,13 @@ export interface GetOrdersResponse {
 export const getOrders = async (
   filters: OrderFilters = { page: 1, limit: 20 },
 ): Promise<GetOrdersResponse> => {
-  const page = filters.page || 1;
-  const limit = filters.limit || 20;
-
   if (typeof window === 'undefined') {
-    // сервер → fetch з абсолютним URL
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/${ApiRoutes.ORDERS}?page=${page}&limit=${limit}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) throw new Error('Failed to fetch orders');
-    return res.json();
+    // --- SERVER SIDE: використовуємо хелпер ---
+    return fetchPaginatedOrders(filters);
   } else {
-    // клієнт → axios
+    // --- CLIENT SIDE: axios запит до API ---
     const res = await axiosInstance.get<GetOrdersResponse>(ApiRoutes.ORDERS, {
-      params: { page, limit },
+      params: filters,
     });
     return res.data;
   }

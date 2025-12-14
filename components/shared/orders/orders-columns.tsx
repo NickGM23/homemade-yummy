@@ -1,27 +1,52 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { Order } from '@/@types/order';
-import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
+import { Order, OrderStatus } from '@/@types/order';
+import { Badge } from '@/components/ui/badge';
+import { STATUS_LABEL, STATUS_CLASSES } from '@/shared/order-status';
 
+/* =========================
+   Items cell component
+========================= */
+function OrderItemsCell({ items }: { items: Order['items'] }) {
+  const [expanded, setExpanded] = useState(false);
+  const displayLimit = 3;
+  const visibleItems = expanded ? items : items.slice(0, displayLimit);
+
+  return (
+    <div className="max-w-[350px] break-words">
+      <ul className="list-disc pl-4">
+        {visibleItems.map((item) => {
+          const productName = item.product?.name || 'Без назви';
+          const quantity = Number(item.quantity) || 0;
+          const price = Number(item.price) || 0;
+          const amount = Number(item.amount) || 0;
+
+          return (
+            <li key={item.id}>
+              {productName} — {quantity} × {price.toFixed(2)} ₴ = {amount.toFixed(2)} ₴
+            </li>
+          );
+        })}
+      </ul>
+      {items.length > displayLimit && (
+        <button className="mt-1 text-sm text-blue-600" onClick={() => setExpanded((v) => !v)}>
+          {expanded ? 'Сховати' : `Показати ще ${items.length - displayLimit}`}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* =========================
+   Columns
+========================= */
 export const orderColumns: ColumnDef<Order>[] = [
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
-  {
-    accessorKey: 'fullName',
-    header: "Ім'я",
-  },
-  {
-    accessorKey: 'phone',
-    header: 'Телефон',
-  },
-  {
-    accessorKey: 'deliveryType',
-    header: 'Доставка',
-  },
+  { accessorKey: 'id', header: 'ID' },
+  { accessorKey: 'fullName', header: "Ім'я" },
+  { accessorKey: 'phone', header: 'Телефон' },
+  { accessorKey: 'deliveryType', header: 'Доставка' },
   {
     accessorKey: 'totalAmount',
     header: 'Сума',
@@ -34,17 +59,12 @@ export const orderColumns: ColumnDef<Order>[] = [
     accessorKey: 'status',
     header: 'Статус',
     cell: ({ row }) => {
-      const status = row.original.status;
-      const map = {
-        PENDING: 'Очікує',
-        SUCCEEDED: 'Виконано',
-        CANCELLED: 'Скасовано',
-      } as const;
-
-      const variant =
-        status === 'SUCCEEDED' ? 'success' : status === 'CANCELLED' ? 'destructive' : 'secondary';
-
-      return <Badge variant={variant}>{map[status]}</Badge>;
+      const status = row.original.status as OrderStatus;
+      return (
+        <Badge className={`${STATUS_CLASSES[status]} rounded-md px-2 py-1`}>
+          {STATUS_LABEL[status]}
+        </Badge>
+      );
     },
   },
   {
@@ -55,38 +75,6 @@ export const orderColumns: ColumnDef<Order>[] = [
   {
     accessorKey: 'items',
     header: 'Товари',
-    cell: ({ row }) => {
-      const items = row.original.items ?? [];
-      const displayLimit = 3;
-
-      const [expanded, setExpanded] = useState(false);
-      const visibleItems = expanded ? items : items.slice(0, displayLimit);
-
-      return (
-        <div className="max-w-[350px] break-words">
-          <ul className="list-disc pl-4">
-            {visibleItems.map((item) => {
-              const productName = item.product?.name || 'Без назви';
-              const quantity = Number(item.quantity) || 0;
-              const price = Number(item.price) || 0;
-              const amount = Number(item.amount) || 0;
-
-              return (
-                <li key={item.id}>
-                  {productName} — {quantity} × {price.toFixed(2)}
-                  {' '}₴ = {amount.toFixed(2)}
-                  {' '}₴
-                </li>
-              );
-            })}
-          </ul>
-          {items.length > displayLimit && (
-            <button className="mt-1 text-sm text-blue-600" onClick={() => setExpanded(!expanded)}>
-              {expanded ? 'Сховати' : `Показати ще ${items.length - displayLimit}`}
-            </button>
-          )}
-        </div>
-      );
-    },
+    cell: ({ row }) => <OrderItemsCell items={row.original.items ?? []} />,
   },
 ];

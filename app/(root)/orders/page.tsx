@@ -7,26 +7,26 @@ import { redirect } from 'next/navigation';
 export default async function OrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string }>;
 }) {
-  // 1. Авторизація
   const session = await getUserSession();
-  if (!session) return redirect('/not-auth');
+  if (!session) redirect('/not-auth');
 
   const user = await prisma.user.findUnique({
     where: { id: Number(session.id) },
   });
 
-  if (!user || !user.isAdmin) return redirect('/not-auth');
+  if (!user || !user.isAdmin) redirect('/not-auth');
 
-  // 2. Чекаємо searchParams
-  const params = await searchParams;
+  const { page, limit } = await searchParams;
 
-  const page = Number(params.page) || 1;
-  const limit = 5;
+  const currentPage = Number(page) || 1;
+  const currentLimit = Number(limit) || 10;
 
-  // 3. Отримуємо дані
-  const ordersResponse = await getOrders({ page, limit }); // ✅ передаємо як об'єкт
+  const ordersResponse = await getOrders({
+    page: currentPage,
+    limit: currentLimit,
+  });
 
   return (
     <div className="p-6">
@@ -36,6 +36,7 @@ export default async function OrdersPage({
         data={ordersResponse.data}
         page={ordersResponse.page}
         totalPages={ordersResponse.totalPages}
+        limit={ordersResponse.limit}
       />
     </div>
   );

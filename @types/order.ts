@@ -1,4 +1,4 @@
-export type OrderStatus = 'PENDING' | 'SUCCEEDED' | 'CANCELLED';
+export type OrderStatus = 'PENDING' | 'ACCEPTED' | 'SUCCEEDED' | 'CANCELLED';
 
 export interface OrderFilters {
   userId?: number;
@@ -48,13 +48,13 @@ export interface OrderItem {
 
 export interface Order {
   id: number;
-  userId?: number; // <--- додати це
+  userId: number | null; // <--- додати це
   fullName: string;
-  email?: string;
+  email: string | null;
   phone: string;
   deliveryType: string;
-  address?: string;
-  comment?: string;
+  address: string | null;
+  comment: string | null;
 
   shippingAmount: number;
   totalAmount: number;
