@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 import { Order, OrderStatus } from '@/@types/order';
 import { Badge } from '@/components/ui/badge';
-import { STATUS_LABEL, STATUS_CLASSES } from '@/shared/order-status';
+import { STATUS_LABEL, STATUS_CLASSES } from '@/shared/constants/order-status';
 
 /* =========================
    Items cell component

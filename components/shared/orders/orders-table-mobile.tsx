@@ -2,7 +2,7 @@
 
 import { Order, OrderStatus } from '@/@types/order';
 import { Badge } from '@/components/ui/badge';
-import { STATUS_LABEL, STATUS_CLASSES } from '@/shared/order-status';
+import { STATUS_LABEL, STATUS_CLASSES } from '@/shared/constants/order-status';
 
 export function OrdersTableMobile({ data }: { data: Order[] }) {
   return (

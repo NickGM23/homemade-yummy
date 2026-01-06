@@ -31,7 +31,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   };
 
   return (
-    <Container>
+    <Container className="mt-2 sm:mt-8">
       <ProductDetails product={product} />
     </Container>
   );

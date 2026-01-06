@@ -45,8 +45,8 @@ export function OrdersDataTable({
   return (
     <>
       {/* Селектор зверху таблиці */}
-      <div className="mb-4 flex justify-end">
-        <label className="mr-2 hidden text-gray-700 sm:inline">Показувати по:</label>
+      <div className="mb-4 flex items-center justify-end">
+        <label className="mr-2 text-gray-700 sm:inline">Показувати по:</label>
         <select
           value={selectedLimit}
           onChange={(e) => handleLimitChange(Number(e.target.value))}
