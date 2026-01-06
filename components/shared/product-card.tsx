@@ -6,6 +6,7 @@ import { Button } from '../ui';
 import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 
 interface Props {
   productId: number;
@@ -59,9 +60,13 @@ export const ProductCard: React.FC<Props> = ({
         </a>
       </div>
 
-      <span title={name} className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold">
+      <Link
+        href={`/product/${productId}`}
+        title={name}
+        className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold transition-colors hover:text-primary hover:underline"
+      >
         {name}
-      </span>
+      </Link>
 
       <div className="flex items-center justify-between gap-4 px-4 py-2 pb-4">
         <div className="inline-flex gap-2">

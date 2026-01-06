@@ -54,8 +54,10 @@ model Product {
     productGroup   ProductGroup @relation(fields: [productGroupId], references: [id])
 
     name            String
+    description     String?     @db.Text
     aliasForSearch  String      @default("")
     price           Decimal     @db.Decimal(9, 2)
+    unit            Unit        @default(KG)
     unitWeight      String
     minPartQuantity Decimal     @db.Decimal(9, 1)
     minQuantity     Decimal     @db.Decimal(9, 1)
@@ -153,4 +155,11 @@ enum OrderStatus {
     ACCEPTED
     SUCCEEDED
     CANCELLED
+}
+
+enum Unit {
+    KG // кілограми
+    G // грами
+    L // літри
+    PCS // штуки
 }

@@ -24,12 +24,13 @@ type ProductGroupWithProducts = ProductGroup & {
 };
 
 interface HeaderProps {
+  variant: 'fixed' | 'autoHide';
   className?: string;
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen }) => {
+export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen, variant }) => {
   const { data: session } = useSession();
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
   const [productGroups, setProductGroups] = useState<ProductGroupWithProducts[]>([]);
@@ -65,11 +66,18 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen }) 
     signOut({ callbackUrl: '/' });
   };
 
-  /*const countItem = products.reduce((acc, item) => acc + item.quantity, 0);*/
-
   const countItem = products.length;
+
   return (
-    <header className={cn('border-b border-gray-100', className)}>
+    <header
+      className={cn(
+        'border-b border-gray-100 transition-all duration-300',
+        variant === 'fixed'
+          ? 'fixed left-0 right-0 top-0 z-50 bg-white' // <- суцільний білий фон
+          : 'relative bg-transparent',
+        className,
+      )}
+    >
       <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">
         {/* LEFT SECTION */}
         <div className="flex items-center gap-2">
@@ -103,7 +111,7 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen }) 
           <CartModal open={openCart} onClose={() => setOpenCart(false)} />
           <ProfileButton onClickSignIn={() => setOpenAuthModal(true)} />
 
-          {/* 🖥️ Desktop cart button */}
+          {/* Desktop cart */}
           <Button className="group relative hidden sm:flex" onClick={() => setOpenCart(true)}>
             {mounted && <b>{totalPrice}</b>}
             <span className="mx-1 h-full w-[1px] bg-white/30" />
@@ -117,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen }) 
             />
           </Button>
 
-          {/* 📱 Mobile cart button */}
+          {/* Mobile cart */}
           <Button className="group relative flex sm:hidden" onClick={() => setOpenCart(true)}>
             <div className="flex items-center gap-1">
               <ShoppingCart size={16} strokeWidth={2} />
