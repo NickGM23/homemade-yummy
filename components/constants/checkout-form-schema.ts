@@ -1,29 +1,36 @@
 import { z } from 'zod';
 
-// Використовуємо .nullable() або .optional() для необов'язкових полів
+const emptyToUndefined = (val: string) => {
+  const trimmed = val.trim();
+  return trimmed === '' ? undefined : trimmed;
+};
+
+const phoneOnlyDigits = (val: string) => val.replace(/\D/g, '');
+
 export const checkoutFormSchema = z
   .object({
     fullName: z
       .string()
+      .trim()
       .min(3, { message: "Ім'я повинно бути не менше 3-х символів" })
       .max(50, { message: "Ім'я не може бути довше 50 символів" }),
 
     email: z
       .string()
+      .trim()
       .max(100, { message: 'Email занадто довгий' })
-      .optional()
-      .transform((val) => {
-        if (!val || val.trim() === '') return undefined; // порожнє поле → undefined
-        return val.trim();
-      })
-      .refine((val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+      .transform(emptyToUndefined)
+      .refine((val) => !val || z.string().email().safeParse(val).success, {
         message: 'Введіть коректну email адресу',
       }),
 
     phone: z
       .string()
-      .transform((val) => val.replace(/\D/g, '')) // залишаємо тільки цифри
-      .refine((val) => val.length === 12, { message: 'Введіть коректний номер телефону' }),
+      .trim()
+      .transform(phoneOnlyDigits)
+      .refine((val) => val.length === 12, {
+        message: 'Введіть коректний номер телефону',
+      }),
 
     deliveryType: z.enum(['pickup', 'address'], {
       required_error: 'Оберіть спосіб доставки',
@@ -31,28 +38,28 @@ export const checkoutFormSchema = z
 
     address: z
       .string()
-      .max(200, { message: 'Адреса занадто довга' })
-      .optional()
-      .transform((val) => (val?.trim() === '' ? undefined : val)),
+      .trim()
+      .transform(emptyToUndefined)
+      .refine((val) => val === undefined || val.length >= 5, {
+        message: 'Введіть коректну адресу',
+      }),
 
     comment: z
       .string()
-      .max(500, { message: 'Коментар занадто довгий' })
-      .optional()
-      .transform((val) => (val?.trim() === '' ? undefined : val)),
+      .trim()
+      .transform(emptyToUndefined)
+      .refine((val) => val === undefined || val.length <= 500, {
+        message: 'Коментар занадто довгий',
+      }),
   })
   .refine(
-    (data) => {
-      if (data.deliveryType === 'address') {
-        return !!data.address && data.address.trim().length >= 5;
-      }
-      return true;
-    },
+    (data) =>
+      data.deliveryType === 'address' ? data.address != null && data.address.length >= 5 : true,
     {
       message: 'Введіть коректну адресу',
       path: ['address'],
     },
   );
 
-// Тип для useForm
-export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
+export type CheckoutFormInput = z.input<typeof checkoutFormSchema>;
+export type CheckoutFormOutput = z.output<typeof checkoutFormSchema>;

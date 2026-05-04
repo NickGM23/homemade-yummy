@@ -19,10 +19,11 @@ import { useCartStore } from '@/store/cart-store';
 import { useCartProducts } from '@/hooks/useCartProducts';
 import { useSession } from 'next-auth/react';
 import { Api } from '@/services/api-client';
-import { CheckoutFormValues, checkoutFormSchema } from '@/components/constants';
+import { checkoutFormSchema, CheckoutFormOutput } from '@/components/constants';
 import { createOrder } from '@/services/orders';
 import { Container } from '@/components/shared/container';
 import { Title } from '@/components/shared/title';
+import { useZodForm } from '@/hooks/useZodForm';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -30,8 +31,7 @@ export default function CheckoutPage() {
   const { removeFromCart, updateItemQuantity, clearCart } = useCartStore();
   const { data: session } = useSession();
 
-  const form = useForm<CheckoutFormValues>({
-    resolver: zodResolver(checkoutFormSchema),
+  const form = useZodForm(checkoutFormSchema, {
     mode: 'onChange',
     defaultValues: {
       fullName: '',
@@ -152,7 +152,7 @@ export default function CheckoutPage() {
   };
 
   // Створення замовлення
-  const handleOrderSubmit = async (data: CheckoutFormValues) => {
+  const handleOrderSubmit = async (data: CheckoutFormOutput) => {
     if (!phoneVerified) {
       setPhoneError('Будь ласка, підтвердіть телефон перед оформленням замовлення');
       return;
@@ -197,7 +197,7 @@ export default function CheckoutPage() {
       />
 
       <FormProvider {...form}>
-        <form onSubmit={form.handleSubmit(handleOrderSubmit)}>
+        <form onSubmit={form.handleSubmitZod(handleOrderSubmit)}>
           <div className="flex flex-col-reverse gap-2 lg:flex-row lg:gap-10">
             <div className="order-2 mb-10 flex flex-1 flex-col gap-6 lg:order-1">
               <CheckoutCart
