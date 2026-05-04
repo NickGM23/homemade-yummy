@@ -9,33 +9,77 @@ import { hashSync } from 'bcrypt';
 import { cookies } from 'next/headers';
 import { getUserSession } from '@/components/shared/lib/get-user-session';
 
-export async function updateUserInfo(body: Prisma.UserUpdateInput) {
+type ActionResult =
+  | { success: true }
+  | {
+      success: false;
+      error?: string;
+      fieldErrors?: Record<string, string>;
+    };
+
+export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<ActionResult> {
   try {
     const currentUser = await getUserSession();
 
     if (!currentUser) {
-      throw new Error('Пользователь не найден');
+      return {
+        success: false,
+        error: 'Сесія закінчилась. Увійдіть знову',
+      };
     }
 
-    const findUser = await prisma.user.findFirst({
-      where: {
-        id: Number(currentUser.id),
+    const userId = Number(currentUser.id);
+
+    const findUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!findUser) {
+      return {
+        success: false,
+        error: 'Користувача не знайдено',
+      };
+    }
+
+    if (body.email && body.email !== findUser.email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: body.email as string },
+      });
+
+      if (existingUser) {
+        return {
+          success: false,
+          fieldErrors: {
+            email: 'Цей email вже використовується',
+          },
+        };
+      }
+    }
+
+    const hasPassword = !!body.password?.toString().trim();
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        fullName: body.fullName,
+        ...(body.email &&
+          body.email !== findUser.email && {
+            email: body.email,
+          }),
+        ...(hasPassword && {
+          password: await hashSync(body.password as string, 10),
+        }),
       },
     });
 
-    await prisma.user.update({
-      where: {
-        id: Number(currentUser.id),
-      },
-      data: {
-        fullName: body.fullName,
-        email: body.email,
-        password: body.password ? hashSync(body.password as string, 10) : findUser?.password,
-      },
-    });
+    return { success: true };
   } catch (err) {
     console.log('Error [UPDATE_USER]', err);
-    throw err;
+
+    return {
+      success: false,
+      error: 'Помилка сервера. Спробуйте пізніше',
+    };
   }
 }
 

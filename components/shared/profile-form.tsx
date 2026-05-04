@@ -36,23 +36,36 @@ export const ProfileForm: React.FC<Props> = ({ data }) => {
   });
 
   const onSubmit = async (data: TFormProfileValues) => {
-    try {
-      await updateUserInfo({
-        email: data.email,
-        fullName: data.fullName,
-        password: data.password || undefined,
-      });
+    const result = await updateUserInfo({
+      email: data.email,
+      fullName: data.fullName,
+      password: data.password || undefined,
+    });
 
-      toast.error('Дані профілю поновлено 📝', {
-        icon: '✅',
-      });
+    // ❌ якщо є помилки
+    if (!result.success) {
+      // помилки полів (email і т.д.)
+      if (result.fieldErrors) {
+        Object.entries(result.fieldErrors).forEach(([field, message]) => {
+          form.setError(field as keyof TFormProfileValues, {
+            type: 'server',
+            message,
+          });
+        });
+      }
 
-      router.push('/');
-    } catch (error) {
-      return toast.error('Помилка при поновленні даних профілю', {
-        icon: '❌',
-      });
+      // загальна помилка
+      if (result.error) {
+        toast.error(result.error, { icon: '❌' });
+      }
+
+      return;
     }
+
+    // ✅ success
+    toast.success('Дані профілю поновлено 📝', { icon: '✅' });
+
+    router.push('/');
   };
 
   const onClickSignOut = () => {
