@@ -61,7 +61,7 @@ export const ProductDetails: React.FC<Props> = ({ product }) => {
   }, []);
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col gap-6">
+    <div className="flex min-h-[calc(100vh-64px)] flex-1 flex-col gap-6 pb-6">
       {/* Навігація */}
       <nav className="sticky top-[114px] z-30 rounded-lg border bg-white p-4 shadow-md sm:top-[125px]">
         <div className="flex gap-4">
@@ -127,14 +127,28 @@ export const ProductDetails: React.FC<Props> = ({ product }) => {
       {/* Характеристики */}
       <section id="specs" className="scroll-mt-[195px] rounded-lg border bg-white p-6 shadow-md">
         <h3 className="mb-4 text-xl font-bold">Характеристики</h3>
-        <ul className="list-disc pl-5">
-          <li>
-            Мінімальна вага: {product.minQuantity} {UNIT_LABELS[product.unit]}
-          </li>
-          <li>
-            Мінімальна вагова частка: {product.minPartQuantity} {UNIT_LABELS[product.unit]}
-          </li>
-        </ul>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-gray-600">Мінімальна вага</span>
+
+            <div className="mt-2 flex-1 border-b border-dotted border-gray-300" />
+
+            <span className="font-medium">
+              {product.minQuantity} {UNIT_LABELS[product.unit]}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 text-sm">
+            <span className="text-gray-600">Мінімальна вагова частка</span>
+
+            <div className="mt-2 flex-1 border-b border-dotted border-gray-300" />
+
+            <span className="font-medium">
+              {product.minPartQuantity} {UNIT_LABELS[product.unit]}
+            </span>
+          </div>
+        </div>
       </section>
     </div>
   );

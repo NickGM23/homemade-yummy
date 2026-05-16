@@ -33,14 +33,14 @@ export const InfoBlock: React.FC<Props> = ({ className, title, text, imageUrl })
             </Button>
           </Link>
 
-          <button className="w-full md:w-auto">
+          <div className="w-full md:w-auto">
             <Button
               variant="outline"
               className="w-full border-gray-400 text-gray-500 hover:bg-gray-50 md:w-auto"
             >
               Оновити
             </Button>
-          </button>
+          </div>
         </div>
       </div>
 
