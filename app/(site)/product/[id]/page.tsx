@@ -1,8 +1,40 @@
-import { use } from 'react';
+import type { Metadata } from 'next';
 import { prisma } from '@/libs/prisma';
 import { Container } from '@/components/shared/container';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/shared/product-details';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  const product = await prisma.product.findFirst({
+    where: { id: Number(id) },
+  });
+
+  if (!product) {
+    return {
+      title: 'Товар не знайдено',
+    };
+  }
+
+  return {
+    title: `${product.name} — домашні напівфабрикати`,
+    description: `${product.name} — домашні напівфабрикати на замовлення в Черкасах.`,
+    alternates: {
+      canonical: `/product/${product.id}`,
+    },
+    openGraph: {
+      title: product.name,
+      description: `${product.name} — домашні напівфабрикати на замовлення в Черкасах.`,
+      images: [product.imageUrl],
+      type: 'website',
+    },
+  };
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
