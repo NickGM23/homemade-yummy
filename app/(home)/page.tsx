@@ -3,18 +3,15 @@
 import { Container } from '@/components/shared/container';
 import { Title } from '@/components/shared/title';
 import { Categories } from '@/components/shared/categories';
-import { ProductCard } from '@/components/shared/product-card';
 import { SortPopup } from '@/components/shared/sort-popup';
 import { PRODUCTS } from '@/data/products';
 import React from 'react';
-import { ProductsGroupList } from '@/components/shared/products-group-list';
 import { useState, useEffect } from 'react';
 import { prisma } from '@/libs/prisma';
 import { ProductGroupItem } from '@/components/shared/product-group-item';
 import { ProductGroup, Product } from '@prisma/client';
 import { Api } from '@/services/api-client';
 import { cn } from '@/lib/utils';
-import { Header } from '@/components/shared/header';
 
 const result = PRODUCTS;
 type ProductGroupWithProducts = ProductGroup & {
@@ -85,14 +82,6 @@ export default function Home() {
               </Container>
             ),
         )}
-      {isAtTop === false && (
-        <div
-          onClick={scrollToTop}
-          className="fixed bottom-16 right-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-slate-200"
-        >
-          <img className="z-30" src="/footer/arrow_up.svg" alt=""></img>
-        </div>
-      )}
     </section>
   );
 }

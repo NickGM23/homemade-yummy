@@ -26,12 +26,11 @@ type ProductGroupWithProducts = ProductGroup & {
 interface HeaderProps {
   variant: 'fixed' | 'autoHide';
   className?: string;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen, variant }) => {
+export const Header: React.FC<HeaderProps> = ({ className, variant }) => {
   const { data: session } = useSession();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
   const [productGroups, setProductGroups] = useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = useState(false);
@@ -44,21 +43,29 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen, va
   }, []);
 
   useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
     Api.product_groups.GetAllProductGroups().then((items) => setProductGroups(items));
   }, []);
 
   const closeMenu = () => {
-    setIsOpen(false);
+    setIsMenuOpen(false);
     setHideOfShort({});
   };
 
   const openMenu = () => {
-    setIsOpen(true);
+    setIsMenuOpen(true);
     setHideOfShort({ display: 'block' });
   };
 
   const handleMenu = () => {
-    setIsOpen((prev) => !prev);
+    setIsMenuOpen((prev) => !prev);
     setHideOfShort((prev) => (prev.display ? {} : { display: 'block' }));
   };
 
@@ -135,7 +142,7 @@ export const Header: React.FC<HeaderProps> = ({ className, isOpen, setIsOpen, va
         </div>
 
         {/* BURGER BACKDROP */}
-        {isOpen && (
+        {isMenuOpen && (
           <BackDrop
             handelMenu={handleMenu}
             className="fixed inset-0 z-20 bg-gray-300 opacity-80 max-sm:opacity-100"

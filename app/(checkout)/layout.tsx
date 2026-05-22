@@ -1,4 +1,5 @@
 import { CheckoutHeader } from '@/components/shared/checkout';
+import { ScrollToTop } from '@/components/ui/scroll-to-top';
 
 export default function RootLayout({
   children,
@@ -6,9 +7,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="min-h-screen bg-[#F4F1EE]">
+    <div className="flex min-h-screen flex-col bg-[#F4F1EE]">
       <CheckoutHeader className="bg-white max-sm:sticky max-sm:top-0" />
-      {children}
-    </main>
+
+      <main className="flex flex-1 flex-col">{children}</main>
+
+      <ScrollToTop />
+    </div>
   );
 }
