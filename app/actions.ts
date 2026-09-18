@@ -1,12 +1,9 @@
 'use server';
 
 import { prisma } from '@/libs/prisma';
-import { VerificationUserTemplate } from '@/components/shared/email-temapltes/verification-user';
 
-import { sendEmail } from '@/components/shared/lib';
 import { Prisma } from '@prisma/client';
 import { hashSync } from 'bcrypt';
-import { cookies } from 'next/headers';
 import { getUserSession } from '@/components/shared/lib/get-user-session';
 
 type ActionResult =
@@ -99,16 +96,16 @@ export async function registerUser(body: Prisma.UserCreateInput) {
       throw new Error('Пользователь уже существует');
     }
 
-    const createdUser = await prisma.user.create({
-      data: {
-        fullName: body.fullName,
-        email: body.email,
-        password: hashSync(body.password, 10),
-        provider: 'credentials',
-      },
-    });
+    //const createdUser = await prisma.user.create({
+    //; data: {
+    //   fullName: body.fullName,
+    //   email: body.email,
+    //   password: hashSync(body.password, 10),
+    //   provider: 'credentials',
+    // },
+    //});
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    //const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     //await prisma.verificationCode.create({
     //  data: {

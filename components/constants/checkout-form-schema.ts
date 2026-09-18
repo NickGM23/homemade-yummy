@@ -20,7 +20,7 @@ export const checkoutFormSchema = z
       .trim()
       .max(100, { message: 'Email занадто довгий' })
       .transform(emptyToUndefined)
-      .refine((val) => !val || z.string().email().safeParse(val).success, {
+      .refine((val) => val === undefined || z.string().email().safeParse(val).success, {
         message: 'Введіть коректну email адресу',
       }),
 
