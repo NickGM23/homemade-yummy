@@ -14,7 +14,7 @@ interface Props {
   onClickLogin?: VoidFunction;
 }
 
-export const RegisterForm: React.FC<Props> = ({ onClose, onClickLogin }) => {
+export const RegisterForm: React.FC<Props> = ({ onClose }) => {
   const form = useForm<TFormRegisterValues>({
     resolver: zodResolver(formRegisterSchema),
     defaultValues: {
@@ -42,7 +42,7 @@ export const RegisterForm: React.FC<Props> = ({ onClose, onClickLogin }) => {
       //});
 
       onClose?.();
-    } catch (error) {
+    } catch {
       return toast.error('Невірний E-Mail або пароль', {
         icon: '❌',
       });

@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { auth } from '@/libs/firebase';
@@ -121,9 +120,9 @@ export default function CheckoutPage() {
       setConfirmationResult(confirmation);
       setOtpSent(true);
       toast.success('OTP надіслано на ваш номер ✅');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setPhoneError(err.message || 'Помилка при відправці OTP');
+      setPhoneError(err instanceof Error ? err.message : 'Помилка при відправці OTP');
       recaptchaVerifierRef.current.clear();
       recaptchaVerifierRef.current = null;
     }
@@ -145,9 +144,9 @@ export default function CheckoutPage() {
       await confirmationResult.confirm(otp);
       setPhoneVerified(true);
       toast.success('Телефон підтверджено ✅');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setPhoneError(err.message || 'Помилка при підтвердженні OTP');
+      setPhoneError(err instanceof Error ? err.message : 'Помилка при підтвердженні OTP');
     }
   };
 
@@ -183,9 +182,9 @@ export default function CheckoutPage() {
     try {
       await createOrder(orderData);
       router.push('/checkout/success');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Помилка при створенні замовлення');
+      toast.error(err instanceof Error ? err.message : 'Помилка при створенні замовлення');
     }
   };
 

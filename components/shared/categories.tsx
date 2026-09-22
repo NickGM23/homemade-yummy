@@ -1,8 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import React, { ReactElement, ReactEventHandler } from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { useCategoryStore } from '@/store/category';
 import { ProductGroupWithProducts } from '@/services/product-groups';
@@ -54,8 +53,8 @@ export const Categories: React.FC<Props> = ({
   const pathname = usePathname();
   const idProductGroup = useCategoryStore((state) => state.activeId);
   const setActiveIdProductGroup = useCategoryStore((state) => state.setActiveId);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isRouting, setIsRouting] = useState(false);
+  const [, setActiveIndex] = useState(0);
+  const [, setIsRouting] = useState(false);
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
     setIsRouting(false);

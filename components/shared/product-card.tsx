@@ -26,10 +26,7 @@ export const ProductCard: React.FC<Props> = ({
   name,
   price,
   unitWeight,
-  count,
   imageUrl,
-  minPartQuantity,
-  minQuantity,
   className,
 }) => {
   const { cart, addToCart } = useCartStore();

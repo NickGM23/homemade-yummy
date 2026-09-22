@@ -27,14 +27,7 @@ interface Props {
   className?: string;
 }
 
-export const CheckoutCart: React.FC<Props> = ({
-  cart,
-  removeFromCart,
-  updateItemQuantity,
-  clearCart,
-  loading,
-  className,
-}) => {
+export const CheckoutCart: React.FC<Props> = ({ cart, removeFromCart, updateItemQuantity, className }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

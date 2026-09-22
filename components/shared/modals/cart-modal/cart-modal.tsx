@@ -17,7 +17,7 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
-  const { products, totalPrice, loading } = useCartProducts();
+  const { products, totalPrice } = useCartProducts();
   const { removeFromCart, clearCart, updateItemQuantity } = useCartStore();
 
   const router = useRouter();

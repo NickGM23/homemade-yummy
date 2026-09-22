@@ -3,7 +3,7 @@ import { prisma } from '@/libs/prisma';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
 
-async function getAllProducts(req: Request) {
+async function getAllProducts(_req: Request) {
   const products = await prisma.product.findMany({
     where: {
       isDeleted: false,

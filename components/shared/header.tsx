@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { ArrowRight, ShoppingCart, Menu, X } from 'lucide-react';
 import { ProductGroup, Product } from '@prisma/client';
 
@@ -67,10 +67,6 @@ export const Header: React.FC<HeaderProps> = ({ className, variant }) => {
   const handleMenu = () => {
     setIsMenuOpen((prev) => !prev);
     setHideOfShort((prev) => (prev.display ? {} : { display: 'block' }));
-  };
-
-  const onClickSignOut = () => {
-    signOut({ callbackUrl: '/' });
   };
 
   const countItem = products.length;
@@ -250,6 +246,7 @@ export const Header: React.FC<HeaderProps> = ({ className, variant }) => {
               <a
                 title="Viber"
                 target="_blank"
+                rel="noreferrer"
                 className="inline-block cursor-pointer"
                 href="https://invite.viber.com/?g2=AQBI%2BqwSzGASd1PReIbHecaMp4g29XjuQbdKW%2FzGL0G9evTj%2FGgqunKZS5Ja%2FybE"
               >
