@@ -1,13 +1,10 @@
 import { prisma } from '@/libs/prisma';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
+import { productByIdsSchema } from '@/libs/validation/product';
 
 async function postProductsByIds(req: Request) {
-  const { ids } = await req.json();
-
-  if (!ids || !Array.isArray(ids)) {
-    return NextResponse.json({ message: 'Invalid ids' }, { status: 400 });
-  }
+  const { ids } = productByIdsSchema.parse(await req.json());
 
   const products = await prisma.product.findMany({
     where: {

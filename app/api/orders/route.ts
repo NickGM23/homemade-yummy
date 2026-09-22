@@ -2,9 +2,9 @@
 import { prisma } from '@/libs/prisma';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
-import { CreateOrderBody } from '@/@types/order';
 import { requireAdmin } from '@/libs/requireAdmin';
 import { getUserSession } from '@/components/shared/lib/get-user-session';
+import { createOrderSchema } from '@/libs/validation/order';
 
 async function getOrders(req: Request) {
   try {
@@ -44,7 +44,7 @@ async function getOrders(req: Request) {
 }
 
 async function createOrder(req: Request) {
-  const data: CreateOrderBody = await req.json();
+  const data = createOrderSchema.parse(await req.json());
   const session = await getUserSession();
 
   const productIds = data.items.map((item) => item.productId);
@@ -59,9 +59,6 @@ async function createOrder(req: Request) {
     const product = productById.get(item.productId);
     if (!product) {
       throw new Error(`Product ${item.productId} not found`);
-    }
-    if (!Number.isFinite(item.quantity) || item.quantity <= 0) {
-      throw new Error(`Invalid quantity for product ${item.productId}`);
     }
 
     const price = Number(product.price);

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 type Handler = (req: Request) => Promise<NextResponse>;
 type HandlersMap = {
@@ -19,6 +20,13 @@ export function withErrorHandling(handlers: HandlersMap) {
       try {
         return await handler(req);
       } catch (error) {
+        if (error instanceof ZodError) {
+          return NextResponse.json(
+            { message: 'Validation error', errors: error.flatten().fieldErrors },
+            { status: 400 },
+          );
+        }
+
         console.error(`[${method}_ERROR]`, error);
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
       }

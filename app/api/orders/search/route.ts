@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
 import { fetchPaginatedOrders } from '@/libs/orderHelpers';
-import { OrderFilters } from '@/@types/order';
 import { requireAdmin } from '@/libs/requireAdmin';
+import { orderFiltersSchema } from '@/libs/validation/order';
 
 async function postOrders(req: Request) {
   try {
@@ -15,7 +15,7 @@ async function postOrders(req: Request) {
     );
   }
 
-  const filters: OrderFilters = await req.json();
+  const filters = orderFiltersSchema.parse(await req.json());
 
   const result = await fetchPaginatedOrders(filters);
 

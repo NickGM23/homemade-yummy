@@ -5,6 +5,7 @@ import { prisma } from '@/libs/prisma';
 import { Prisma } from '@prisma/client';
 import { hashSync } from 'bcrypt';
 import { getUserSession } from '@/components/shared/lib/get-user-session';
+import { updateUserInfoSchema } from '@/libs/validation/user';
 
 type ActionResult =
   | { success: true }
@@ -38,9 +39,24 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<Acti
       };
     }
 
-    if (body.email && body.email !== findUser.email) {
+    const parsed = updateUserInfoSchema.safeParse(body);
+
+    if (!parsed.success) {
+      const fieldErrors = Object.fromEntries(
+        Object.entries(parsed.error.flatten().fieldErrors).map(([field, messages]) => [
+          field,
+          messages?.[0] ?? 'Некоректне значення',
+        ]),
+      );
+
+      return { success: false, fieldErrors };
+    }
+
+    const { email, fullName, password } = parsed.data;
+
+    if (email !== findUser.email) {
       const existingUser = await prisma.user.findUnique({
-        where: { email: body.email as string },
+        where: { email },
       });
 
       if (existingUser) {
@@ -53,18 +69,13 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<Acti
       }
     }
 
-    const hasPassword = !!body.password?.toString().trim();
-
     await prisma.user.update({
       where: { id: userId },
       data: {
-        fullName: body.fullName,
-        ...(body.email &&
-          body.email !== findUser.email && {
-            email: body.email,
-          }),
-        ...(hasPassword && {
-          password: await hashSync(body.password as string, 10),
+        fullName,
+        ...(email !== findUser.email && { email }),
+        ...(password && {
+          password: hashSync(password, 10),
         }),
       },
     });
