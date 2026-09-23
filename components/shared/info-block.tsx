@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Button } from '../ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -10,9 +12,10 @@ interface Props {
   text: string;
   className?: string;
   imageUrl?: string;
+  onRefresh?: () => void;
 }
 
-export const InfoBlock: React.FC<Props> = ({ className, title, text, imageUrl }) => {
+export const InfoBlock: React.FC<Props> = ({ className, title, text, imageUrl, onRefresh }) => {
   return (
     <div
       className={cn(
@@ -37,6 +40,7 @@ export const InfoBlock: React.FC<Props> = ({ className, title, text, imageUrl })
             <Button
               variant="outline"
               className="w-full border-gray-400 text-gray-500 hover:bg-gray-50 md:w-auto"
+              onClick={onRefresh ?? (() => window.location.reload())}
             >
               Оновити
             </Button>
