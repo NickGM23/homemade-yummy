@@ -10,6 +10,7 @@ npm run build                  # next build (ESLint + TS errors now fail the bui
 npm run start                  # start production server (after build)
 npm run lint                   # next lint
 npm run format                 # prettier --write . (config is .prettierrc.json, actually picked up)
+npm test                       # vitest run
 npm run prisma:migrate         # prisma migrate dev — generates + applies a new migration against the local DATABASE_URL (localhost dev DB)
 npm run prisma:migrate:deploy  # prisma migrate deploy — applies pending migrations to whatever DATABASE_URL is set (used against the prod Neon DB; not run automatically by Vercel — see below)
 npm run prisma:studio          # prisma studio
@@ -17,7 +18,7 @@ npx prisma generate            # regenerate the Prisma client after editing sche
 npx tsc --noEmit               # typecheck (no dedicated npm script exists)
 ```
 
-There is no test runner configured in this repository (no `test` script, no Jest/Vitest/Playwright config, no test files).
+Tests use Vitest (`vitest.config.mts`, `environment: 'node'`, `@` alias matching `tsconfig.json`), colocated as `*.test.ts` next to the code they cover (e.g. `app/actions.test.ts`, `app/api/orders/route.test.ts`, `libs/validation/order.test.ts`). Coverage is intentionally partial — Server Actions and the mutating/admin-gated API routes under `app/api/orders/**` and `app/api/products/by-ids/**`, plus the `libs/validation/*` Zod schemas that gate them — not a full suite. Prisma and `getUserSession` are mocked per-file with `vi.mock('@/libs/prisma', ...)`/`vi.mock('@/components/shared/lib/get-user-session', ...)`, not a shared test-db or `vitest-mock-extended`. No React component/UI tests and no e2e (Playwright) yet.
 
 Vercel's build command (`.vercel/project.json`) is `npx prisma generate && next build` — a plain local `npm run build` does **not** regenerate the Prisma client, so run `npx prisma generate` manually after schema changes before building locally. **This build command does not run `prisma migrate deploy`** — after merging a schema change, `npm run prisma:migrate:deploy` must be run manually against the prod `DATABASE_URL` (no `vercel.json` exists to wire this into the deploy pipeline).
 

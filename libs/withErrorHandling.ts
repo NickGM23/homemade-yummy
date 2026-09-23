@@ -9,14 +9,14 @@ type HandlersMap = {
   DELETE?: Handler;
 };
 
-export function withErrorHandling(handlers: HandlersMap) {
-  const wrappedHandlers: HandlersMap = {};
+export function withErrorHandling<T extends HandlersMap>(handlers: T): T {
+  const wrappedHandlers = {} as T;
 
-  for (const method of Object.keys(handlers) as (keyof HandlersMap)[]) {
-    const handler = handlers[method];
+  for (const method of Object.keys(handlers) as (keyof T)[]) {
+    const handler = handlers[method] as Handler | undefined;
     if (!handler) continue;
 
-    wrappedHandlers[method] = async (req: Request) => {
+    wrappedHandlers[method] = (async (req: Request) => {
       try {
         return await handler(req);
       } catch (error) {
@@ -27,10 +27,10 @@ export function withErrorHandling(handlers: HandlersMap) {
           );
         }
 
-        console.error(`[${method}_ERROR]`, error);
+        console.error(`[${String(method)}_ERROR]`, error);
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
       }
-    };
+    }) as T[keyof T];
   }
 
   return wrappedHandlers;
