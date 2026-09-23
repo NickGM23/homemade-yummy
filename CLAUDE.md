@@ -5,20 +5,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev            # start dev server (localhost:3000)
-npm run build           # next build
-npm run start            # start production server (after build)
-npm run lint              # next lint (see ESLint gotcha below — this does not gate the build)
-npm run format            # prettier --write . (see Prettier gotcha below — config is not actually picked up)
-npm run prisma:push      # prisma db push — applies prisma/schema.prisma to the DB (no migrations/ dir exists)
-npm run prisma:studio   # prisma studio
-npx prisma generate      # regenerate the Prisma client after editing schema.prisma
-npx tsc --noEmit          # typecheck (no dedicated npm script exists)
+npm run dev                    # start dev server (localhost:3000)
+npm run build                  # next build (ESLint + TS errors now fail the build, see below)
+npm run start                  # start production server (after build)
+npm run lint                   # next lint
+npm run format                 # prettier --write . (config is .prettierrc.json, actually picked up)
+npm run prisma:migrate         # prisma migrate dev — generates + applies a new migration against the local DATABASE_URL (localhost dev DB)
+npm run prisma:migrate:deploy  # prisma migrate deploy — applies pending migrations to whatever DATABASE_URL is set (used against the prod Neon DB; not run automatically by Vercel — see below)
+npm run prisma:studio          # prisma studio
+npx prisma generate            # regenerate the Prisma client after editing schema.prisma
+npx tsc --noEmit               # typecheck (no dedicated npm script exists)
 ```
 
 There is no test runner configured in this repository (no `test` script, no Jest/Vitest/Playwright config, no test files).
 
-Vercel's build command (`.vercel/project.json`) is `npx prisma generate && next build` — a plain local `npm run build` does **not** regenerate the Prisma client, so run `npx prisma generate` manually after schema changes before building locally.
+Vercel's build command (`.vercel/project.json`) is `npx prisma generate && next build` — a plain local `npm run build` does **not** regenerate the Prisma client, so run `npx prisma generate` manually after schema changes before building locally. **This build command does not run `prisma migrate deploy`** — after merging a schema change, `npm run prisma:migrate:deploy` must be run manually against the prod `DATABASE_URL` (no `vercel.json` exists to wire this into the deploy pipeline).
 
 ## Architecture
 
@@ -36,11 +37,11 @@ Three App Router route groups under `app/`, each with its own `layout.tsx`/heade
 
 ### Auth
 
-NextAuth v4 is configured in `shared/constants/auth-options.ts` (JWT strategy, Credentials + GitHub + Google providers, bcrypt password hashing) — the route handler at `app/api/auth/[...nextauth]/route.ts` just imports it. `components/shared/lib/get-user-session.ts` wraps `getServerSession(authOptions)` for use in Server Components and route handlers. There is no `middleware.ts`; authorization is instead checked per-route/per-page. Admin-only API routes call `libs/requireAdmin.ts`, which throws `'UNAUTHORIZED'`/`'FORBIDDEN'` — callers catch it and map to a 401/403 response themselves (this try/catch is duplicated in each protected route rather than centralized).
+NextAuth v4 is configured in `shared/constants/auth-options.ts` (JWT strategy, Credentials + GitHub + Google providers, bcrypt password hashing) — the route handler at `app/api/auth/[...nextauth]/route.ts` just imports it. `components/shared/lib/get-user-session.ts` wraps `getServerSession(authOptions)` for use in Server Components and route handlers. `middleware.ts` (repo root) centralizes admin-gating for `/orders/**` and `/api/orders/**` — everything under those paths requires `token.role === 'admin'` (read via `next-auth/jwt`'s `getToken()`, Edge-safe) except the single carve-out `POST /api/orders` (public order creation); any new route added under these paths is protected by default. `libs/requireAdmin.ts` (Prisma-backed, re-checks `User.isAdmin` fresh from the DB) is still called inside the admin API route handlers and `app/(site)/orders/page.tsx` as a second line of defense against the JWT staleness window (the token's `role` claim only refreshes when a session is re-read, not the instant DB access is revoked) — don't remove these when touching that code, they're intentionally redundant with the middleware.
 
 ### Validation
 
-Zod schemas are colocated near their forms (e.g. `components/constants/checkout-form-schema.ts`, `components/shared/modals/auth-modal/forms/schemas.ts`) and wired to `react-hook-form` through a custom `hooks/useZodForm.ts` wrapper plus `@hookform/resolvers/zod`. Validation currently runs client-side only; Server Actions (`app/actions.ts`) and API routes do not re-run these schemas.
+Zod schemas are colocated near their forms (e.g. `components/constants/checkout-form-schema.ts`, `components/shared/modals/auth-modal/forms/schemas.ts`) and wired to `react-hook-form` through a custom `hooks/useZodForm.ts` wrapper plus `@hookform/resolvers/zod`. Server-side, `libs/validation/{order,product,user}.ts` holds separate Zod schemas (not reused from the client ones, which have client-only transform/UX semantics) for the mutating API routes and `app/actions.ts`'s `updateUserInfo`; `libs/withErrorHandling.ts` catches `ZodError` centrally and maps it to a 400 with `error.flatten().fieldErrors`, so route handlers just call `schema.parse(body)`.
 
 ### State
 
@@ -52,7 +53,7 @@ Every handler in `app/api/**/route.ts` is wrapped via `libs/withErrorHandling.ts
 
 ### Prisma schema
 
-`prisma/schema.prisma` defines `User`, `ProductGroup`, `Product`, `Cart`, `CartItem`, `Order`, `OrderItem`. Schema changes are applied via `prisma db push` — there is no `prisma/migrations/` directory, so there's no migration history to consult or extend.
+`prisma/schema.prisma` defines `User`, `ProductGroup`, `Product`, `Cart`, `CartItem`, `Order`, `OrderItem`. Schema changes go through `prisma/migrations/` (baselined from the pre-migrate `db push` state as `0_init`) — run `npm run prisma:migrate` locally to generate+apply a new migration, then `npm run prisma:migrate:deploy` against the prod `DATABASE_URL` to apply it there (see Commands above; this is a manual step, not wired into the Vercel build).
 
 ### Folder-naming gotcha: five similarly-named "shared" locations
 
@@ -65,7 +66,6 @@ Know which one you need before adding a helper — these are not interchangeable
 
 ## Known gotchas
 
-- **ESLint does not gate anything.** `next.config.mjs` sets `eslint.ignoreDuringBuilds: true`. Three ESLint config files exist (`.eslintrc.json`, `eslint.config.js`, `eslint.config.mjs`); only `.eslintrc.json` is actually read, since the project pins ESLint 8 and flat config requires `ESLINT_USE_FLAT_CONFIG=true`, which is not set anywhere. `.eslintrc.json` also disables `no-unused-vars`.
-- **Prettier config is not applied.** `prettierrc.json` is missing its leading dot (should be `.prettierrc.json`), so `npm run format` runs on Prettier's defaults rather than the configured `singleQuote`/`printWidth`/`prettier-plugin-tailwindcss` settings.
-- **`libs/prisma.ts` does not use the `globalThis` dev-hot-reload cache pattern** — expect a fresh `PrismaClient`/connection pool on every dev-server hot reload rather than a reused singleton.
+- **`.eslintrc.json` is the only ESLint config** (the legacy format; flat config would need `ESLINT_USE_FLAT_CONFIG=true`, not set). `no-unused-vars` is enforced (`@typescript-eslint/no-unused-vars` with `argsIgnorePattern`/`varsIgnorePattern: '^_'` for intentionally-unused params), `react/prop-types` is off (redundant with TS-typed props). `next.config.mjs` no longer sets `eslint.ignoreDuringBuilds`, so ESLint errors fail `next build`; `<img>`/a11y/`exhaustive-deps` rules are left as warnings (non-blocking) pending the `next/image` migration.
 - Installed Prisma is `6.6.0` (`^6.6.0` in `package.json`). The Prisma VS Code extension may surface Prisma-7-era warnings (e.g. about `datasource.url` being unsupported) that don't apply to the version actually installed here.
+- `middleware.ts`'s admin gate relies on the JWT `role` claim (`next-auth/jwt`'s `getToken()`), which is only as fresh as the last time a session was actually read — see the Auth section above for why `requireAdmin()`'s DB check is kept as a second line of defense rather than removed.
