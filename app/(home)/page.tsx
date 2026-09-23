@@ -3,32 +3,11 @@ import { Title } from '@/components/shared/title';
 import { Categories } from '@/components/shared/categories';
 import React from 'react';
 import { ProductGroupItem } from '@/components/shared/product-group-item';
-import { ProductGroup, Product } from '@prisma/client';
-import { prisma } from '@/libs/prisma';
+import { fetchActiveProductGroupsWithProducts } from '@/libs/productGroups';
 import { cn } from '@/lib/utils';
-type ProductGroupWithProducts = ProductGroup & {
-  products: Product[];
-};
 
 export default async function Home() {
-  const productGroups: ProductGroupWithProducts[] = await prisma.productGroup.findMany({
-    where: {
-      isDeleted: false,
-    },
-    include: {
-      products: {
-        where: {
-          isDeleted: false,
-        },
-        orderBy: {
-          positionNumber: 'asc',
-        },
-      },
-    },
-    orderBy: {
-      positionNumber: 'asc',
-    },
-  });
+  const productGroups = await fetchActiveProductGroupsWithProducts();
 
   return (
     <section className="mb-4 min-h-screen rounded-3xl bg-white">

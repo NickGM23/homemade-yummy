@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { ArrowRight, ShoppingCart, Menu, X } from 'lucide-react';
-import { ProductGroup, Product } from '@prisma/client';
 
 import { cn } from '@/lib/utils';
 import { Container } from './container';
@@ -13,26 +12,22 @@ import { Button } from '../ui';
 import { SearchInput } from './search-input';
 import { Categories } from '@/components/shared/categories';
 import { BackDrop } from './back-drop';
-import { Api } from '@/services/api-client';
+import type { ProductGroupWithProducts } from '@/services/product-groups';
 import { AuthModal } from './modals/auth-modal';
 import { CartModal } from './modals/cart-modal';
 import { useCartProducts } from '@/hooks/useCartProducts';
 import { ProfileButton } from './profile-button';
 
-type ProductGroupWithProducts = ProductGroup & {
-  products: Product[];
-};
-
 interface HeaderProps {
   variant: 'fixed' | 'autoHide';
   className?: string;
+  productGroups: ProductGroupWithProducts[];
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, variant }) => {
+export const Header: React.FC<HeaderProps> = ({ className, variant, productGroups }) => {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
-  const [productGroups, setProductGroups] = useState<ProductGroupWithProducts[]>([]);
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const { products, totalPrice } = useCartProducts();
@@ -49,10 +44,6 @@ export const Header: React.FC<HeaderProps> = ({ className, variant }) => {
       document.body.style.overflow = '';
     };
   }, [isMenuOpen]);
-
-  useEffect(() => {
-    Api.product_groups.GetAllProductGroups().then((items) => setProductGroups(items));
-  }, []);
 
   const closeMenu = () => {
     setIsMenuOpen(false);
