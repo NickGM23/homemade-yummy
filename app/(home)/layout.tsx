@@ -2,6 +2,8 @@ import { Header } from '@/components/shared/header';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
 import { fetchActiveProductGroupsWithProducts } from '@/libs/productGroups';
 
+export const revalidate = 60;
+
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
   const productGroups = await fetchActiveProductGroupsWithProducts();
 

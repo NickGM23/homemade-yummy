@@ -6,6 +6,8 @@ import { ProductGroupItem } from '@/components/shared/product-group-item';
 import { fetchActiveProductGroupsWithProducts } from '@/libs/productGroups';
 import { cn } from '@/lib/utils';
 
+export const revalidate = 60;
+
 export default async function Home() {
   const productGroups = await fetchActiveProductGroupsWithProducts();
 

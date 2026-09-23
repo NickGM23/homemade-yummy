@@ -4,6 +4,17 @@ import { Container } from '@/components/shared/container';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/shared/product-details';
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const products = await prisma.product.findMany({
+    where: { isDeleted: false },
+    select: { id: true },
+  });
+
+  return products.map((product) => ({ id: String(product.id) }));
+}
+
 export async function generateMetadata({
   params,
 }: {

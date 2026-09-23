@@ -3,6 +3,8 @@ import { prisma } from '@/libs/prisma';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
 
+export const revalidate = 60;
+
 async function getAllProducts(_req: Request) {
   const products = await prisma.product.findMany({
     where: {

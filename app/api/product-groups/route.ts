@@ -2,6 +2,8 @@ import { prisma } from '@/libs/prisma';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/libs/withErrorHandling';
 
+export const revalidate = 60;
+
 async function getProductGroups() {
   const productGroups = await prisma.productGroup.findMany({
     where: {
