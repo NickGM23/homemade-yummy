@@ -10,10 +10,8 @@ async function getOrders(req: Request) {
   try {
     await requireAdmin();
   } catch (e) {
-    return NextResponse.json(
-      { error: String(e) },
-      { status: String(e) === 'UNAUTHORIZED' ? 401 : 403 },
-    );
+    const message = e instanceof Error ? e.message : 'FORBIDDEN';
+    return NextResponse.json({ error: message }, { status: message === 'UNAUTHORIZED' ? 401 : 403 });
   }
 
   const url = new URL(req.url);
