@@ -4,7 +4,7 @@ import React from 'react';
 import { FormProvider } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { auth } from '@/libs/firebase';
+import { auth } from '@/server/firebase';
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from 'firebase/auth';
 
 import {

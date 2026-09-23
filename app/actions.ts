@@ -1,11 +1,11 @@
 'use server';
 
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 
 import { Prisma } from '@prisma/client';
 import { hashSync } from 'bcrypt';
-import { getUserSession } from '@/components/shared/lib/get-user-session';
-import { updateUserInfoSchema } from '@/libs/validation/user';
+import { getUserSession } from '@/server/get-user-session';
+import { updateUserInfoSchema } from '@/server/validation/user';
 
 type ActionResult =
   | { success: true }

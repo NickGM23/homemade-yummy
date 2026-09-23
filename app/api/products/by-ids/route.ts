@@ -1,7 +1,7 @@
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/libs/withErrorHandling';
-import { productByIdsSchema } from '@/libs/validation/product';
+import { withErrorHandling } from '@/server/withErrorHandling';
+import { productByIdsSchema } from '@/server/validation/product';
 
 async function postProductsByIds(req: Request) {
   const { ids } = productByIdsSchema.parse(await req.json());

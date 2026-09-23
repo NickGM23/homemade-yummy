@@ -1,7 +1,7 @@
 import { OrdersDataTable } from '@/components/shared/orders/orders-data-table';
 import { getOrders } from '@/services/orders';
-import { prisma } from '@/libs/prisma';
-import { getUserSession } from '@/components/shared/lib/get-user-session';
+import { prisma } from '@/server/prisma';
+import { getUserSession } from '@/server/get-user-session';
 import { redirect } from 'next/navigation';
 
 export default async function OrdersPage({

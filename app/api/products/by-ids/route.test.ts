@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-vi.mock('@/libs/prisma', () => ({
+vi.mock('@/server/prisma', () => ({
   prisma: {
     product: { findMany: vi.fn() },
   },
 }));
 
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import { POST } from './route';
 
 const mockedPrisma = vi.mocked(prisma, true);

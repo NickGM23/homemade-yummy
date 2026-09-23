@@ -1,10 +1,10 @@
 // app/api/orders/route.ts
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/libs/withErrorHandling';
-import { requireAdmin } from '@/libs/requireAdmin';
-import { getUserSession } from '@/components/shared/lib/get-user-session';
-import { createOrderSchema } from '@/libs/validation/order';
+import { withErrorHandling } from '@/server/withErrorHandling';
+import { requireAdmin } from '@/server/requireAdmin';
+import { getUserSession } from '@/server/get-user-session';
+import { createOrderSchema } from '@/server/validation/order';
 
 async function getOrders(req: Request) {
   try {

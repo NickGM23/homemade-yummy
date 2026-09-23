@@ -1,18 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-vi.mock('@/libs/prisma', () => ({
+vi.mock('@/server/prisma', () => ({
   prisma: {
     user: { findUnique: vi.fn() },
     order: { findMany: vi.fn(), count: vi.fn() },
   },
 }));
 
-vi.mock('@/components/shared/lib/get-user-session', () => ({
+vi.mock('@/server/get-user-session', () => ({
   getUserSession: vi.fn(),
 }));
 
-import { prisma } from '@/libs/prisma';
-import { getUserSession } from '@/components/shared/lib/get-user-session';
+import { prisma } from '@/server/prisma';
+import { getUserSession } from '@/server/get-user-session';
 import { POST } from './route';
 
 const mockedPrisma = vi.mocked(prisma, true);

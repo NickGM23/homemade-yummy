@@ -1,6 +1,6 @@
 import { Header } from '@/components/shared/header';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
-import { fetchActiveProductGroupsWithProducts } from '@/libs/productGroups';
+import { fetchActiveProductGroupsWithProducts } from '@/server/productGroups';
 
 export const revalidate = 60;
 

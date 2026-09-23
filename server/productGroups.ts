@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import type { ProductGroupWithProducts } from '@/services/product-groups';
 
 export const fetchActiveProductGroupsWithProducts = cache(

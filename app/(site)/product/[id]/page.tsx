@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import { Container } from '@/components/shared/container';
 import { notFound } from 'next/navigation';
 import { ProductDetails } from '@/components/shared/product-details';

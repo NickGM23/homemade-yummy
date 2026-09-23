@@ -8,7 +8,7 @@ import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from 'react-hot-toast';
 import { cn } from '@/lib/utils';
-import { UNIT_LABELS } from '@/shared/constants/units';
+import { UNIT_LABELS } from '@/config/units';
 
 interface Props {
   product: SerializedProductWithProductGroup;

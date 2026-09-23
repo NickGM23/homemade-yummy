@@ -3,7 +3,7 @@ import { Title } from '@/components/shared/title';
 import { Categories } from '@/components/shared/categories';
 import React from 'react';
 import { ProductGroupItem } from '@/components/shared/product-group-item';
-import { fetchActiveProductGroupsWithProducts } from '@/libs/productGroups';
+import { fetchActiveProductGroupsWithProducts } from '@/server/productGroups';
 import { cn } from '@/lib/utils';
 
 export const revalidate = 60;

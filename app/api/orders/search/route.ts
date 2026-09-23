@@ -1,9 +1,9 @@
 // app/api/orders/search/route.ts
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/libs/withErrorHandling';
-import { fetchPaginatedOrders } from '@/libs/orderHelpers';
-import { requireAdmin } from '@/libs/requireAdmin';
-import { orderFiltersSchema } from '@/libs/validation/order';
+import { withErrorHandling } from '@/server/withErrorHandling';
+import { fetchPaginatedOrders } from '@/server/orderHelpers';
+import { requireAdmin } from '@/server/requireAdmin';
+import { orderFiltersSchema } from '@/server/validation/order';
 
 async function postOrders(req: Request) {
   try {

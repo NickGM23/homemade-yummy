@@ -1,7 +1,7 @@
 // app/api/products/route.ts
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/server/prisma';
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/libs/withErrorHandling';
+import { withErrorHandling } from '@/server/withErrorHandling';
 
 export const revalidate = 60;
 

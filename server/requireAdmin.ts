@@ -1,5 +1,5 @@
-import { prisma } from '@/libs/prisma';
-import { getUserSession } from '@/components/shared/lib/get-user-session';
+import { prisma } from '@/server/prisma';
+import { getUserSession } from '@/server/get-user-session';
 import { NextResponse } from 'next/server';
 
 export async function requireAdmin() {

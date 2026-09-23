@@ -2,7 +2,7 @@
 import { axiosInstance } from './instance';
 import { ApiRoutes } from './constants';
 import { OrderFilters, Order, CreateOrderBody } from '@/@types/order';
-import { fetchPaginatedOrders } from '@/libs/orderHelpers';
+import { fetchPaginatedOrders } from '@/server/orderHelpers';
 
 export interface GetOrdersResponse {
   data: Order[];

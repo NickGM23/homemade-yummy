@@ -1,8 +1,8 @@
-import { prisma } from '@/libs/prisma';
-import { authOptions } from '@/shared/constants/auth-options';
+import { prisma } from '@/server/prisma';
+import { authOptions } from '@/config/auth-options';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/libs/withErrorHandling';
+import { withErrorHandling } from '@/server/withErrorHandling';
 
 export const dynamic = 'force-dynamic';
 
