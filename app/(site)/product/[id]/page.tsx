@@ -73,8 +73,29 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     },
   };
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description || undefined,
+    image: `${baseUrl}${product.imageUrl}`,
+    offers: {
+      '@type': 'Offer',
+      url: `${baseUrl}/product/${product.id}`,
+      price: product.price,
+      priceCurrency: 'UAH',
+      availability: 'https://schema.org/InStock',
+    },
+  };
+
   return (
     <Container className="mt-2 sm:mt-8">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+      />
       <ProductDetails product={product} />
     </Container>
   );
