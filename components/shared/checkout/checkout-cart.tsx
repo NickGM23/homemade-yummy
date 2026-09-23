@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { WhiteBlock } from '../white-block';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -62,10 +63,13 @@ export const CheckoutCart: React.FC<Props> = ({ cart, removeFromCart, updateItem
                   <div>
                     {item.imageUrl && (
                       <div className="justify-left flex">
-                        <img
+                        <Image
                           className="h-[32px] w-[32px] max-w-full object-cover"
                           src={item.imageUrl}
-                        ></img>
+                          alt={item.name}
+                          width={32}
+                          height={32}
+                        />
                       </div>
                     )}
                     <p className="font-medium">{item.name}</p>

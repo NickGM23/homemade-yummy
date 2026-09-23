@@ -45,7 +45,12 @@ export const AuthModal: React.FC<Props> = ({ open, onClose }) => {
             type="button"
             className="h-12 flex-1 gap-2 p-2"
           >
-            <img className="h-6 w-6" src="https://github.githubassets.com/favicons/favicon.svg" />
+            {/* eslint-disable-next-line @next/next/no-img-element -- tiny external icon, not worth next/image's remotePatterns config */}
+            <img
+              className="h-6 w-6"
+              src="https://github.githubassets.com/favicons/favicon.svg"
+              alt="GitHub"
+            />
             GitHub
           </Button>
 
@@ -60,9 +65,11 @@ export const AuthModal: React.FC<Props> = ({ open, onClose }) => {
             type="button"
             className="h-12 flex-1 gap-2 p-2"
           >
+            {/* eslint-disable-next-line @next/next/no-img-element -- tiny external icon, not worth next/image's remotePatterns config */}
             <img
               className="h-6 w-6"
               src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"
+              alt="Google"
             />
             Google
           </Button>

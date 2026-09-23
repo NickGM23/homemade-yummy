@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { SerializedProductWithProductGroup } from '@/@types/prisma';
 import { Button } from '../../ui';
 import { ShoppingCart } from 'lucide-react';
@@ -90,11 +91,16 @@ export const ProductDetails: React.FC<Props> = ({ product }) => {
           <h3 className="mb-4 text-xl font-bold">Фото</h3>
 
           {product.imageUrl && (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="max-h-[260px] w-full rounded-lg object-contain sm:max-h-[340px] md:max-h-[420px]"
-            />
+            <div className="relative h-[260px] w-full sm:h-[340px] md:h-[420px]">
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                sizes="(min-width: 768px) 420px, (min-width: 640px) 340px, 260px"
+                className="rounded-lg object-contain"
+                priority
+              />
+            </div>
           )}
         </section>
 

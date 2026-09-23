@@ -7,6 +7,7 @@ import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '@/store/cart-store';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Props {
   productId: number;
@@ -53,7 +54,13 @@ export const ProductCard: React.FC<Props> = ({
     >
       <div className="flex justify-center">
         <a href={`/product/${productId}`}>
-          <img className="h-[225px] w-96 max-w-full object-cover" src={imageUrl} alt={name} />
+          <Image
+            className="h-[225px] w-96 max-w-full object-cover"
+            src={imageUrl}
+            alt={name}
+            width={384}
+            height={225}
+          />
         </a>
       </div>
 

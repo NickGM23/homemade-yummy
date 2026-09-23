@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Button } from '../ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Title } from './title';
@@ -49,7 +50,15 @@ export const InfoBlock: React.FC<Props> = ({ className, title, text, imageUrl, o
       </div>
 
       {/* IMAGE */}
-      {imageUrl && <img src={imageUrl} alt={title} className="h-auto w-40 md:w-[300px]" />}
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={title}
+          width={640}
+          height={758}
+          className="h-auto w-40 md:w-[300px]"
+        />
+      )}
     </div>
   );
 };

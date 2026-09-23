@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart-store';
@@ -63,10 +64,13 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                   <div>
                     {item.imageUrl && (
                       <div className="justify-left flex">
-                        <img
+                        <Image
                           className="h-[32px] w-[32px] max-w-full object-cover"
                           src={item.imageUrl}
-                        ></img>
+                          alt={item.name}
+                          width={32}
+                          height={32}
+                        />
                       </div>
                     )}
                     <p className="font-medium">{item.name}</p>
