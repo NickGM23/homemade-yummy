@@ -21,15 +21,18 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const productId = Number(id);
+
+  if (!Number.isInteger(productId) || productId <= 0) {
+    notFound();
+  }
 
   const product = await prisma.product.findFirst({
-    where: { id: Number(id) },
+    where: { id: productId },
   });
 
   if (!product) {
-    return {
-      title: 'Товар не знайдено',
-    };
+    notFound();
   }
 
   return {
@@ -49,8 +52,14 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const productId = Number(id);
+
+  if (!Number.isInteger(productId) || productId <= 0) {
+    notFound();
+  }
+
   const productRaw = await prisma.product.findFirst({
-    where: { id: Number(id) },
+    where: { id: productId },
     include: {
       productGroup: true,
     },
