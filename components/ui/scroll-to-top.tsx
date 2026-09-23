@@ -22,11 +22,13 @@ export function ScrollToTop() {
   if (isAtTop) return null;
 
   return (
-    <div
+    <button
+      type="button"
       onClick={scrollToTop}
+      aria-label="Прокрутити вгору"
       className="fixed bottom-16 right-8 z-50 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-slate-200"
     >
-      <Image className="z-30" src="/footer/arrow_up.svg" alt="Scroll to top" width={24} height={24} />
-    </div>
+      <Image className="z-30" src="/footer/arrow_up.svg" alt="" width={24} height={24} />
+    </button>
   );
 }

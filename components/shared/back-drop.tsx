@@ -8,5 +8,5 @@ interface Props {
 }
 
 export const BackDrop: React.FC<Props> = ({ className, handelMenu }) => {
-  return <div className={cn(className)} onClick={handelMenu}></div>;
+  return <div className={cn(className)} onClick={handelMenu} aria-hidden="true"></div>;
 };

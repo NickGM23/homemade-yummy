@@ -37,7 +37,12 @@ export const CheckoutDeliveryForm: React.FC<Props> = ({ className }) => {
       {/* Поле для адреси — з’являється лише при виборі адресної доставки */}
       {deliveryType === 'address' && (
         <div className="mt-5">
-          <FormInput name="address" className="text-base" placeholder="Вкажіть адресу доставки" />
+          <FormInput
+            name="address"
+            className="text-base"
+            placeholder="Вкажіть адресу доставки"
+            aria-label="Адреса доставки"
+          />
         </div>
       )}
     </WhiteBlock>

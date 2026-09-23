@@ -12,6 +12,7 @@ export const CheckoutCommentForm: React.FC<Props> = ({ className }) => {
       <FormTextarea
         name="comment"
         placeholder="Коментар до замовлення (необов’язково)"
+        aria-label="Коментар до замовлення"
         minRows={3}
         maxHeight={350}
       />

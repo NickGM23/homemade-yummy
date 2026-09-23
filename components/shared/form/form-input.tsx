@@ -39,13 +39,19 @@ export const FormInput: React.FC<Props> = ({
   return (
     <div className={className}>
       {label && (
-        <p className="mb-2 font-medium">
+        <label htmlFor={name} className="mb-2 block font-medium">
           {label} {required && <RequiredSymbol />}
-        </p>
+        </label>
       )}
 
       <div className="relative">
-        <Input className="text-md h-12" {...register(name)} {...props} disabled={notEdit} />
+        <Input
+          id={name}
+          className="text-md h-12"
+          {...register(name)}
+          {...props}
+          disabled={notEdit}
+        />
 
         {notEdit === false && value && <ClearButton onClick={onClickClear} />}
       </div>

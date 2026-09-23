@@ -114,7 +114,8 @@ export const Categories: React.FC<Props> = ({
           (productGroup, index) =>
             productGroup.products &&
             productGroup.products.length > 0 && (
-              <a
+              <button
+                type="button"
                 data-goto={'.' + productGroup.codeGroup}
                 key={index}
                 className={cn(
@@ -124,13 +125,12 @@ export const Categories: React.FC<Props> = ({
                   idProductGroup === productGroup.id * 100 &&
                     'bg-white text-primary shadow-md shadow-gray-200',
                 )}
-                // href={`/#${catsInfo[index]}`}
                 onClick={(e) =>
                   categoryOnClick(e, productGroup.id * 100, '.' + productGroup.codeGroup)
                 }
               >
                 {productGroup.name}
-              </a>
+              </button>
             ),
         )}
     </div>

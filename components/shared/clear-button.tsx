@@ -10,7 +10,9 @@ interface Props {
 export const ClearButton: React.FC<Props> = ({ onClick, className }) => {
   return (
     <button
+      type="button"
       onClick={onClick}
+      aria-label="Очистити"
       className={cn(
         'absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer opacity-30 hover:opacity-100',
         className,

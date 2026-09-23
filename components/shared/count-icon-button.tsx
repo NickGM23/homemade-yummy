@@ -24,6 +24,7 @@ export const CountIconButton: React.FC<IconButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       type="button"
+      aria-label={type === 'plus' ? 'Збільшити кількість' : 'Зменшити кількість'}
       className={cn(
         'bg-white p-0 text-black', // фон білий, текст чорний
         'hover:bg-white hover:text-black', // hover: без змін

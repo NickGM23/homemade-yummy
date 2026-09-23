@@ -75,11 +75,14 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, productGroup
       <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">
         {/* LEFT SECTION */}
         <div className="flex items-center gap-2">
-          <Menu
-            size={40}
-            className="mr-2 cursor-pointer hover:bg-gray-100 sm:mr-6"
+          <button
+            type="button"
+            aria-label="Відкрити меню"
             onClick={openMenu}
-          />
+            className="mr-2 cursor-pointer hover:bg-gray-100 sm:mr-6"
+          >
+            <Menu size={40} />
+          </button>
           <Link href="/">
             <Image src="/logo/80n80_2.png" width={48} height={48} alt="Logo" />
           </Link>
@@ -157,7 +160,14 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, productGroup
                 height={60}
                 alt="Logo"
               />
-              <X size={32} onClick={closeMenu} className="cursor-pointer hover:bg-[#ffa700]" />
+              <button
+                type="button"
+                aria-label="Закрити меню"
+                onClick={closeMenu}
+                className="cursor-pointer hover:bg-[#ffa700]"
+              >
+                <X size={32} />
+              </button>
             </div>
 
             {/* SEARCH */}

@@ -95,9 +95,9 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                       <Tooltip delayDuration={200}>
                         <TooltipTrigger asChild>
                           <Button
-                            tabIndex={-1}
                             variant="destructive"
                             size="sm"
+                            aria-label="Видалити товар"
                             onClick={() => removeFromCart(item.id)}
                           >
                             <Trash size={16} />
@@ -109,6 +109,7 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
                       <Button
                         variant="destructive"
                         size="sm"
+                        aria-label="Видалити товар"
                         onClick={() => removeFromCart(item.id)}
                       >
                         <Trash size={16} />

@@ -49,6 +49,7 @@ export const SearchInput: React.FC<Props> = ({ className, onAfterSelectItem }) =
         <input
           className="w-full rounded-2xl bg-gray-50 pl-11 outline-none"
           type="text"
+          aria-label="Пошук товарів"
           placeholder="Знайти смаколик..."
           onFocus={() => setFocused(true)}
           value={searchQuery}

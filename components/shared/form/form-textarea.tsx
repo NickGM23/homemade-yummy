@@ -42,13 +42,14 @@ export const FormTextarea: React.FC<Props> = ({
   return (
     <div className={className}>
       {label && (
-        <p className="mb-2 font-medium">
+        <label htmlFor={name} className="mb-2 block font-medium">
           {label} {required && <RequiredSymbol />}
-        </p>
+        </label>
       )}
 
       <div className="relative w-full rounded-md">
         <Textarea
+          id={name}
           {...register(name)}
           {...props}
           value={value ?? ''}
