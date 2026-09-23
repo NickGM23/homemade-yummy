@@ -16,13 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 1,
     },
-    ...products.map(
-      (product): MetadataRoute.Sitemap[number] => ({
-        url: `${baseUrl}/product/${product.id}`,
-        lastModified: product.updatedAt,
-        changeFrequency: 'weekly',
-        priority: 0.8,
-      }),
-    ),
+    ...products.map((product): MetadataRoute.Sitemap[number] => ({
+      url: `${baseUrl}/product/${product.id}`,
+      lastModified: product.updatedAt,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    })),
   ];
 }

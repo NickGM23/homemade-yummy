@@ -22,16 +22,8 @@ export const createOrderSchema = z
     deliveryType: z.enum(['pickup', 'address'], {
       required_error: 'Оберіть спосіб доставки',
     }),
-    address: z
-      .string()
-      .trim()
-      .max(200, { message: 'Адреса занадто довга' })
-      .optional(),
-    comment: z
-      .string()
-      .trim()
-      .max(500, { message: 'Коментар занадто довгий' })
-      .optional(),
+    address: z.string().trim().max(200, { message: 'Адреса занадто довга' }).optional(),
+    comment: z.string().trim().max(500, { message: 'Коментар занадто довгий' }).optional(),
     items: z.array(orderItemSchema).min(1, { message: 'Кошик порожній' }),
   })
   .refine((data) => (data.deliveryType === 'address' ? !!data.address : true), {

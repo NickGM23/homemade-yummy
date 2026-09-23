@@ -10,7 +10,10 @@ async function postOrders(req: Request) {
     await requireAdmin();
   } catch (e) {
     const message = e instanceof Error ? e.message : 'FORBIDDEN';
-    return NextResponse.json({ error: message }, { status: message === 'UNAUTHORIZED' ? 401 : 403 });
+    return NextResponse.json(
+      { error: message },
+      { status: message === 'UNAUTHORIZED' ? 401 : 403 },
+    );
   }
 
   const filters = orderFiltersSchema.parse(await req.json());

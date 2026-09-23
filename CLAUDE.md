@@ -59,6 +59,7 @@ Every handler in `app/api/**/route.ts` is wrapped via `server/withErrorHandling.
 ### Folder-naming: `lib` / `server` / `config` / `components/shared`
 
 Previously five confusingly-similar locations existed (`lib`, `libs`, root `shared/`, `components/shared/`, `components/shared/lib/`); `libs/` and `components/shared/lib/` were merged into `server/`, and root `shared/constants/` was renamed to `config/` (Крок 6 #20). Current layout:
+
 - `lib/` — just the shadcn-generated `cn()` helper, imported everywhere as `@/lib/utils`. Left alone deliberately (shadcn CLI convention, `components.json` hardcodes this path, and it has ~30 importers).
 - `server/` — everything server-only: the Prisma client singleton (`prisma.ts`), Firebase init (`firebase.ts`), `withErrorHandling.ts`, `requireAdmin.ts`, `orderHelpers.ts`, `productGroups.ts`, `get-user-session.ts`, `send-email.ts`, and `validation/{order,product,user}.ts` (+ their `.test.ts` files).
 - `config/` (repo root) — a handful of constants/config modules: `auth-options.ts`, `order-status.ts`, `units.ts`.
