@@ -17,6 +17,7 @@ import { AuthModal } from './modals/auth-modal';
 import { CartModal } from './modals/cart-modal';
 import { useCartProducts } from '@/hooks/useCartProducts';
 import { ProfileButton } from './profile-button';
+import { useMenuStore } from '@/store/menu';
 
 interface HeaderProps {
   variant: 'fixed' | 'autoHide';
@@ -26,7 +27,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ className, variant, productGroups }) => {
   const { data: session } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMenuOpen = useMenuStore((state) => state.isMenuOpen);
+  const setIsMenuOpen = useMenuStore((state) => state.setIsMenuOpen);
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const [openCart, setOpenCart] = useState(false);
@@ -56,7 +58,7 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, productGroup
   };
 
   const handleMenu = () => {
-    setIsMenuOpen((prev) => !prev);
+    setIsMenuOpen(!isMenuOpen);
     setHideOfShort((prev) => (prev.display ? {} : { display: 'block' }));
   };
 

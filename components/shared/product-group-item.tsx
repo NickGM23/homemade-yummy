@@ -5,6 +5,8 @@ import { Title } from './title';
 import { ProductCard } from './product-card';
 import { ProductGroupWithProducts } from '@/services/product-groups';
 import { useCategoryStore } from '@/store/category';
+import { useMenuStore } from '@/store/menu';
+import { cn } from '@/lib/utils';
 
 interface Props {
   productGroup: ProductGroupWithProducts;
@@ -13,6 +15,7 @@ interface Props {
 
 export const ProductGroupItem: React.FC<Props> = ({ productGroup, className }) => {
   const setActiveIdProductGroup = useCategoryStore((state) => state.setActiveId);
+  const isMenuOpen = useMenuStore((state) => state.isMenuOpen);
   const intersectionRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -40,7 +43,7 @@ export const ProductGroupItem: React.FC<Props> = ({ productGroup, className }) =
         <Title
           text={productGroup.name}
           size="lg"
-          className="sticky top-[112px] mb-4 bg-white font-extrabold"
+          className={cn('mb-4 bg-white font-extrabold', !isMenuOpen && 'sticky top-[112px]')}
         />
         {productGroup.products.length > 0 && (
           <div className="relation flex flex-wrap gap-4">
