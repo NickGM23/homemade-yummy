@@ -8,7 +8,7 @@ import { useCartStore } from '@/store/cart-store';
 import React from 'react';
 import { ArrowLeft, Trash } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { CountButton } from '../..';
+import { CountButton } from '../../count-button';
 import { useRouter } from 'next/navigation';
 import { useCartProducts } from '@/hooks/useCartProducts';
 

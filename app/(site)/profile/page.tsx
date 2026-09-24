@@ -1,5 +1,5 @@
 import { prisma } from '@/server/prisma';
-import { ProfileForm } from '@/components/shared';
+import { ProfileForm } from '@/components/shared/profile-form';
 import { getUserSession } from '@/server/get-user-session';
 import { redirect } from 'next/navigation';
 

@@ -4,3 +4,4 @@ export { CheckoutSidebar } from './checkout-sidebar';
 export { CheckoutPersonalForm } from './checkout-personal-form';
 export { CheckoutDeliveryForm } from './checkout-delivery-form';
 export { CheckoutCommentForm } from './checkout-comment-form';
+export { CheckoutPhoneVerification } from './checkout-phone-verification';
