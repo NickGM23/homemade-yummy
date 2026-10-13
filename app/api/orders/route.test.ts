@@ -87,12 +87,13 @@ describe('POST /api/orders (createOrder)', () => {
     expect(mockedPrisma.order.create).not.toHaveBeenCalled();
   });
 
-  it('returns 500 when a referenced product does not exist', async () => {
+  it('returns 400 when a referenced product does not exist', async () => {
     mockedGetUserSession.mockResolvedValue(null);
     mockedPrisma.product.findMany.mockResolvedValue([]); // no matching product
 
     const res = await POST(postRequest(validBody));
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(400);
+    expect(mockedPrisma.order.create).not.toHaveBeenCalled();
   });
 });
 

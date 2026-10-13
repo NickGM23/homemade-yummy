@@ -1,7 +1,7 @@
 // app/api/orders/route.ts
 import { prisma } from '@/server/prisma';
 import { NextResponse } from 'next/server';
-import { withErrorHandling } from '@/server/withErrorHandling';
+import { HttpError, withErrorHandling } from '@/server/withErrorHandling';
 import { requireAdmin } from '@/server/requireAdmin';
 import { getUserSession } from '@/server/get-user-session';
 import { createOrderSchema } from '@/server/validation/order';
@@ -59,7 +59,7 @@ async function createOrder(req: Request) {
   const items = data.items.map((item) => {
     const product = productById.get(item.productId);
     if (!product) {
-      throw new Error(`Product ${item.productId} not found`);
+      throw new HttpError(400, `Product ${item.productId} not found`);
     }
 
     const price = Number(product.price);
