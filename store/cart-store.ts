@@ -48,7 +48,6 @@ export const useCartStore = create<CartStore>()(
           item.productId === productId ? { ...item, quantity } : item,
         );
 
-        console.log(cart);
         set({ cart: updatedCart });
       },
 

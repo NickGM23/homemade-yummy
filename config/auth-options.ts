@@ -81,8 +81,6 @@ export const authOptions: AuthOptions = {
           return false;
         }
 
-        console.log('account');
-        console.log(account);
         const findUser = await prisma.user.findFirst({
           where: {
             OR: [
@@ -92,8 +90,6 @@ export const authOptions: AuthOptions = {
           },
         });
 
-        console.log('findUser');
-        console.log(findUser);
         if (findUser) {
           await prisma.user.update({
             where: {
@@ -144,8 +140,6 @@ export const authOptions: AuthOptions = {
         token.role = role;
       }
 
-      console.log('token');
-      console.log(token);
       return token;
     },
     session({ session, token }) {

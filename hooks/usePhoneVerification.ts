@@ -39,7 +39,6 @@ export const usePhoneVerification = ({ getPhone }: Params) => {
         recaptchaRef.current as HTMLElement, // ✅ Потім сам контейнер
         {
           size: 'normal',
-          callback: () => console.log('reCAPTCHA пройдена ✅'),
         },
       );
 
@@ -59,7 +58,6 @@ export const usePhoneVerification = ({ getPhone }: Params) => {
     }
 
     const formattedPhone = formatPhoneNumber(phone);
-    console.log('📞 formattedPhone:', formattedPhone);
 
     if (!recaptchaVerifierRef.current) {
       setPhoneError('reCAPTCHA не ініціалізована');

@@ -10,8 +10,6 @@ export default async function ProfilePage() {
     return redirect('/not-auth');
   }
 
-  console.log('profile_page_tsx - session');
-  console.log(session);
   const user = await prisma.user.findFirst({ where: { id: Number(session?.id) } });
 
   if (!user) {
