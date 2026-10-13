@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCartStore } from '@/store/cart-store';
 import { Api } from '@/services/api-client';
 
-type FullCartItem = {
+export type FullCartItem = {
   id: number;
   name: string;
   imageUrl: string;

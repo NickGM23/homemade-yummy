@@ -1,14 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart-store';
 import React from 'react';
-import { ArrowLeft, Trash } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { CountButton } from '../../count-button';
+import { ArrowLeft } from 'lucide-react';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { CartItemRow } from '../../cart-item-row';
 import { useRouter } from 'next/navigation';
 import { useCartProducts } from '@/hooks/useCartProducts';
 
@@ -22,24 +20,6 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
   const { removeFromCart, clearCart, updateItemQuantity } = useCartStore();
 
   const router = useRouter();
-
-  // 👇 Додали перевірку, що компонент змонтовано
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const onClickCountButton = (
-    id: number,
-    quantity: number,
-    minPartQuantity: number | string, // тимчасово допускаємо string
-    type: 'plus' | 'minus',
-  ) => {
-    const minPart = Number(minPartQuantity);
-    const newQuantity = type === 'plus' ? quantity + minPart : quantity - minPart;
-
-    updateItemQuantity(id, newQuantity);
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -57,66 +37,12 @@ export const CartModal: React.FC<CartModalProps> = ({ open, onClose }) => {
               <p className="text-center text-gray-500">Корзина порожня</p>
             ) : (
               products.map((item) => (
-                <div
+                <CartItemRow
                   key={item.id}
-                  className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
-                >
-                  <div>
-                    {item.imageUrl && (
-                      <div className="justify-left flex">
-                        <Image
-                          className="h-[32px] w-[32px] max-w-full object-cover"
-                          src={item.imageUrl}
-                          alt={item.name}
-                          width={32}
-                          height={32}
-                        />
-                      </div>
-                    )}
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.quantity} × {item.price} = {item.quantity * item.price} грн
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 sm:gap-6">
-                    <CountButton
-                      size="sm"
-                      value={item.quantity}
-                      minValue={item.minQuantity}
-                      minPartValue={item.minPartQuantity}
-                      onClick={(type) =>
-                        onClickCountButton(item.id, item.quantity, item.minPartQuantity, type)
-                      }
-                    />
-
-                    {/* 👇 Тільки якщо змонтовано */}
-                    {isMounted ? (
-                      <Tooltip delayDuration={200}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            aria-label="Видалити товар"
-                            onClick={() => removeFromCart(item.id)}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">Видалити</TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        aria-label="Видалити товар"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        <Trash size={16} />
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                  item={item}
+                  removeFromCart={removeFromCart}
+                  updateItemQuantity={updateItemQuantity}
+                />
               ))
             )}
           </div>

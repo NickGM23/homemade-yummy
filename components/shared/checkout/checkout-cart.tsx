@@ -1,23 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import { WhiteBlock } from '../white-block';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { CountButton } from '../count-button';
-import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
-
-type FullCartItem = {
-  id: number;
-  name: string;
-  imageUrl: string;
-  price: number;
-  minPartQuantity: number;
-  minQuantity: number;
-  quantity: number;
-};
+import { TooltipProvider } from '@/components/ui/tooltip';
+import type { FullCartItem } from '@/hooks/useCartProducts';
+import { CartItemRow } from '../cart-item-row';
 
 interface Props {
   cart: FullCartItem[];
@@ -34,24 +22,6 @@ export const CheckoutCart: React.FC<Props> = ({
   updateItemQuantity,
   className,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const onClickCountButton = (
-    id: number,
-    quantity: number,
-    minPartQuantity: number | string, // тимчасово допускаємо string
-    type: 'plus' | 'minus',
-  ) => {
-    const minPart = Number(minPartQuantity);
-    const newQuantity = type === 'plus' ? quantity + minPart : quantity - minPart;
-
-    updateItemQuantity(id, newQuantity);
-  };
-
   return (
     <WhiteBlock title="Ваші вибрані товари" className={cn(className)}>
       <div className="flex flex-col gap-5">
@@ -61,65 +31,12 @@ export const CheckoutCart: React.FC<Props> = ({
               <p className="text-center text-gray-500">Корзина порожня</p>
             ) : (
               cart.map((item) => (
-                <div
+                <CartItemRow
                   key={item.id}
-                  className="flex items-center justify-between border-b pb-2 pr-2 last:border-b-0"
-                >
-                  <div>
-                    {item.imageUrl && (
-                      <div className="justify-left flex">
-                        <Image
-                          className="h-[32px] w-[32px] max-w-full object-cover"
-                          src={item.imageUrl}
-                          alt={item.name}
-                          width={32}
-                          height={32}
-                        />
-                      </div>
-                    )}
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.quantity} × {item.price} = {item.quantity * item.price} грн
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-3 sm:gap-6">
-                    <CountButton
-                      size="sm"
-                      value={item.quantity}
-                      minValue={item.minQuantity}
-                      minPartValue={item.minPartQuantity}
-                      onClick={(type) =>
-                        onClickCountButton(item.id, item.quantity, item.minPartQuantity, type)
-                      }
-                    />
-
-                    {isMounted ? (
-                      <Tooltip delayDuration={200}>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            aria-label="Видалити товар"
-                            onClick={() => removeFromCart(item.id)}
-                          >
-                            <Trash size={16} />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">Видалити</TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        aria-label="Видалити товар"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        <Trash size={16} />
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                  item={item}
+                  removeFromCart={removeFromCart}
+                  updateItemQuantity={updateItemQuantity}
+                />
               ))
             )}
           </div>
