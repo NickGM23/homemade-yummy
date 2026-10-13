@@ -72,6 +72,8 @@ model Product {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([productGroupId])
 }
 
 model Cart {
@@ -103,6 +105,8 @@ model CartItem {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([cartId])
 }
 
 model Order {
@@ -126,6 +130,8 @@ model Order {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([userId])
 }
 
 model OrderItem {
@@ -143,6 +149,9 @@ model OrderItem {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@index([orderId])
+    @@index([productId])
 }
 
 enum ProductType {
