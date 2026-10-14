@@ -12,6 +12,9 @@ export const authOptions: AuthOptions = {
     GitHubProvider({
       clientId: process.env.GITHUB_ID || '',
       clientSecret: process.env.GITHUB_SECRET || '',
+      // GitHub додає `iss` у callback (RFC 9207); без issuer openid-client кидає
+      // "issuer must be configured on the issuer". Значення має збігатися з `iss`.
+      issuer: 'https://github.com/login/oauth',
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
