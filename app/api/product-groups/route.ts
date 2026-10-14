@@ -1,30 +1,11 @@
-import { prisma } from '@/server/prisma';
+import { fetchActiveProductGroupsWithProducts } from '@/server/productGroups';
 import { NextResponse } from 'next/server';
 import { withErrorHandling } from '@/server/withErrorHandling';
 
 export const revalidate = 60;
 
 async function getProductGroups() {
-  const productGroups = await prisma.productGroup.findMany({
-    where: {
-      isDeleted: false,
-    },
-    include: {
-      products: {
-        where: {
-          isDeleted: false,
-        },
-        orderBy: {
-          positionNumber: 'asc',
-        },
-      },
-    },
-    orderBy: {
-      positionNumber: 'asc',
-    },
-  });
-
-  return NextResponse.json(productGroups);
+  return NextResponse.json(await fetchActiveProductGroupsWithProducts());
 }
 
 // Обгортка через хелпер

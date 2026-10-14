@@ -4,7 +4,7 @@ import type { ProductGroupWithProducts } from '@/services/product-groups';
 
 export const fetchActiveProductGroupsWithProducts = cache(
   async (): Promise<ProductGroupWithProducts[]> => {
-    return prisma.productGroup.findMany({
+    const productGroups = await prisma.productGroup.findMany({
       where: { isDeleted: false },
       include: {
         products: {
@@ -14,5 +14,15 @@ export const fetchActiveProductGroupsWithProducts = cache(
       },
       orderBy: { positionNumber: 'asc' },
     });
+
+    return productGroups.map((group) => ({
+      ...group,
+      products: group.products.map((product) => ({
+        ...product,
+        price: product.price.toNumber(),
+        minPartQuantity: product.minPartQuantity.toNumber(),
+        minQuantity: product.minQuantity.toNumber(),
+      })),
+    }));
   },
 );
