@@ -3,7 +3,7 @@ import { Title } from '@/components/shared/title';
 import { Categories } from '@/components/shared/categories';
 import React from 'react';
 import { ProductGroupItem } from '@/components/shared/product-group-item';
-import { fetchActiveProductGroupsWithProducts } from '@/server/productGroups';
+import { fetchActiveProductGroupsWithProducts, toCategories } from '@/server/productGroups';
 import { cn } from '@/lib/utils';
 
 export const revalidate = 60;
@@ -19,7 +19,7 @@ export default async function Home() {
         </Container>
 
         <Container className="relative mt-5 flex gap-2">
-          <Categories productGroupsWithProducts={productGroups} />
+          <Categories categories={toCategories(productGroups)} />
         </Container>
       </div>
 

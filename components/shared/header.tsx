@@ -10,7 +10,7 @@ import { Container } from './container';
 import { Button } from '../ui';
 import { SearchInput } from './search-input';
 import { BackDrop } from './back-drop';
-import type { ProductGroupWithProducts } from '@/services/product-groups';
+import type { CategoryItem } from '@/services/product-groups';
 import { AuthModal } from './modals/auth-modal';
 import { CartModal } from './modals/cart-modal';
 import { useCartProducts } from '@/hooks/useCartProducts';
@@ -21,10 +21,10 @@ import { HeaderCartButton, MobileMenu } from './header/index';
 interface HeaderProps {
   variant: 'fixed' | 'autoHide';
   className?: string;
-  productGroups: ProductGroupWithProducts[];
+  categories: CategoryItem[];
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, variant, productGroups }) => {
+export const Header: React.FC<HeaderProps> = ({ className, variant, categories }) => {
   const isMenuOpen = useMenuStore((state) => state.isMenuOpen);
   const setIsMenuOpen = useMenuStore((state) => state.setIsMenuOpen);
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
@@ -138,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, productGroup
         <MobileMenu
           style={hideOrShow}
           onClose={closeMenu}
-          productGroups={productGroups}
+          categories={categories}
           mounted={mounted}
           totalPrice={totalPrice}
           countItem={countItem}

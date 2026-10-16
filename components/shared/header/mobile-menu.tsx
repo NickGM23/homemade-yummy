@@ -8,13 +8,13 @@ import { X } from 'lucide-react';
 import { SearchInput } from '../search-input';
 import { Categories } from '@/components/shared/categories';
 import { ProfileButton } from '../profile-button';
-import type { ProductGroupWithProducts } from '@/services/product-groups';
+import type { CategoryItem } from '@/services/product-groups';
 import { HeaderCartButton } from './header-cart-button';
 
 interface Props {
   style: React.CSSProperties;
   onClose: () => void;
-  productGroups: ProductGroupWithProducts[];
+  categories: CategoryItem[];
   mounted: boolean;
   totalPrice: number;
   countItem: number;
@@ -25,7 +25,7 @@ interface Props {
 export const MobileMenu: React.FC<Props> = ({
   style,
   onClose,
-  productGroups,
+  categories,
   mounted,
   totalPrice,
   countItem,
@@ -77,11 +77,7 @@ export const MobileMenu: React.FC<Props> = ({
         <div className="border-b border-gray-400 py-4">
           <b>Каталог товарів</b>
           <div className="flex w-full flex-row pt-2">
-            <Categories
-              isShowByBurgerMenu={true}
-              onChange={onClose}
-              productGroupsWithProducts={productGroups}
-            />
+            <Categories isShowByBurgerMenu={true} onChange={onClose} categories={categories} />
           </div>
         </div>
 

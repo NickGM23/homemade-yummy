@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 import { useState } from 'react';
 import { useCategoryStore } from '@/store/category';
-import { ProductGroupWithProducts } from '@/services/product-groups';
+import type { CategoryItem } from '@/services/product-groups';
 import { useRouter, usePathname } from 'next/navigation';
 
 interface Props {
   className?: string;
-  productGroupsWithProducts?: ProductGroupWithProducts[];
+  categories?: CategoryItem[];
   isShowByBurgerMenu?: boolean;
   onChange?: () => void;
 }
@@ -45,7 +45,7 @@ interface Props {
 
 export const Categories: React.FC<Props> = ({
   className,
-  productGroupsWithProducts,
+  categories,
   isShowByBurgerMenu,
   onChange,
 }) => {
@@ -109,30 +109,24 @@ export const Categories: React.FC<Props> = ({
     <div
       className={cn('flex flex-wrap justify-around gap-1 rounded-2xl bg-gray-50 p-1', className)}
     >
-      {productGroupsWithProducts &&
-        productGroupsWithProducts.map(
-          (productGroup, index) =>
-            productGroup.products &&
-            productGroup.products.length > 0 && (
-              <button
-                type="button"
-                data-goto={'.' + productGroup.codeGroup}
-                key={index}
-                className={cn(
-                  'menu__link',
-                  'flex h-11 cursor-pointer select-none items-center rounded-2xl border px-5 font-bold',
-                  '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
-                  idProductGroup === productGroup.id * 100 &&
-                    'bg-white text-primary shadow-md shadow-gray-200',
-                )}
-                onClick={(e) =>
-                  categoryOnClick(e, productGroup.id * 100, '.' + productGroup.codeGroup)
-                }
-              >
-                {productGroup.name}
-              </button>
-            ),
-        )}
+      {categories &&
+        categories.map((category, index) => (
+          <button
+            type="button"
+            data-goto={'.' + category.codeGroup}
+            key={index}
+            className={cn(
+              'menu__link',
+              'flex h-11 cursor-pointer select-none items-center rounded-2xl border px-5 font-bold',
+              '[@media(any-hover:hover){&:hover}]:border-orange-600 [@media(any-hover:hover){&:hover}]:bg-green-300 [@media(any-hover:hover){&:hover}]:text-primary',
+              idProductGroup === category.id * 100 &&
+                'bg-white text-primary shadow-md shadow-gray-200',
+            )}
+            onClick={(e) => categoryOnClick(e, category.id * 100, '.' + category.codeGroup)}
+          >
+            {category.name}
+          </button>
+        ))}
     </div>
   );
 };

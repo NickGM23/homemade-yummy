@@ -1,6 +1,6 @@
 import { Header } from '@/components/shared/header';
 import { ScrollToTop } from '@/components/ui/scroll-to-top';
-import { fetchActiveProductGroupsWithProducts } from '@/server/productGroups';
+import { fetchActiveProductGroupsWithProducts, toCategories } from '@/server/productGroups';
 
 export const revalidate = 60;
 
@@ -12,7 +12,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
       <Header
         variant="autoHide"
         className="bg-white max-sm:sticky max-sm:top-0"
-        productGroups={productGroups}
+        categories={toCategories(productGroups)}
       />
 
       <main className="flex flex-1 flex-col">{children}</main>

@@ -14,6 +14,9 @@ export type ProductGroupWithProducts = ProductGroup & {
   products: ProductWithNumbers[];
 };
 
+// Мінімум даних для навігації по категоріях (Header, бургер-меню, Categories) — без товарів.
+export type CategoryItem = Pick<ProductGroup, 'id' | 'name' | 'codeGroup'>;
+
 export const GetAllProductGroups = async (): Promise<ProductGroupWithProducts[]> => {
   return (await axiosInstance.get<ProductGroupWithProducts[]>(ApiRoutes.PRODUCT_GROUPS)).data;
 };
