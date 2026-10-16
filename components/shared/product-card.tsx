@@ -53,14 +53,8 @@ export const ProductCard: React.FC<Props> = ({
       className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
     >
       <div className="flex justify-center">
-        <a href={`/product/${productId}`}>
-          <Image
-            className="h-[225px] w-96 max-w-full object-cover"
-            src={imageUrl}
-            alt={name}
-            width={384}
-            height={225}
-          />
+        <a href={`/product/${productId}`} className="relative block h-[225px] w-96 max-w-full">
+          <Image className="object-cover" src={imageUrl} alt={name} fill sizes="350px" />
         </a>
       </div>
 
