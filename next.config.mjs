@@ -2,9 +2,9 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 const firebaseAuthDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
 
-// CSP поки що лише у Report-Only режимі: браузер пише порушення в консоль, але нічого не блокує.
-// Після ручної перевірки входу (credentials/GitHub/Google), checkout з OTP та каталогу —
-// перейменувати заголовок на 'Content-Security-Policy'.
+// Content-Security-Policy у блокуючому режимі. Якщо після додавання нового зовнішнього сервісу
+// (скрипти, API, iframe, картинки) щось перестало працювати — браузер пише в консоль, який
+// саме origin заблоковано і за якою директивою; додайте його в список нижче.
 //
 // 'unsafe-inline' у script-src потрібен, бо Next.js вставляє інлайнові скрипти (hydration,
 // JSON-LD). Nonce через middleware зробив би всі сторінки динамічними і зламав ISR/prerender.
@@ -49,12 +49,9 @@ const cspDirectives = {
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
   'form-action': ["'self'"],
-  // Лише в dev: без report-uri Firefox не пише порушення Report-Only в консоль, а
-  // /api/csp-report виводить їх у термінал. У production ендпоінт вимкнений.
-  ...(isDev ? { 'report-uri': ['/api/csp-report'] } : {}),
 };
 
-const cspReportOnly = Object.entries(cspDirectives)
+const csp = Object.entries(cspDirectives)
   .map(([directive, sources]) => `${directive} ${sources.join(' ')}`)
   .join('; ');
 
@@ -64,7 +61,7 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   // Без includeSubDomains/preload: вони зачіпають усі піддомени і майже не скасовуються.
   { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
-  { key: 'Content-Security-Policy-Report-Only', value: cspReportOnly },
+  { key: 'Content-Security-Policy', value: csp },
 ];
 
 /** @type {import('next').NextConfig} */
