@@ -10,6 +10,10 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  // Без змінної Next сам підставляє адресу деплою на Vercel, тому fallback на localhost не ставимо.
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+    : undefined,
   title: 'Домашні смаколики — напівфабрикати в Черкасах',
   description: 'Домашні напівфабрикати на замовлення в Черкасах',
   other: {
@@ -32,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uk">
+    <html lang="uk" data-scroll-behavior="smooth">
       <body className={nunito.variable}>
         <Providers>{children}</Providers>
       </body>
