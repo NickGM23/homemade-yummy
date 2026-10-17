@@ -1,7 +1,5 @@
 const isDev = process.env.NODE_ENV !== 'production';
 
-const firebaseAuthDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
-
 // Content-Security-Policy у блокуючому режимі. Якщо після додавання нового зовнішнього сервісу
 // (скрипти, API, iframe, картинки) щось перестало працювати — браузер пише в консоль, який
 // саме origin заблоковано і за якою директивою; додайте його в список нижче.
@@ -15,36 +13,21 @@ const cspDirectives = {
     "'unsafe-inline'",
     // Next dev (HMR/React Refresh) використовує eval; у production не потрібен.
     ...(isDev ? ["'unsafe-eval'"] : []),
-    // Firebase Auth (gapi) + reCAPTCHA для OTP у checkout.
-    'https://apis.google.com',
-    'https://www.google.com',
-    'https://www.gstatic.com',
   ],
-  'style-src': ["'self'", "'unsafe-inline'", 'https://www.gstatic.com'],
+  'style-src': ["'self'", "'unsafe-inline'"],
   'img-src': [
     "'self'",
     'data:',
     'blob:',
-    // Іконки провайдерів в auth-modal + картинки reCAPTCHA.
+    // Іконки провайдерів в auth-modal.
     'https://github.githubassets.com',
     'https://fonts.gstatic.com',
-    'https://www.gstatic.com',
-    'https://www.google.com',
   ],
   'font-src': ["'self'", 'data:'],
   'connect-src': [
     "'self'",
-    'https://identitytoolkit.googleapis.com',
-    'https://securetoken.googleapis.com',
-    'https://www.googleapis.com',
-    'https://www.google.com',
-    'https://www.gstatic.com',
     // HMR websocket у dev.
     ...(isDev ? ['ws://localhost:*'] : []),
-  ],
-  'frame-src': [
-    'https://www.google.com', // reCAPTCHA
-    ...(firebaseAuthDomain ? [`https://${firebaseAuthDomain}`] : []),
   ],
   'object-src': ["'none'"],
   'base-uri': ["'self'"],
