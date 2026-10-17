@@ -68,7 +68,7 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, categories }
         'border-b border-gray-100 transition-all duration-300',
         variant === 'fixed'
           ? 'fixed left-0 right-0 top-0 z-50 bg-white' // <- суцільний білий фон
-          : 'relative bg-transparent',
+          : 'relative z-40 bg-transparent', // z-40: шапка (і її бургер-меню) завжди над позиціонованим контентом сторінки
         className,
       )}
     >
