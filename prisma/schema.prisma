@@ -15,6 +15,10 @@ model User {
     email    String @unique
     password String
 
+    // Телефон у форматі 380XXXXXXXXX; заповнюється при реєстрації по SMS (див. PhoneVerification).
+    phone         String?   @unique @db.VarChar(12)
+    phoneVerified DateTime?
+
     verified DateTime?
 
     provider          String?
@@ -152,6 +156,34 @@ model OrderItem {
 
     @@index([orderId])
     @@index([productId])
+}
+
+// Одноразовий SMS-код для підтвердження дії на номері телефону. `payload` зберігає
+// «чернетку» (наприклад, замовлення), яка застосовується лише після введення вірного коду.
+model PhoneVerification {
+    id String @id
+
+    phone   String              @db.VarChar(12)
+    purpose VerificationPurpose
+
+    codeHash String
+    payload  Json
+    attempts Int    @default(0)
+
+    expiresAt  DateTime
+    consumedAt DateTime?
+
+    ip String? @db.VarChar(45)
+
+    createdAt DateTime @default(now())
+
+    @@index([phone, createdAt])
+    @@index([ip, createdAt])
+}
+
+enum VerificationPurpose {
+    ORDER
+    REGISTER
 }
 
 enum ProductType {

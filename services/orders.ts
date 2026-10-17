@@ -1,7 +1,7 @@
 // services/orders.ts
 import { axiosInstance } from './instance';
 import { ApiRoutes } from './constants';
-import { OrderFilters, Order, CreateOrderBody } from '@/@types/order';
+import { OrderFilters, Order } from '@/@types/order';
 import { fetchPaginatedOrders } from '@/server/orderHelpers';
 
 export interface GetOrdersResponse {
@@ -36,25 +36,4 @@ export const getOrders = async (
 export const searchOrders = async (filters: OrderFilters): Promise<Order[]> => {
   const result = await getOrders(filters);
   return result.data;
-};
-
-/**
- * Створення нового замовлення
- */
-export const createOrder = async (orderData: CreateOrderBody): Promise<Order> => {
-  if (typeof window === 'undefined') {
-    // сервер
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const res = await fetch(`${baseUrl}/api/${ApiRoutes.ORDERS}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    });
-    if (!res.ok) throw new Error('Failed to create order');
-    return res.json();
-  } else {
-    // клієнт
-    const res = await axiosInstance.post<Order>(ApiRoutes.ORDERS, orderData);
-    return res.data;
-  }
 };

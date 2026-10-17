@@ -5,8 +5,9 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const isPublicOrderCreate = pathname === '/api/orders' && req.method === 'POST';
-  const isOrdersApiRequest = pathname.startsWith('/api/orders') && !isPublicOrderCreate;
+  // Публічне створення замовлення тепер іде через /api/checkout/* (після SMS-підтвердження),
+  // тому весь /api/orders/** — лише для адміна, без винятків.
+  const isOrdersApiRequest = pathname.startsWith('/api/orders');
   const isOrdersPageRequest = pathname === '/orders' || pathname.startsWith('/orders/');
 
   if (!isOrdersApiRequest && !isOrdersPageRequest) {

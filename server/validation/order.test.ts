@@ -13,6 +13,18 @@ describe('createOrderSchema', () => {
     expect(createOrderSchema.safeParse(validPickupOrder).success).toBe(true);
   });
 
+  it.each(['0991234567', '+380 (99) 123-45-67', '80991234567'])(
+    'normalizes phone %s to 380XXXXXXXXX',
+    (phone) => {
+      const result = createOrderSchema.safeParse({ ...validPickupOrder, phone });
+      expect(result.success && result.data.phone).toBe('380991234567');
+    },
+  );
+
+  it.each(['', '12345', '380441234567'])('rejects phone "%s"', (phone) => {
+    expect(createOrderSchema.safeParse({ ...validPickupOrder, phone }).success).toBe(false);
+  });
+
   it('rejects an empty items array', () => {
     const result = createOrderSchema.safeParse({ ...validPickupOrder, items: [] });
     expect(result.success).toBe(false);
@@ -39,6 +51,22 @@ describe('createOrderSchema', () => {
     const result = createOrderSchema.safeParse({
       ...validPickupOrder,
       items: [{ productId: 1, quantity: -1 }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it.each([0.5, 1.5, 2.25])('accepts a fractional quantity %s', (quantity) => {
+    const result = createOrderSchema.safeParse({
+      ...validPickupOrder,
+      items: [{ productId: 1, quantity }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects a quantity with more than two decimal places', () => {
+    const result = createOrderSchema.safeParse({
+      ...validPickupOrder,
+      items: [{ productId: 1, quantity: 0.333 }],
     });
     expect(result.success).toBe(false);
   });

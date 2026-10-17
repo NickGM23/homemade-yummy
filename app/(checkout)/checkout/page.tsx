@@ -11,15 +11,14 @@ import {
   CheckoutPersonalForm,
   CheckoutDeliveryForm,
   CheckoutCommentForm,
-  CheckoutPhoneVerification,
+  CheckoutSmsConfirm,
 } from '@/components/shared/checkout';
 import { useCartStore } from '@/store/cart-store';
 import { useCartProducts } from '@/hooks/useCartProducts';
-import { usePhoneVerification } from '@/hooks/usePhoneVerification';
 import { useSession } from 'next-auth/react';
 import { Api } from '@/services/api-client';
 import { checkoutFormSchema, CheckoutFormOutput } from '@/components/constants';
-import { createOrder } from '@/services/orders';
+import { CodeSentResponse, getCheckoutErrorMessage } from '@/services/checkout';
 import { Container } from '@/components/shared/container';
 import { Title } from '@/components/shared/title';
 import { useZodForm } from '@/hooks/useZodForm';
@@ -42,7 +41,8 @@ export default function CheckoutPage() {
     },
   });
 
-  const phoneVerification = usePhoneVerification({ getPhone: () => form.getValues('phone') });
+  // Дані SMS-підтвердження; поки `null` — вікно з вводом коду закрите.
+  const [verification, setVerification] = React.useState<CodeSentResponse | null>(null);
 
   // Автозаповнення користувача
   React.useEffect(() => {
@@ -54,43 +54,56 @@ export default function CheckoutPage() {
     })();
   }, [session]);
 
-  // Створення замовлення
+  const finishOrder = () => {
+    clearCart();
+    router.push('/checkout/success');
+  };
+
+  // Крок 1: надсилаємо замовлення на сервер — той шле SMS-код (замовлення ще не створюється).
+  // Ціни й суми сервер рахує сам, тому з клієнта йдуть лише товари й кількість.
   const handleOrderSubmit = async (data: CheckoutFormOutput) => {
-    if (!phoneVerification.phoneVerified) {
-      phoneVerification.setPhoneError(
-        'Будь ласка, підтвердіть телефон перед оформленням замовлення',
-      );
-      return;
-    }
-
-    const deliveryType = data.deliveryType;
-    const shippingAmount =
-      totalPrice === 0 ? 0 : deliveryType === 'pickup' ? 0 : totalPrice >= 1000 ? 0 : 75;
-
-    const orderData = {
-      userId: session?.user?.id ? Number(session.user.id) : undefined,
-      fullName: data.fullName,
-      email: data.email || undefined,
-      phone: data.phone,
-      deliveryType: data.deliveryType,
-      address: data.address,
-      comment: data.comment,
-      shippingAmount,
-      totalAmount: totalPrice + shippingAmount,
-      items: products.map((p) => ({
-        productId: p.id,
-        quantity: p.quantity,
-        price: p.price,
-        amount: p.price * p.quantity,
-      })),
-    };
-
     try {
-      await createOrder(orderData);
-      router.push('/checkout/success');
+      const res = await Api.checkout.sendOrderCode({
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        deliveryType: data.deliveryType,
+        address: data.address,
+        comment: data.comment,
+        items: products.map((p) => ({ productId: p.id, quantity: p.quantity })),
+      });
+
+      if (res.status === 'created') {
+        // Номер користувача вже підтверджений — SMS не потрібне.
+        finishOrder();
+      } else {
+        setVerification(res);
+      }
     } catch (err) {
       console.error(err);
-      toast.error(err instanceof Error ? err.message : 'Помилка при створенні замовлення');
+      toast.error(getCheckoutErrorMessage(err, 'Помилка при створенні замовлення'));
+    }
+  };
+
+  // Крок 2: вірний код з SMS — замовлення створюється й зберігається.
+  const handleConfirmCode = async (code: string) => {
+    if (!verification) return;
+
+    try {
+      await Api.checkout.confirmOrder(verification.verificationId, code);
+    } catch (err) {
+      throw new Error(getCheckoutErrorMessage(err, 'Не вдалося підтвердити код'));
+    }
+    finishOrder();
+  };
+
+  const handleResendCode = async () => {
+    if (!verification) return;
+
+    try {
+      setVerification(await Api.checkout.resendOrderCode(verification.verificationId));
+    } catch (err) {
+      throw new Error(getCheckoutErrorMessage(err, 'Не вдалося надіслати код'));
     }
   };
 
@@ -115,30 +128,28 @@ export default function CheckoutPage() {
               <CheckoutPersonalForm />
               <CheckoutDeliveryForm />
               <CheckoutCommentForm />
-
-              <CheckoutPhoneVerification {...phoneVerification} />
             </div>
 
             <div className="order-1 w-full lg:order-2 lg:w-[450px]">
               <CheckoutSidebar
                 totalCartAmount={totalPrice}
                 countCartItems={products.length}
-                phoneVerified={phoneVerification.phoneVerified}
               />
             </div>
           </div>
-
-          {/*<button
-            type="submit"
-            disabled={!phoneVerified}
-            className={`mt-4 w-full rounded p-3 text-white ${
-              phoneVerified ? 'bg-orange-500' : 'cursor-not-allowed bg-gray-400'
-            }`}
-          >
-            Підтвердити замовлення
-          </button>*/}
         </form>
       </FormProvider>
+
+      {verification && (
+        <CheckoutSmsConfirm
+          open
+          maskedPhone={verification.maskedPhone}
+          resendAvailableAt={verification.resendAvailableAt}
+          onConfirm={handleConfirmCode}
+          onResend={handleResendCode}
+          onClose={() => setVerification(null)}
+        />
+      )}
     </Container>
   );
 }

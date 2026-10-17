@@ -14,26 +14,6 @@ export interface OrderFilters {
   limit?: number; // за замовчуванням 20
 }
 
-// Тип для створення нового замовлення
-export interface CreateOrderBody {
-  userId?: number;
-  fullName: string;
-  email?: string;
-  phone: string;
-  deliveryType: string;
-  address?: string;
-  comment?: string;
-  shippingAmount: number;
-  totalAmount: number;
-  items: {
-    productId: number;
-    quantity: number;
-    price: number;
-    amount: number;
-  }[];
-  status?: OrderStatus; // дефолт PENDING
-}
-
 export interface OrderItem {
   id: number;
   productId: number;

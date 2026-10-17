@@ -5,4 +5,7 @@ export enum ApiRoutes {
   SEARCH_ORDERS = 'orders/search',
   GET_ORDERS_BY_IDS = 'orders/by-ids',
   ORDERS = 'orders',
+  CHECKOUT_SEND_CODE = 'checkout/send-code',
+  CHECKOUT_RESEND_CODE = 'checkout/resend-code',
+  CHECKOUT_CONFIRM = 'checkout/confirm',
 }

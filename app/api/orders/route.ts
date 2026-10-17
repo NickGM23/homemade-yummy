@@ -1,10 +1,8 @@
 // app/api/orders/route.ts
 import { prisma } from '@/server/prisma';
 import { NextResponse } from 'next/server';
-import { HttpError, withErrorHandling } from '@/server/withErrorHandling';
+import { withErrorHandling } from '@/server/withErrorHandling';
 import { requireAdmin } from '@/server/requireAdmin';
-import { getUserSession } from '@/server/get-user-session';
-import { createOrderSchema } from '@/server/validation/order';
 
 async function getOrders(req: Request) {
   try {
@@ -44,61 +42,6 @@ async function getOrders(req: Request) {
   });
 }
 
-async function createOrder(req: Request) {
-  const data = createOrderSchema.parse(await req.json());
-  const session = await getUserSession();
-
-  const productIds = data.items.map((item) => item.productId);
-  const products = await prisma.product.findMany({
-    where: { id: { in: productIds } },
-  });
-  const productById = new Map(products.map((product) => [product.id, product]));
-
-  // Ціна/сума кожної позиції рахується на сервері з актуальної ціни продукту в БД,
-  // а не з того, що прислав клієнт — щоб виключити підміну суми замовлення.
-  const items = data.items.map((item) => {
-    const product = productById.get(item.productId);
-    if (!product) {
-      throw new HttpError(400, `Product ${item.productId} not found`);
-    }
-
-    const price = Number(product.price);
-    return {
-      productId: product.id,
-      quantity: item.quantity,
-      price,
-      amount: price * item.quantity,
-    };
-  });
-
-  const itemsTotal = items.reduce((sum, item) => sum + item.amount, 0);
-  const shippingAmount =
-    itemsTotal === 0 ? 0 : data.deliveryType === 'pickup' ? 0 : itemsTotal >= 1000 ? 0 : 75;
-  const totalAmount = itemsTotal + shippingAmount;
-
-  const order = await prisma.order.create({
-    data: {
-      userId: session?.id ? Number(session.id) : undefined,
-      fullName: data.fullName,
-      email: data.email,
-      phone: data.phone,
-      deliveryType: data.deliveryType,
-      address: data.address,
-      comment: data.comment,
-      shippingAmount,
-      totalAmount,
-      status: 'PENDING',
-      items: {
-        create: items,
-      },
-    },
-    include: { items: true },
-  });
-
-  return NextResponse.json(order);
-}
-
-export const { GET, POST } = withErrorHandling({
+export const { GET } = withErrorHandling({
   GET: getOrders,
-  POST: createOrder,
 });

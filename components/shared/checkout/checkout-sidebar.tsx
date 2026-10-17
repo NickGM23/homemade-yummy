@@ -11,7 +11,6 @@ interface Props {
   countCartItems: number;
   shippingPrice?: number;
   freeShippingThreshold?: number;
-  phoneVerified?: boolean;
   className?: string;
 }
 
@@ -20,7 +19,6 @@ export const CheckoutSidebar: React.FC<Props> = ({
   countCartItems,
   shippingPrice = 75,
   freeShippingThreshold = 1000,
-  phoneVerified,
   className,
 }) => {
   const { watch, formState } = useFormContext();
@@ -56,7 +54,7 @@ export const CheckoutSidebar: React.FC<Props> = ({
       </div>
       <Button
         type="submit"
-        disabled={!isFormValid || !phoneVerified}
+        disabled={!isFormValid || formState.isSubmitting}
         className="mt-6 h-14 w-full rounded-2xl text-base font-bold"
       >
         Підтвердити замовлення

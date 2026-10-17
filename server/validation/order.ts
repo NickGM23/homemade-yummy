@@ -1,8 +1,11 @@
 import { z } from 'zod';
+import { normalizeUaPhone } from '@/server/phone';
 
 const orderItemSchema = z.object({
   productId: z.number().int().positive(),
-  quantity: z.number().int().positive().max(999),
+  // Кількість може бути дробовою (напр. 0.5 кг, крок — Product.minPartQuantity);
+  // OrderItem.quantity у БД — Decimal(9,2), тож більше двох знаків після коми не приймаємо.
+  quantity: z.number().positive().max(999).multipleOf(0.01),
 });
 
 export const createOrderSchema = z
@@ -18,7 +21,18 @@ export const createOrderSchema = z
       .email({ message: 'Введіть коректну email адресу' })
       .max(100, { message: 'Email занадто довгий' })
       .optional(),
-    phone: z.string().trim().min(1, { message: 'Введіть номер телефону' }),
+    // Нормалізується до 380XXXXXXXXX: саме на цей номер піде SMS з кодом підтвердження.
+    phone: z
+      .string()
+      .trim()
+      .transform((value, ctx) => {
+        const phone = normalizeUaPhone(value);
+        if (!phone) {
+          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Введіть коректний номер телефону' });
+          return z.NEVER;
+        }
+        return phone;
+      }),
     deliveryType: z.enum(['pickup', 'address'], {
       required_error: 'Оберіть спосіб доставки',
     }),
