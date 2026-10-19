@@ -1,7 +1,7 @@
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'crypto';
 import { Prisma, VerificationPurpose } from '@prisma/client';
 import { prisma } from '@/server/prisma';
-import { sendSms } from '@/server/sms';
+import { getSmsDriver, sendSms } from '@/server/sms';
 import { maskPhone } from '@/server/phone';
 import { HttpError } from '@/server/withErrorHandling';
 
@@ -10,8 +10,24 @@ export const RESEND_COOLDOWN_MS = 60_000;
 export const MAX_ATTEMPTS = 3;
 
 // Ліміти на кількість SMS — головний захист від «SMS-насоса» (кожне SMS коштує грошей).
-const MAX_SENDS_PER_PHONE_PER_HOUR = 5;
-const MAX_SENDS_PER_IP_PER_HOUR = 20;
+// Рахуються всі відправки (замовлення, реєстрація, повторні коди) за останню годину.
+export const SEND_LIMITS = {
+  // Реальні SMS (драйвер alphasms).
+  real: { perPhonePerHour: 2, perIpPerHour: 5 },
+  // Драйвер console (локальна розробка): SMS нікуди не йдуть і нічого не коштують, а весь
+  // локальний трафік має один IP — тісні ліміти лише заважали б тестувати.
+  dev: { perPhonePerHour: 5, perIpPerHour: 20 },
+} as const;
+
+/**
+ * Які ліміти діють зараз. М'якші — лише для console-драйвера і ніколи в production: навіть
+ * якщо там помилково виставлять SMS_DRIVER=console, ліміти лишаються тісними.
+ */
+export function getSendLimits() {
+  const isDevSms = getSmsDriver() === 'console' && process.env.NODE_ENV !== 'production';
+  return isDevSms ? SEND_LIMITS.dev : SEND_LIMITS.real;
+}
+
 const HOUR_MS = 60 * 60_000;
 
 const SMS_TEXT: Record<VerificationPurpose, (code: string) => string> = {
@@ -59,6 +75,7 @@ export async function startVerification({
 }: StartParams): Promise<StartedVerification> {
   const now = Date.now();
   const hourAgo = new Date(now - HOUR_MS);
+  const limits = getSendLimits();
 
   const [lastForPhone, sentToPhone, sentFromIp] = await Promise.all([
     prisma.phoneVerification.findFirst({
@@ -73,7 +90,7 @@ export async function startVerification({
   if (lastForPhone && now - lastForPhone.createdAt.getTime() < RESEND_COOLDOWN_MS) {
     throw new HttpError(429, 'Зачекайте хвилину перед повторною відправкою коду');
   }
-  if (sentToPhone >= MAX_SENDS_PER_PHONE_PER_HOUR || sentFromIp >= MAX_SENDS_PER_IP_PER_HOUR) {
+  if (sentToPhone >= limits.perPhonePerHour || sentFromIp >= limits.perIpPerHour) {
     throw new HttpError(429, 'Забагато спроб. Спробуйте через годину');
   }
 

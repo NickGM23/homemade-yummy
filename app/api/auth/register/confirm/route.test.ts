@@ -1,6 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-const tx = { user: { findUnique: vi.fn(), create: vi.fn() } };
+const tx = {
+  user: { findUnique: vi.fn(), create: vi.fn() },
+  order: { updateMany: vi.fn() },
+};
 
 vi.mock('@/server/prisma', () => ({
   prisma: { $transaction: vi.fn((fn: (t: unknown) => unknown) => fn(tx)) },
@@ -38,6 +41,7 @@ beforeEach(() => {
   mockedClaim.mockResolvedValue(undefined);
   tx.user.findUnique.mockResolvedValue(null);
   tx.user.create.mockResolvedValue({ id: 1 });
+  tx.order.updateMany.mockResolvedValue({ count: 0 });
 });
 
 describe('POST /api/auth/register/confirm', () => {
@@ -100,5 +104,24 @@ describe('POST /api/auth/register/confirm', () => {
 
     expect(res.status).toBe(400);
     expect(mockedVerify).not.toHaveBeenCalled();
+  });
+
+  it("links the phone's earlier guest orders to the new account, and only unowned ones", async () => {
+    tx.user.create.mockResolvedValue({ id: 33 });
+
+    await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(tx.order.updateMany).toHaveBeenCalledWith({
+      where: { userId: null, phone: '380991234567' }, // чужі (з userId) не чіпаємо
+      data: { userId: 33 },
+    });
+  });
+
+  it('links nothing when the registration fails', async () => {
+    tx.user.findUnique.mockResolvedValue({ id: 9 }); // номер уже зайнятий
+
+    await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(tx.order.updateMany).not.toHaveBeenCalled();
   });
 });

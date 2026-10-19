@@ -5,6 +5,42 @@ import type { CreateOrderInput } from '@/server/validation/order';
 
 type Db = Prisma.TransactionClient | typeof prisma;
 
+// Не більше двох замовлень з одного номера за останні 24 години (ковзне вікно). Скасовані
+// не рахуються — клієнт має змогу оформити замовлення знову.
+export const MAX_ORDERS_PER_PHONE_PER_DAY = 2;
+const DAY_MS = 24 * 60 * 60_000;
+
+/** Кидає 429, якщо з цього номера вже оформлено максимум замовлень за добу. */
+export async function assertOrderLimit(phone: string, db: Db = prisma) {
+  const recentOrders = await db.order.count({
+    where: {
+      phone,
+      status: { not: 'CANCELLED' },
+      createdAt: { gte: new Date(Date.now() - DAY_MS) },
+    },
+  });
+
+  if (recentOrders >= MAX_ORDERS_PER_PHONE_PER_DAY) {
+    throw new HttpError(
+      429,
+      `Досягнуто ліміт замовлень з цього номера на добу (${MAX_ORDERS_PER_PHONE_PER_DAY}). Спробуйте пізніше`,
+    );
+  }
+}
+
+/**
+ * Користувач, чий підтверджений телефон збігається з `phone`. Викликати лише після успішної
+ * перевірки SMS-коду: код доводить, що номер належить тому, хто оформлює замовлення.
+ */
+export async function findUserIdByVerifiedPhone(phone: string, db: Db = prisma) {
+  const user = await db.user.findUnique({
+    where: { phone },
+    select: { id: true, phoneVerified: true },
+  });
+
+  return user?.phoneVerified ? user.id : undefined;
+}
+
 /**
  * Ціна/сума кожної позиції рахується на сервері з актуальної ціни продукту в БД,
  * а не з того, що прислав клієнт — щоб виключити підміну суми замовлення.
@@ -46,6 +82,7 @@ export async function createOrderFromInput(
   userId: number | undefined,
   db: Db = prisma,
 ) {
+  await assertOrderLimit(data.phone, db);
   const { items, shippingAmount, totalAmount } = await priceOrder(data, db);
 
   return db.order.create({

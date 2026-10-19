@@ -22,7 +22,7 @@ async function confirm(req: Request) {
       throw new HttpError(409, 'Користувач з таким номером уже зареєстрований. Увійдіть в акаунт');
     }
 
-    await tx.user.create({
+    const user = await tx.user.create({
       data: {
         fullName: data.fullName,
         phone: data.phone,
@@ -30,6 +30,13 @@ async function confirm(req: Request) {
         password: data.passwordHash,
         provider: 'credentials',
       },
+    });
+
+    // Номер щойно підтверджено кодом — усі раніші замовлення гостя з цим номером стають
+    // замовленнями нового акаунта.
+    await tx.order.updateMany({
+      where: { userId: null, phone: data.phone },
+      data: { userId: user.id },
     });
   });
 

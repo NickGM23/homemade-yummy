@@ -3,7 +3,7 @@ import { prisma } from '@/server/prisma';
 import { withErrorHandling } from '@/server/withErrorHandling';
 import { getUserSession } from '@/server/get-user-session';
 import { createOrderSchema } from '@/server/validation/order';
-import { createOrderFromInput, priceOrder } from '@/server/createOrder';
+import { assertOrderLimit, createOrderFromInput, priceOrder } from '@/server/createOrder';
 import { codeSentResponse, getClientIp, startVerification } from '@/server/phone-verification';
 
 /**
@@ -16,6 +16,9 @@ async function sendCode(req: Request) {
   const data = createOrderSchema.parse(await req.json());
   const session = await getUserSession();
   const userId = session?.id ? Number(session.id) : undefined;
+
+  // Добовий ліміт перевіряємо ДО відправки SMS, щоб не витрачати гроші на замовлення, яке не пройде.
+  await assertOrderLimit(data.phone);
 
   if (userId) {
     const user = await prisma.user.findUnique({

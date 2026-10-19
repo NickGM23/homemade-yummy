@@ -6,7 +6,7 @@ const REQUEST_TIMEOUT_MS = 10_000;
 
 type SmsDriver = 'alphasms' | 'console';
 
-function getDriver(): SmsDriver {
+export function getSmsDriver(): SmsDriver {
   const configured = process.env.SMS_DRIVER;
   if (configured === 'alphasms' || configured === 'console') return configured;
   return process.env.NODE_ENV === 'production' ? 'alphasms' : 'console';
@@ -40,7 +40,7 @@ async function sendViaAlphaSms(to: string, message: string): Promise<void> {
  * @throws якщо шлюз недоступний/відхилив повідомлення
  */
 export async function sendSms(to: string, message: string): Promise<void> {
-  if (getDriver() === 'console') {
+  if (getSmsDriver() === 'console') {
     console.log(`[SMS:console] -> +${to}: ${message}`);
     return;
   }

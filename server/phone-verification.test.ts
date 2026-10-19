@@ -14,12 +14,14 @@ vi.mock('@/server/prisma', () => ({
   },
 }));
 
-vi.mock('@/server/sms', () => ({ sendSms: vi.fn() }));
+vi.mock('@/server/sms', () => ({ sendSms: vi.fn(), getSmsDriver: vi.fn(() => 'alphasms') }));
 
 import { prisma } from '@/server/prisma';
-import { sendSms } from '@/server/sms';
+import { getSmsDriver, sendSms } from '@/server/sms';
 import {
   MAX_ATTEMPTS,
+  SEND_LIMITS,
+  getSendLimits,
   RESEND_COOLDOWN_MS,
   claimVerification,
   startVerification,
@@ -28,6 +30,7 @@ import {
 
 const db = vi.mocked(prisma, true).phoneVerification;
 const mockedSendSms = vi.mocked(sendSms);
+const mockedGetSmsDriver = vi.mocked(getSmsDriver);
 
 const PHONE = '380991234567';
 
@@ -39,6 +42,7 @@ beforeEach(() => {
   db.create.mockResolvedValue({} as never);
   db.updateMany.mockResolvedValue({ count: 0 });
   mockedSendSms.mockResolvedValue(undefined);
+  mockedGetSmsDriver.mockReturnValue('alphasms'); // за замовчуванням — реальні (тісні) ліміти
 });
 
 const start = () =>
@@ -86,17 +90,59 @@ describe('startVerification', () => {
   });
 
   it('rejects when the per-phone hourly limit is reached', async () => {
-    db.count.mockResolvedValueOnce(5); // sent to this phone in the last hour
+    db.count.mockResolvedValueOnce(SEND_LIMITS.real.perPhonePerHour); // sent to this phone in the last hour
 
     await expect(start()).rejects.toMatchObject({ status: 429 });
     expect(mockedSendSms).not.toHaveBeenCalled();
   });
 
   it('rejects when the per-IP hourly limit is reached', async () => {
-    db.count.mockResolvedValueOnce(0).mockResolvedValueOnce(20);
+    db.count.mockResolvedValueOnce(0).mockResolvedValueOnce(SEND_LIMITS.real.perIpPerHour);
 
     await expect(start()).rejects.toMatchObject({ status: 429 });
     expect(mockedSendSms).not.toHaveBeenCalled();
+  });
+
+  it('still sends when the phone and the IP are one below their hourly limits', async () => {
+    db.count
+      .mockResolvedValueOnce(SEND_LIMITS.real.perPhonePerHour - 1)
+      .mockResolvedValueOnce(SEND_LIMITS.real.perIpPerHour - 1);
+
+    await expect(start()).resolves.toMatchObject({ id: expect.any(String) });
+    expect(mockedSendSms).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the agreed real limits: 2 SMS per hour per phone, 5 per hour per IP', () => {
+    expect(SEND_LIMITS.real).toEqual({ perPhonePerHour: 2, perIpPerHour: 5 });
+    expect(getSendLimits()).toEqual(SEND_LIMITS.real);
+  });
+
+  it('with the console driver (local dev) the looser dev limits apply', async () => {
+    mockedGetSmsDriver.mockReturnValue('console');
+    expect(getSendLimits()).toEqual({ perPhonePerHour: 5, perIpPerHour: 20 });
+
+    // 2 SMS to this phone already — blocked with real limits, fine with the dev ones
+    db.count.mockResolvedValueOnce(SEND_LIMITS.real.perPhonePerHour);
+    await expect(start()).resolves.toMatchObject({ id: expect.any(String) });
+  });
+
+  it('the dev limits still cap at 5 per phone and 20 per IP', async () => {
+    mockedGetSmsDriver.mockReturnValue('console');
+
+    db.count.mockResolvedValueOnce(SEND_LIMITS.dev.perPhonePerHour);
+    await expect(start()).rejects.toMatchObject({ status: 429 });
+
+    db.count.mockResolvedValueOnce(0).mockResolvedValueOnce(SEND_LIMITS.dev.perIpPerHour);
+    await expect(start()).rejects.toMatchObject({ status: 429 });
+  });
+
+  it('never loosens the limits in production, even if SMS_DRIVER=console is set there', () => {
+    mockedGetSmsDriver.mockReturnValue('console');
+    vi.stubEnv('NODE_ENV', 'production');
+
+    expect(getSendLimits()).toEqual(SEND_LIMITS.real);
+
+    vi.unstubAllEnvs();
   });
 
   it('removes the record and returns 502 when the SMS gateway fails', async () => {

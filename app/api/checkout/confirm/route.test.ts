@@ -6,14 +6,17 @@ vi.mock('@/server/prisma', () => ({
   prisma: { $transaction: vi.fn((fn: (t: unknown) => unknown) => fn(tx)) },
 }));
 vi.mock('@/server/get-user-session', () => ({ getUserSession: vi.fn() }));
-vi.mock('@/server/createOrder', () => ({ createOrderFromInput: vi.fn() }));
+vi.mock('@/server/createOrder', () => ({
+  createOrderFromInput: vi.fn(),
+  findUserIdByVerifiedPhone: vi.fn(),
+}));
 vi.mock('@/server/phone-verification', () => ({
   verifyCode: vi.fn(),
   claimVerification: vi.fn(),
 }));
 
 import { getUserSession } from '@/server/get-user-session';
-import { createOrderFromInput } from '@/server/createOrder';
+import { createOrderFromInput, findUserIdByVerifiedPhone } from '@/server/createOrder';
 import { claimVerification, verifyCode } from '@/server/phone-verification';
 import { HttpError } from '@/server/withErrorHandling';
 import { POST } from './route';
@@ -22,6 +25,7 @@ const mockedGetUserSession = vi.mocked(getUserSession);
 const mockedVerify = vi.mocked(verifyCode);
 const mockedClaim = vi.mocked(claimVerification);
 const mockedCreateOrder = vi.mocked(createOrderFromInput);
+const mockedFindUserByPhone = vi.mocked(findUserIdByVerifiedPhone);
 
 const VERIFICATION_ID = '3f0c9c0e-6f4b-4b1e-9d8a-1b2c3d4e5f60';
 
@@ -45,6 +49,7 @@ beforeEach(() => {
   mockedVerify.mockResolvedValue({ id: VERIFICATION_ID, payload: draft } as never);
   mockedClaim.mockResolvedValue(undefined);
   mockedCreateOrder.mockResolvedValue({ id: 42 } as never);
+  mockedFindUserByPhone.mockResolvedValue(undefined);
 });
 
 describe('POST /api/checkout/confirm', () => {
@@ -100,5 +105,37 @@ describe('POST /api/checkout/confirm', () => {
 
     expect(res.status).toBe(400);
     expect(mockedVerify).not.toHaveBeenCalled();
+  });
+
+  it('attributes a guest order to the account whose verified phone was just confirmed', async () => {
+    mockedFindUserByPhone.mockResolvedValue(21);
+
+    await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(mockedFindUserByPhone).toHaveBeenCalledWith('380991234567');
+    expect(mockedCreateOrder).toHaveBeenCalledWith(expect.anything(), 21, tx);
+  });
+
+  it('keeps the order a guest order when no account owns that phone', async () => {
+    await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(mockedCreateOrder).toHaveBeenCalledWith(expect.anything(), undefined, tx);
+  });
+
+  it('prefers the logged-in session user over the phone owner', async () => {
+    mockedGetUserSession.mockResolvedValue({ id: '7' } as never);
+    mockedFindUserByPhone.mockResolvedValue(21);
+
+    await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(mockedCreateOrder).toHaveBeenCalledWith(expect.anything(), 7, tx);
+  });
+
+  it('returns 429 when the daily order limit is hit at confirmation', async () => {
+    mockedCreateOrder.mockRejectedValue(new HttpError(429, 'Досягнуто ліміт замовлень'));
+
+    const res = await POST(request({ verificationId: VERIFICATION_ID, code: '123456' }));
+
+    expect(res.status).toBe(429);
   });
 });

@@ -5,6 +5,7 @@ vi.mock('@/server/prisma', () => ({
 }));
 vi.mock('@/server/get-user-session', () => ({ getUserSession: vi.fn() }));
 vi.mock('@/server/createOrder', () => ({
+  assertOrderLimit: vi.fn(),
   priceOrder: vi.fn(),
   createOrderFromInput: vi.fn(),
 }));
@@ -16,7 +17,7 @@ vi.mock('@/server/phone-verification', async (importOriginal) => ({
 
 import { prisma } from '@/server/prisma';
 import { getUserSession } from '@/server/get-user-session';
-import { createOrderFromInput, priceOrder } from '@/server/createOrder';
+import { assertOrderLimit, createOrderFromInput, priceOrder } from '@/server/createOrder';
 import { startVerification } from '@/server/phone-verification';
 import { HttpError } from '@/server/withErrorHandling';
 import { POST } from './route';
@@ -26,6 +27,7 @@ const mockedGetUserSession = vi.mocked(getUserSession);
 const mockedStart = vi.mocked(startVerification);
 const mockedCreateOrder = vi.mocked(createOrderFromInput);
 const mockedPriceOrder = vi.mocked(priceOrder);
+const mockedAssertOrderLimit = vi.mocked(assertOrderLimit);
 
 const validBody = {
   fullName: 'Test User',
@@ -45,6 +47,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockedGetUserSession.mockResolvedValue(null);
   mockedPriceOrder.mockResolvedValue(undefined as never);
+  mockedAssertOrderLimit.mockResolvedValue(undefined);
   mockedStart.mockResolvedValue({
     id: 'v1',
     expiresAt: new Date('2026-01-01T00:05:00Z'),
@@ -110,6 +113,31 @@ describe('POST /api/checkout/send-code', () => {
     const res = await POST(request(validBody));
 
     expect((await res.json()).status).toBe('code_sent');
+    expect(mockedCreateOrder).not.toHaveBeenCalled();
+  });
+
+  it('rejects with 429 and sends no SMS when the phone reached the daily order limit', async () => {
+    mockedAssertOrderLimit.mockRejectedValue(new HttpError(429, 'Досягнуто ліміт замовлень'));
+
+    const res = await POST(request(validBody));
+
+    expect(res.status).toBe(429);
+    expect(mockedAssertOrderLimit).toHaveBeenCalledWith('380991234567');
+    expect(mockedStart).not.toHaveBeenCalled();
+    expect(mockedCreateOrder).not.toHaveBeenCalled();
+  });
+
+  it('applies the daily limit to the no-SMS path of a verified logged-in user too', async () => {
+    mockedGetUserSession.mockResolvedValue({ id: '7' } as never);
+    mockedPrisma.user.findUnique.mockResolvedValue({
+      phone: '380991234567',
+      phoneVerified: new Date(),
+    } as never);
+    mockedAssertOrderLimit.mockRejectedValue(new HttpError(429, 'Досягнуто ліміт замовлень'));
+
+    const res = await POST(request(validBody));
+
+    expect(res.status).toBe(429);
     expect(mockedCreateOrder).not.toHaveBeenCalled();
   });
 });

@@ -3,7 +3,7 @@ import { prisma } from '@/server/prisma';
 import { withErrorHandling } from '@/server/withErrorHandling';
 import { getUserSession } from '@/server/get-user-session';
 import { createOrderSchema } from '@/server/validation/order';
-import { createOrderFromInput } from '@/server/createOrder';
+import { createOrderFromInput, findUserIdByVerifiedPhone } from '@/server/createOrder';
 import { claimVerification, verifyCode } from '@/server/phone-verification';
 import { confirmVerificationSchema } from '@/server/validation/verification';
 
@@ -15,7 +15,9 @@ async function confirm(req: Request) {
   const data = createOrderSchema.parse(verification.payload);
 
   const session = await getUserSession();
-  const userId = session?.id ? Number(session.id) : undefined;
+  // Залогінений — замовлення його. Гість — але код з SMS щойно підтвердив номер, що належить
+  // зареєстрованому акаунту: тоді замовлення теж потрапляє в цей акаунт.
+  const userId = session?.id ? Number(session.id) : await findUserIdByVerifiedPhone(data.phone);
 
   // Витрата коду і створення замовлення — в одній транзакції: або обоє, або нічого.
   const order = await prisma.$transaction(async (tx) => {
