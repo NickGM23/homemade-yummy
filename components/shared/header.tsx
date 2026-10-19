@@ -64,6 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, categories }
 
   return (
     <header
+      id="site-header"
       className={cn(
         'border-b border-gray-100 transition-all duration-300',
         variant === 'fixed'
