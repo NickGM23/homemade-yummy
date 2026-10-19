@@ -2,6 +2,7 @@ import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'crypto';
 import { Prisma, VerificationPurpose } from '@prisma/client';
 import { prisma } from '@/server/prisma';
 import { sendSms } from '@/server/sms';
+import { maskPhone } from '@/server/phone';
 import { HttpError } from '@/server/withErrorHandling';
 
 export const CODE_TTL_MS = 5 * 60_000;
@@ -99,6 +100,17 @@ export async function startVerification({
   });
 
   return { id, expiresAt, resendAvailableAt: new Date(now + RESEND_COOLDOWN_MS) };
+}
+
+/** Тіло відповіді API «код надіслано» — однакове для замовлення та реєстрації. */
+export function codeSentResponse(verification: StartedVerification, phone: string) {
+  return {
+    status: 'code_sent' as const,
+    verificationId: verification.id,
+    maskedPhone: maskPhone(phone),
+    expiresAt: verification.expiresAt,
+    resendAvailableAt: verification.resendAvailableAt,
+  };
 }
 
 /**

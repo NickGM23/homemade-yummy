@@ -2,7 +2,6 @@
 
 import { prisma } from '@/server/prisma';
 
-import { Prisma } from '@prisma/client';
 import { hashSync } from 'bcrypt';
 import { getUserSession } from '@/server/get-user-session';
 import { updateUserInfoSchema } from '@/server/validation/user';
@@ -15,7 +14,13 @@ type ActionResult =
       fieldErrors?: Record<string, string>;
     };
 
-export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<ActionResult> {
+interface UpdateUserInfoBody {
+  email?: string | null;
+  fullName: string;
+  password?: string;
+}
+
+export async function updateUserInfo(body: UpdateUserInfoBody): Promise<ActionResult> {
   try {
     const currentUser = await getUserSession();
 
@@ -53,10 +58,14 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<Acti
     }
 
     const { email, fullName, password } = parsed.data;
+    // Порожній email = «не вказано» (email — лише контакт, входити за ним не можна).
+    const newEmail = email ?? null;
 
-    if (email !== findUser.email) {
+    const emailChanged = newEmail !== findUser.email;
+
+    if (emailChanged && newEmail !== null) {
       const existingUser = await prisma.user.findUnique({
-        where: { email },
+        where: { email: newEmail },
       });
 
       if (existingUser) {
@@ -73,7 +82,7 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<Acti
       where: { id: userId },
       data: {
         fullName,
-        ...(email !== findUser.email && { email }),
+        ...(emailChanged && { email: newEmail }),
         ...(password && {
           password: hashSync(password, 10),
         }),
@@ -88,52 +97,5 @@ export async function updateUserInfo(body: Prisma.UserUpdateInput): Promise<Acti
       success: false,
       error: 'Помилка сервера. Спробуйте пізніше',
     };
-  }
-}
-
-export async function registerUser(body: Prisma.UserCreateInput) {
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: body.email,
-      },
-    });
-
-    if (user) {
-      if (!user.verified) {
-        throw new Error('Почта не подтверждена');
-      }
-
-      throw new Error('Пользователь уже существует');
-    }
-
-    //const createdUser = await prisma.user.create({
-    //; data: {
-    //   fullName: body.fullName,
-    //   email: body.email,
-    //   password: hashSync(body.password, 10),
-    //   provider: 'credentials',
-    // },
-    //});
-
-    //const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-    //await prisma.verificationCode.create({
-    //  data: {
-    //    code,
-    //    userId: createdUser.id,
-    //  },
-    //});
-
-    //await sendEmail(
-    //  createdUser.email,
-    //  'Next Pizza / 📝 Подтверждение регистрации',
-    //  VerificationUserTemplate({
-    //    code,
-    //  }),
-    //);
-  } catch (err) {
-    console.log('Error [CREATE_USER]', err);
-    throw err;
   }
 }

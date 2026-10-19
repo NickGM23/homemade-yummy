@@ -8,7 +8,9 @@ declare module 'next-auth' {
       id: string;
       role: UserRole;
       fullName: string;
-      email: string;
+      // Відсутній у користувачів, що зареєструвались по телефону без email.
+      email: string | null;
+      phone: string | null;
       image?: string;
     };
   }
@@ -23,7 +25,7 @@ declare module 'next-auth' {
 declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
     id: string;
-    email: string;
+    phone?: string | null;
     fullName: string;
     role: UserRole;
   }

@@ -8,7 +8,8 @@ vi.mock('@/server/createOrder', () => ({
   priceOrder: vi.fn(),
   createOrderFromInput: vi.fn(),
 }));
-vi.mock('@/server/phone-verification', () => ({
+vi.mock('@/server/phone-verification', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/server/phone-verification')>()),
   startVerification: vi.fn(),
   getClientIp: vi.fn(() => '1.2.3.4'),
 }));

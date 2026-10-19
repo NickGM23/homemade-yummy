@@ -1,6 +1,6 @@
-import { isAxiosError } from 'axios';
 import { axiosInstance } from './instance';
 import { ApiRoutes } from './constants';
+import type { CodeSentResponse } from './verification';
 
 /** Дані замовлення, які надсилає клієнт. Ціни й суми сервер рахує сам. */
 export interface CheckoutOrderDraft {
@@ -11,14 +11,6 @@ export interface CheckoutOrderDraft {
   address?: string;
   comment?: string;
   items: { productId: number; quantity: number }[];
-}
-
-export interface CodeSentResponse {
-  status: 'code_sent';
-  verificationId: string;
-  maskedPhone: string;
-  expiresAt: string;
-  resendAvailableAt: string;
 }
 
 export interface OrderCreatedResponse {
@@ -56,18 +48,4 @@ export const confirmOrder = async (
     code,
   });
   return res.data;
-};
-
-/** Текст помилки з відповіді API (`{ message }`) або запасний, якщо сервер недоступний. */
-export const getCheckoutErrorMessage = (
-  error: unknown,
-  fallback = 'Щось пішло не так. Спробуйте ще раз',
-): string => {
-  if (isAxiosError(error) && typeof error.response?.data?.message === 'string') {
-    // Для помилок валідації сервер повертає технічне 'Validation error' — показуємо запасний текст.
-    return error.response.data.message === 'Validation error'
-      ? 'Перевірте правильність введених даних'
-      : error.response.data.message;
-  }
-  return fallback;
 };

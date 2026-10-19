@@ -106,4 +106,52 @@ describe('updateUserInfo', () => {
     expect(call.data.password).toBeDefined();
     expect(call.data.password).not.toBe('newpassword123');
   });
+
+  describe('optional email', () => {
+    const phoneUser = { ...existingUser, email: null, phone: '380991234567' };
+
+    it('lets a phone user save the profile without an email', async () => {
+      mockedGetUserSession.mockResolvedValue({ id: '1' } as never);
+      mockedPrisma.user.findUnique.mockResolvedValue(phoneUser as never);
+
+      const result = await updateUserInfo({ email: '', fullName: 'New Name' });
+
+      expect(result).toEqual({ success: true });
+      expect(mockedPrisma.user.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { fullName: 'New Name' }, // email лишився null — не чіпаємо
+      });
+    });
+
+    it('lets a phone user add an email', async () => {
+      mockedGetUserSession.mockResolvedValue({ id: '1' } as never);
+      mockedPrisma.user.findUnique
+        .mockResolvedValueOnce(phoneUser as never) // by id
+        .mockResolvedValueOnce(null); // email is free
+
+      const result = await updateUserInfo({ email: 'new@example.com', fullName: 'New Name' });
+
+      expect(result).toEqual({ success: true });
+      expect(mockedPrisma.user.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { fullName: 'New Name', email: 'new@example.com' },
+      });
+    });
+
+    it('clears the email (null) when a user with a phone empties the field', async () => {
+      mockedGetUserSession.mockResolvedValue({ id: '1' } as never);
+      mockedPrisma.user.findUnique.mockResolvedValue({
+        ...existingUser,
+        phone: '380991234567',
+      } as never);
+
+      const result = await updateUserInfo({ email: null, fullName: 'New Name' });
+
+      expect(result).toEqual({ success: true });
+      expect(mockedPrisma.user.update).toHaveBeenCalledWith({
+        where: { id: 1 },
+        data: { fullName: 'New Name', email: null },
+      });
+    });
+  });
 });

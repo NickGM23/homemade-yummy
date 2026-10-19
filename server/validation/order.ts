@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { normalizeUaPhone } from '@/server/phone';
+import { uaPhoneSchema } from '@/server/validation/phone';
 
 const orderItemSchema = z.object({
   productId: z.number().int().positive(),
@@ -22,17 +22,7 @@ export const createOrderSchema = z
       .max(100, { message: 'Email занадто довгий' })
       .optional(),
     // Нормалізується до 380XXXXXXXXX: саме на цей номер піде SMS з кодом підтвердження.
-    phone: z
-      .string()
-      .trim()
-      .transform((value, ctx) => {
-        const phone = normalizeUaPhone(value);
-        if (!phone) {
-          ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Введіть коректний номер телефону' });
-          return z.NEVER;
-        }
-        return phone;
-      }),
+    phone: uaPhoneSchema,
     deliveryType: z.enum(['pickup', 'address'], {
       required_error: 'Оберіть спосіб доставки',
     }),

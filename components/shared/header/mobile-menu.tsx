@@ -114,7 +114,9 @@ export const MobileMenu: React.FC<Props> = ({
             <div className="flex h-full items-center justify-center pt-2">
               <div className="w-full rounded-2xl bg-gray-50 p-4">
                 <p className="font-bold">{session.user?.fullName}</p>
-                <p>{session.user?.email}</p>
+                <p>
+                  {session.user?.email ?? (session.user?.phone ? `+${session.user.phone}` : '')}
+                </p>
               </div>
               <div className="m-2">
                 <ProfileButton

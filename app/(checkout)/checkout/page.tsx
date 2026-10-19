@@ -18,7 +18,9 @@ import { useCartProducts } from '@/hooks/useCartProducts';
 import { useSession } from 'next-auth/react';
 import { Api } from '@/services/api-client';
 import { checkoutFormSchema, CheckoutFormOutput } from '@/components/constants';
-import { CodeSentResponse, getCheckoutErrorMessage } from '@/services/checkout';
+import { formatPhoneForMask } from '@/components/constants/phone-mask';
+import type { CodeSentResponse } from '@/services/verification';
+import { getApiErrorMessage } from '@/services/errors';
 import { Container } from '@/components/shared/container';
 import { Title } from '@/components/shared/title';
 import { useZodForm } from '@/hooks/useZodForm';
@@ -50,7 +52,15 @@ export default function CheckoutPage() {
     (async () => {
       const data = await Api.auth.getMe();
       form.setValue('fullName', data.fullName);
-      form.setValue('email', data.email);
+      // email/телефон можуть бути відсутні (реєстрація по телефону / вхід через провайдера).
+      form.setValue('email', data.email ?? '');
+      if (data.phone) {
+        // Поле телефону — з маскою, тож підставляємо вже у її форматі. Збіг із підтвердженим
+        // номером акаунта дозволяє оформити замовлення без SMS.
+        form.setValue('phone', formatPhoneForMask(data.phone));
+      }
+      // setValue сам не перераховує isValid — без цього кнопка лишилась би неактивною.
+      form.trigger();
     })();
   }, [session]);
 
@@ -81,7 +91,7 @@ export default function CheckoutPage() {
       }
     } catch (err) {
       console.error(err);
-      toast.error(getCheckoutErrorMessage(err, 'Помилка при створенні замовлення'));
+      toast.error(getApiErrorMessage(err, 'Помилка при створенні замовлення'));
     }
   };
 
@@ -92,7 +102,7 @@ export default function CheckoutPage() {
     try {
       await Api.checkout.confirmOrder(verification.verificationId, code);
     } catch (err) {
-      throw new Error(getCheckoutErrorMessage(err, 'Не вдалося підтвердити код'));
+      throw new Error(getApiErrorMessage(err, 'Не вдалося підтвердити код'));
     }
     finishOrder();
   };
@@ -103,7 +113,7 @@ export default function CheckoutPage() {
     try {
       setVerification(await Api.checkout.resendOrderCode(verification.verificationId));
     } catch (err) {
-      throw new Error(getCheckoutErrorMessage(err, 'Не вдалося надіслати код'));
+      throw new Error(getApiErrorMessage(err, 'Не вдалося надіслати код'));
     }
   };
 
@@ -131,10 +141,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="order-1 w-full lg:order-2 lg:w-[450px]">
-              <CheckoutSidebar
-                totalCartAmount={totalPrice}
-                countCartItems={products.length}
-              />
+              <CheckoutSidebar totalCartAmount={totalPrice} countCartItems={products.length} />
             </div>
           </div>
         </form>

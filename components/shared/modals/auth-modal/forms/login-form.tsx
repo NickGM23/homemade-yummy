@@ -1,31 +1,33 @@
 'use client';
 
 import React from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
 import { TFormLoginValues, formLoginSchema } from './schemas';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import toast from 'react-hot-toast';
 import { Title } from '../../../title';
-import { FormInput } from '@/components/shared/form/form-input';
+import { FormInput, FormInputWithMask } from '@/components/shared/form';
 import { Button } from '@/components/ui/button';
+import { useZodForm } from '@/hooks/useZodForm';
 
 interface Props {
   onClose?: VoidFunction;
 }
 
 export const LoginForm: React.FC<Props> = ({ onClose }) => {
-  const form = useForm<TFormLoginValues>({
-    resolver: zodResolver(formLoginSchema),
+  const form = useZodForm(formLoginSchema, {
+    mode: 'onChange',
     defaultValues: {
-      email: '',
+      phone: '',
       password: '',
     },
   });
   const onSubmit = async (data: TFormLoginValues) => {
     try {
+      // `data.phone` — вже самі цифри (380XXXXXXXXX).
       const resp = await signIn('credentials', {
-        ...data,
+        phone: data.phone,
+        password: data.password,
         redirect: false,
       });
 
@@ -48,17 +50,35 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
 
   return (
     <FormProvider {...form}>
-      <form className="flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="flex flex-col gap-5"
+        onSubmit={form.handleSubmitZod(onSubmit)}
+        autoComplete="off"
+      >
         <div className="flex items-center justify-between">
           <div className="mr-2">
             <Title text="Вхід в акаунт" size="md" className="font-bold" />
-            <p className="text-gray-400">Введіть свою пошту, щоб увійти в свій акаунт</p>
+            <p className="text-gray-400">Введіть номер телефону, щоб увійти в свій акаунт</p>
           </div>
           {/* <img src="/assets/images/phone-icon.png" alt="phone-icon" width={60} height={60} /> */}
         </div>
 
-        <FormInput name="email" label="E-Mail" required />
-        <FormInput name="password" label="Пароль" type="password" required />
+        <FormInputWithMask
+          name="phone"
+          label="Телефон"
+          required
+          aria-label="Телефон"
+          autoComplete="off"
+        />
+        <FormInput
+          name="password"
+          label="Пароль"
+          type="password"
+          required
+          // Chrome ігнорує "off" для паролів, але шанує "new-password": так він не пропонує
+          // збережені паролі й не показує вікно «Керувати паролями» під полями входу.
+          autoComplete="new-password"
+        />
 
         <Button loading={form.formState.isSubmitting} className="h-12 text-base" type="submit">
           Увійти

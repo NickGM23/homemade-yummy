@@ -11,8 +11,9 @@ datasource db {
 model User {
     id Int @id @default(autoincrement())
 
-    fullName String @unique
-    email    String @unique
+    // Ім'я не унікальне: ідентифікатори користувача — телефон та (необов'язковий) email.
+    fullName String
+    email    String? @unique
     password String
 
     // Телефон у форматі 380XXXXXXXXX; заповнюється при реєстрації по SMS (див. PhoneVerification).

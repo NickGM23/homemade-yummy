@@ -5,6 +5,7 @@ import { IMaskInput } from 'react-imask';
 import { ClearButton } from '../clear-button';
 import { ErrorText } from '../error-text';
 import { RequiredSymbol } from '../required-symbol';
+import { PHONE_MASK } from '@/components/constants/phone-mask';
 import React from 'react';
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -52,7 +53,7 @@ export const FormInputWithMask: React.FC<Props> = ({
           render={({ field }) => (
             <IMaskInput
               {...field}
-              mask="+38(000)000-00-00"
+              mask={PHONE_MASK}
               lazy={false}
               overwrite={true}
               unmask={false}

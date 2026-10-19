@@ -4,8 +4,7 @@ import { withErrorHandling } from '@/server/withErrorHandling';
 import { getUserSession } from '@/server/get-user-session';
 import { createOrderSchema } from '@/server/validation/order';
 import { createOrderFromInput, priceOrder } from '@/server/createOrder';
-import { getClientIp, startVerification } from '@/server/phone-verification';
-import { maskPhone } from '@/server/phone';
+import { codeSentResponse, getClientIp, startVerification } from '@/server/phone-verification';
 
 /**
  * Початок оформлення: перевіряє замовлення й надсилає SMS-код на вказаний номер.
@@ -40,13 +39,7 @@ async function sendCode(req: Request) {
     ip: getClientIp(req),
   });
 
-  return NextResponse.json({
-    status: 'code_sent',
-    verificationId: verification.id,
-    maskedPhone: maskPhone(data.phone),
-    expiresAt: verification.expiresAt,
-    resendAvailableAt: verification.resendAvailableAt,
-  });
+  return NextResponse.json(codeSentResponse(verification, data.phone));
 }
 
 export const { POST } = withErrorHandling({ POST: sendCode });

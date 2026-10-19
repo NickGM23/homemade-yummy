@@ -20,6 +20,7 @@ async function getUser() {
     select: {
       fullName: true,
       email: true,
+      phone: true,
       password: false,
     },
   });

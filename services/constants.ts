@@ -8,4 +8,7 @@ export enum ApiRoutes {
   CHECKOUT_SEND_CODE = 'checkout/send-code',
   CHECKOUT_RESEND_CODE = 'checkout/resend-code',
   CHECKOUT_CONFIRM = 'checkout/confirm',
+  REGISTER_START = 'auth/register/start',
+  REGISTER_CONFIRM = 'auth/register/confirm',
+  REGISTER_RESEND_CODE = 'auth/register/resend-code',
 }

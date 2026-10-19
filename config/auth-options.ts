@@ -4,8 +4,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare, hashSync } from 'bcrypt';
 import { prisma } from '@/server/prisma';
 import type { AuthOptions } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 import { UserRole } from '@/@types/user';
+import { normalizeUaPhone } from '@/server/phone';
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -23,21 +23,21 @@ export const authOptions: AuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'text' },
+        phone: { label: 'Phone', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials) {
+        if (!credentials?.phone || !credentials.password) {
           return null;
         }
 
-        const values = {
-          email: credentials.email,
-        };
+        // Вхід паролем — лише за телефоном (будь-який запис: 099…, +380…).
+        const phone = normalizeUaPhone(credentials.phone);
+        if (!phone) {
+          return null;
+        }
 
-        const findUser = await prisma.user.findFirst({
-          where: values,
-        });
+        const findUser = await prisma.user.findUnique({ where: { phone } });
 
         if (!findUser) {
           return null;
@@ -124,21 +124,26 @@ export const authOptions: AuthOptions = {
         return false;
       }
     },
-    async jwt({ token }: { token: JWT }) {
-      if (!token.email) {
-        return token;
-      }
+    async jwt({ token, user, account }) {
+      // Після першого входу в токені вже є id нашого користувача — далі шукаємо тільки за ним
+      // (email може бути відсутній: користувач, що зареєструвався по телефону).
+      // На самому вході id беремо з `user` (credentials) або шукаємо за email (OAuth: там
+      // `user.id` — це id провайдера, а не наш).
+      let findUser = null;
 
-      const findUser = await prisma.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      });
+      if (token.id) {
+        findUser = await prisma.user.findUnique({ where: { id: Number(token.id) } });
+      } else if (account?.provider === 'credentials' && user?.id) {
+        findUser = await prisma.user.findUnique({ where: { id: Number(user.id) } });
+      } else if (token.email) {
+        findUser = await prisma.user.findUnique({ where: { email: token.email } });
+      }
 
       if (findUser) {
         const role: UserRole = findUser.isAdmin ? 'admin' : 'user';
         token.id = String(findUser.id);
         token.email = findUser.email;
+        token.phone = findUser.phone;
         token.fullName = findUser.fullName;
         token.role = role;
       }
@@ -150,7 +155,8 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.fullName = token.fullName;
-        session.user.email = String(token.email);
+        session.user.email = token.email ?? null;
+        session.user.phone = token.phone ?? null;
       }
 
       return session;

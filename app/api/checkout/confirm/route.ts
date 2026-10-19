@@ -1,23 +1,15 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { prisma } from '@/server/prisma';
 import { withErrorHandling } from '@/server/withErrorHandling';
 import { getUserSession } from '@/server/get-user-session';
 import { createOrderSchema } from '@/server/validation/order';
 import { createOrderFromInput } from '@/server/createOrder';
 import { claimVerification, verifyCode } from '@/server/phone-verification';
-
-const confirmSchema = z.object({
-  verificationId: z.string().uuid(),
-  code: z
-    .string()
-    .trim()
-    .regex(/^\d{6}$/, { message: 'Введіть 6-значний код' }),
-});
+import { confirmVerificationSchema } from '@/server/validation/verification';
 
 /** Перевіряє SMS-код і, якщо він вірний, створює замовлення зі збереженої чернетки. */
 async function confirm(req: Request) {
-  const { verificationId, code } = confirmSchema.parse(await req.json());
+  const { verificationId, code } = confirmVerificationSchema.parse(await req.json());
 
   const verification = await verifyCode({ id: verificationId, code, purpose: 'ORDER' });
   const data = createOrderSchema.parse(verification.payload);

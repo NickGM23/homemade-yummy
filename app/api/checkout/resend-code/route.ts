@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { withErrorHandling } from '@/server/withErrorHandling';
 import { createOrderSchema } from '@/server/validation/order';
 import {
+  codeSentResponse,
   getClientIp,
   getVerificationForResend,
   startVerification,
 } from '@/server/phone-verification';
-import { maskPhone } from '@/server/phone';
-
-const resendSchema = z.object({ verificationId: z.string().uuid() });
+import { resendVerificationSchema } from '@/server/validation/verification';
 
 /** Повторно надсилає код для тієї ж чернетки замовлення (з таймером і лімітами як при першій відправці). */
 async function resendCode(req: Request) {
-  const { verificationId } = resendSchema.parse(await req.json());
+  const { verificationId } = resendVerificationSchema.parse(await req.json());
 
   const previous = await getVerificationForResend(verificationId, 'ORDER');
   const data = createOrderSchema.parse(previous.payload);
@@ -25,13 +23,7 @@ async function resendCode(req: Request) {
     ip: getClientIp(req),
   });
 
-  return NextResponse.json({
-    status: 'code_sent',
-    verificationId: verification.id,
-    maskedPhone: maskPhone(data.phone),
-    expiresAt: verification.expiresAt,
-    resendAvailableAt: verification.resendAvailableAt,
-  });
+  return NextResponse.json(codeSentResponse(verification, data.phone));
 }
 
 export const { POST } = withErrorHandling({ POST: resendCode });
