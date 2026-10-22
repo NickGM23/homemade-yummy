@@ -118,7 +118,7 @@ export const RegisterForm: React.FC<Props> = ({ onClose }) => {
   return (
     <FormProvider {...form}>
       <form className="flex flex-col gap-5" onSubmit={form.handleSubmitZod(onSubmit)}>
-        <div>
+        <div className="sticky top-0 z-10 bg-white pb-1 pr-8">
           <Title text="Реєстрація" size="md" className="font-bold" />
           <p className="text-gray-400">Ми надішлемо SMS з кодом на ваш номер телефону</p>
         </div>
@@ -146,9 +146,15 @@ export const RegisterForm: React.FC<Props> = ({ onClose }) => {
           autoComplete="new-password"
         />
 
-        <Button loading={form.formState.isSubmitting} className="h-12 text-base" type="submit">
-          Отримати код
-        </Button>
+        <div className="sticky bottom-0 z-10 bg-white pt-1">
+          <Button
+            loading={form.formState.isSubmitting}
+            className="h-12 w-full text-base"
+            type="submit"
+          >
+            Отримати код
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

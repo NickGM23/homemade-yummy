@@ -37,7 +37,7 @@ export const MobileMenu: React.FC<Props> = ({
   return (
     <div
       style={style}
-      className="fixed inset-0 z-30 hidden w-full overflow-auto bg-gray-100/90 p-6 transition-all duration-300 ease-in-out sm:max-w-[480px]"
+      className="fixed left-0 top-0 z-30 hidden max-h-dvh w-full overflow-auto bg-gray-100/90 p-6 transition-all duration-300 ease-in-out sm:max-w-[480px]"
     >
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between gap-2 border-b border-gray-400 py-4">

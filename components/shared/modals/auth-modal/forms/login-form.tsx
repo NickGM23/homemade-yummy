@@ -55,7 +55,7 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
         onSubmit={form.handleSubmitZod(onSubmit)}
         autoComplete="off"
       >
-        <div className="flex items-center justify-between">
+        <div className="sticky top-0 z-10 flex items-center justify-between bg-white pb-1 pr-8">
           <div className="mr-2">
             <Title text="Вхід в акаунт" size="md" className="font-bold" />
             <p className="text-gray-400">Введіть номер телефону, щоб увійти в свій акаунт</p>
@@ -80,9 +80,15 @@ export const LoginForm: React.FC<Props> = ({ onClose }) => {
           autoComplete="new-password"
         />
 
-        <Button loading={form.formState.isSubmitting} className="h-12 text-base" type="submit">
-          Увійти
-        </Button>
+        <div className="sticky bottom-0 z-10 bg-white pt-1">
+          <Button
+            loading={form.formState.isSubmitting}
+            className="h-12 w-full text-base"
+            type="submit"
+          >
+            Увійти
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

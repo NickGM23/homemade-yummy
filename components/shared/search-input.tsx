@@ -56,13 +56,10 @@ export const SearchInput: React.FC<Props> = ({ className, onAfterSelectItem }) =
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        {products.length > 0 && (
-          <div
-            className={cn(
-              'invisible absolute top-14 z-30 w-full rounded-xl bg-white py-2 opacity-0 shadow-md transition-all duration-200',
-              focused && 'visible top-12 opacity-100',
-            )}
-          >
+        {/* Рендеримо лише у фокусі: невидимий (opacity-0), але абсолютно позиційований список
+            усіх товарів розтягував область прокрутки бургер-меню на тисячі пікселів. */}
+        {focused && products.length > 0 && (
+          <div className="absolute top-12 z-30 w-full rounded-xl bg-white py-2 shadow-md">
             {products.map((product) => (
               <Link
                 key={product.id}
