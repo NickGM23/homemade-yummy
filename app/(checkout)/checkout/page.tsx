@@ -46,23 +46,39 @@ export default function CheckoutPage() {
   // Дані SMS-підтвердження; поки `null` — вікно з вводом коду закрите.
   const [verification, setVerification] = React.useState<CodeSentResponse | null>(null);
 
+  // `form` — новий об'єкт на кожен рендер, тому в залежності беремо лише стабільні методи
+  // react-hook-form (інакше ефект і запит getMe крутилися б у циклі).
+  const { setValue, trigger } = form;
+
+  // Залежимо від id користувача (примітив), а не від об'єкта `session`: NextAuth перезапитує сесію
+  // при поверненні у вкладку/вікно, і новий об'єкт запускав би автозаповнення знову —
+  // зайвий запит getMe і перезапис того, що користувач уже встиг змінити у формі.
+  const userId = session?.user?.id;
+
   // Автозаповнення користувача
   React.useEffect(() => {
-    if (!session) return;
+    if (!userId) return;
     (async () => {
-      const data = await Api.auth.getMe();
-      form.setValue('fullName', data.fullName);
-      // email/телефон можуть бути відсутні (реєстрація по телефону / вхід через провайдера).
-      form.setValue('email', data.email ?? '');
-      if (data.phone) {
-        // Поле телефону — з маскою, тож підставляємо вже у її форматі. Збіг із підтвердженим
-        // номером акаунта дозволяє оформити замовлення без SMS.
-        form.setValue('phone', formatPhoneForMask(data.phone));
+      try {
+        const data = await Api.auth.getMe();
+        // Користувача з сесії могли видалити з БД — тоді сервер повертає null.
+        if (!data) return;
+        setValue('fullName', data.fullName);
+        // email/телефон можуть бути відсутні (реєстрація по телефону / вхід через провайдера).
+        setValue('email', data.email ?? '');
+        if (data.phone) {
+          // Поле телефону — з маскою, тож підставляємо вже у її форматі. Збіг із підтвердженим
+          // номером акаунта дозволяє оформити замовлення без SMS.
+          setValue('phone', formatPhoneForMask(data.phone));
+        }
+        // setValue сам не перераховує isValid — без цього кнопка лишилась би неактивною.
+        trigger();
+      } catch (err) {
+        // Автозаповнення — зручність, не обов'язкова умова: форму можна заповнити вручну.
+        console.error('Error [CHECKOUT_AUTOFILL]', err);
       }
-      // setValue сам не перераховує isValid — без цього кнопка лишилась би неактивною.
-      form.trigger();
     })();
-  }, [session]);
+  }, [userId, setValue, trigger]);
 
   const finishOrder = () => {
     clearCart();
