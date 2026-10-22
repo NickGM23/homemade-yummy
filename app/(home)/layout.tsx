@@ -11,6 +11,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header
         variant="autoHide"
+        compactOnMobile
         className="bg-white max-sm:sticky max-sm:top-0"
         categories={toCategories(productGroups)}
       />

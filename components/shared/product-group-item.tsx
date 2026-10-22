@@ -43,10 +43,13 @@ export const ProductGroupItem: React.FC<Props> = ({ productGroup, className }) =
         <Title
           text={productGroup.name}
           size="lg"
-          className={cn('mb-4 bg-white font-extrabold', !isMenuOpen && 'sticky top-[112px]')}
+          className={cn(
+            'mb-4 bg-white font-extrabold',
+            !isMenuOpen && 'sticky top-[112px] max-sm:top-[72px]',
+          )}
         />
         {productGroup.products.length > 0 && (
-          <div className="relation flex flex-wrap gap-4">
+          <div className="relation flex flex-wrap gap-4 max-sm:gap-3">
             {productGroup.products.map((product) => (
               <ProductCard
                 key={product.id}

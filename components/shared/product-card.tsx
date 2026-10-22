@@ -50,29 +50,42 @@ export const ProductCard: React.FC<Props> = ({
 
   return (
     <div
-      className={cn('flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary', className)}
+      className={cn(
+        'flex w-[350px] flex-col overflow-hidden rounded-lg bg-secondary max-sm:w-full',
+        className,
+      )}
     >
-      <div className="flex justify-center">
-        <a href={`/product/${productId}`} className="relative block h-[225px] w-96 max-w-full">
-          <Image className="object-cover" src={imageUrl} alt={name} fill sizes="350px" />
+      <div className="flex justify-center max-sm:px-3 max-sm:pt-2">
+        <a href={`/product/${productId}`} className="block w-96 max-w-full max-sm:w-auto">
+          {/* На телефоні фото не кадрується: висота фіксована, ширина за пропорціями кадру,
+              тож rounded-lg закруглює саме фото. */}
+          <Image
+            className="block h-[225px] w-full object-cover max-sm:h-[142px] max-sm:w-auto max-sm:max-w-full max-sm:rounded-lg max-sm:object-contain"
+            src={imageUrl}
+            alt={name}
+            width={700}
+            height={467}
+            sizes="(max-width: 640px) 300px, 350px"
+          />
         </a>
       </div>
 
       <Link
         href={`/product/${productId}`}
         title={name}
-        className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold transition-colors hover:text-primary hover:underline"
+        className="my-4 h-16 overflow-hidden px-4 text-xl font-semibold transition-colors hover:text-primary hover:underline max-sm:mb-1 max-sm:mt-2 max-sm:line-clamp-2 max-sm:h-10 max-sm:px-3 max-sm:text-base max-sm:leading-5"
       >
         {name}
       </Link>
 
-      <div className="flex items-center justify-between gap-4 px-4 py-2 pb-4">
+      <div className="flex items-center justify-between gap-4 px-4 py-2 pb-4 max-sm:gap-2 max-sm:px-3 max-sm:pb-2 max-sm:pt-0">
         <div className="inline-flex gap-2">
-          <p className="m-0 text-2xl font-bold text-primary">{price.toString()}</p>
-          <p className="m-0 text-xl font-medium">{unitWeight}</p>
+          <p className="m-0 text-2xl font-bold text-primary max-sm:text-xl">{price.toString()}</p>
+          <p className="m-0 text-xl font-medium max-sm:text-base">{unitWeight}</p>
         </div>
 
         <Button
+          className="max-sm:h-9 max-sm:px-3"
           onClick={handleAddToCart}
           /*disabled={isInCart} // ❗ блокуємо, якщо вже в кошику
           variant={isInCart ? 'secondary' : 'default'} // наприклад, змінюємо стиль*/

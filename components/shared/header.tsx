@@ -22,9 +22,16 @@ interface HeaderProps {
   variant: 'fixed' | 'autoHide';
   className?: string;
   categories: CategoryItem[];
+  /** Нижча шапка на телефоні (менше вертикального padding). */
+  compactOnMobile?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, variant, categories }) => {
+export const Header: React.FC<HeaderProps> = ({
+  className,
+  variant,
+  categories,
+  compactOnMobile,
+}) => {
   const isMenuOpen = useMenuStore((state) => state.isMenuOpen);
   const setIsMenuOpen = useMenuStore((state) => state.setIsMenuOpen);
   const [hideOrShow, setHideOfShort] = useState<React.CSSProperties>({});
@@ -73,7 +80,12 @@ export const Header: React.FC<HeaderProps> = ({ className, variant, categories }
         className,
       )}
     >
-      <Container className="flex items-center justify-between gap-2 py-8 sm:gap-4">
+      <Container
+        className={cn(
+          'flex items-center justify-between gap-2 py-8 sm:gap-4',
+          compactOnMobile && 'max-sm:py-3',
+        )}
+      >
         {/* LEFT SECTION */}
         <div className="flex items-center gap-2">
           <button
