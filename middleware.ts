@@ -6,7 +6,8 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Публічне створення замовлення тепер іде через /api/checkout/* (після SMS-підтвердження),
-  // тому весь /api/orders/** — лише для адміна, без винятків.
+  // тому весь /api/orders/** — лише для адміна, без винятків. Сторінка /orders — для будь-якого
+  // авторизованого (див. нижче).
   const isOrdersApiRequest = pathname.startsWith('/api/orders');
   const isOrdersPageRequest = pathname === '/orders' || pathname.startsWith('/orders/');
 
@@ -23,10 +24,13 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 });
   }
 
+  // Сторінка /orders відкрита для кожного авторизованого: клієнт бачить лише свої замовлення,
+  // а вкладку «Всі» сторінка віддає тільки адміну (перевірка по БД у app/(site)/orders/page.tsx).
+  if (isOrdersPageRequest) {
+    return NextResponse.next();
+  }
+
   if (token.role !== 'admin') {
-    if (isOrdersPageRequest) {
-      return NextResponse.redirect(new URL('/not-auth', req.url));
-    }
     return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 });
   }
 

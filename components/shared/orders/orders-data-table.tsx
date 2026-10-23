@@ -2,8 +2,9 @@
 
 import { OrdersTable } from './orders-table';
 import { OrdersTableMobile } from './orders-table-mobile';
-import { orderColumns } from './orders-columns';
+import { orderColumns, ownOrderColumns } from './orders-columns';
 import { Order } from '@/@types/order';
+import type { OrdersScope } from '@/server/orders-scope';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -12,11 +13,13 @@ export function OrdersDataTable({
   page,
   totalPages,
   limit,
+  scope = 'all',
 }: {
   data: Order[];
   page: number;
   totalPages: number;
   limit: number;
+  scope?: OrdersScope;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -64,8 +67,8 @@ export function OrdersDataTable({
       </div>
 
       {/* Таблиці */}
-      <OrdersTable data={data} columns={orderColumns} />
-      <OrdersTableMobile data={data} />
+      <OrdersTable data={data} columns={scope === 'mine' ? ownOrderColumns : orderColumns} />
+      <OrdersTableMobile data={data} showCustomer={scope !== 'mine'} />
 
       {/* Пагінація внизу */}
       <div className="mt-4 flex items-center justify-between">

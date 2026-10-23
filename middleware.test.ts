@@ -40,6 +40,23 @@ describe('middleware: /api/orders is admin-only', () => {
     expect(res.status).toBe(200);
   });
 
+  it('redirects an anonymous user from the /orders page to /not-auth', async () => {
+    mockedGetToken.mockResolvedValue(null);
+
+    const res = await middleware(request('/orders'));
+
+    expect(res.status).toBe(307);
+    expect(res.headers.get('location')).toBe('http://localhost/not-auth');
+  });
+
+  it('lets a non-admin open the /orders page (the page itself limits them to own orders)', async () => {
+    mockedGetToken.mockResolvedValue({ role: 'user' } as never);
+
+    const res = await middleware(request('/orders'));
+
+    expect(res.status).toBe(200);
+  });
+
   it('does not touch other paths', async () => {
     const res = await middleware(request('/api/checkout/send-code', 'POST'));
 

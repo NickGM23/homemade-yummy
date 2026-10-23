@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Order, OrderStatus } from '@/@types/order';
 import { Badge } from '@/components/ui/badge';
 import { STATUS_LABEL, STATUS_CLASSES } from '@/config/order-status';
+import { getDeliveryTypeLabel } from '@/config/delivery-type';
 
 /* =========================
    Items cell component
@@ -46,7 +47,11 @@ export const orderColumns: ColumnDef<Order>[] = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'fullName', header: "Ім'я" },
   { accessorKey: 'phone', header: 'Телефон' },
-  { accessorKey: 'deliveryType', header: 'Доставка' },
+  {
+    accessorKey: 'deliveryType',
+    header: 'Доставка',
+    cell: ({ row }) => <span>{getDeliveryTypeLabel(row.original.deliveryType)}</span>,
+  },
   {
     accessorKey: 'totalAmount',
     header: 'Сума',
@@ -78,3 +83,10 @@ export const orderColumns: ColumnDef<Order>[] = [
     cell: ({ row }) => <OrderItemsCell items={row.original.items ?? []} />,
   },
 ];
+
+// У «своїх» замовленнях ім'я й телефон — це дані самого користувача, колонки зайві.
+const CUSTOMER_COLUMNS = ['fullName', 'phone'];
+
+export const ownOrderColumns: ColumnDef<Order>[] = orderColumns.filter(
+  (c) => !CUSTOMER_COLUMNS.includes((c as { accessorKey?: string }).accessorKey ?? ''),
+);

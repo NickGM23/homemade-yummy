@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useCategoryStore } from '@/store/category';
 import type { CategoryItem } from '@/services/product-groups';
 import { useRouter, usePathname } from 'next/navigation';
+import { PENDING_CATEGORY_KEY, scrollToCategory } from './category-scroll';
 
 interface Props {
   className?: string;
@@ -54,54 +55,28 @@ export const Categories: React.FC<Props> = ({
   const idProductGroup = useCategoryStore((state) => state.activeId);
   const setActiveIdProductGroup = useCategoryStore((state) => state.setActiveId);
   const [, setActiveIndex] = useState(0);
-  const [, setIsRouting] = useState(false);
 
   const categoryOnClick = (e: React.MouseEvent<HTMLElement>, index: number, category: string) => {
-    setIsRouting(false);
-    if (onChange) {
-      // Позначаємо, що треба виконати onChange після переходу
-      sessionStorage.setItem('shouldRunOnChange', 'true');
-      sessionStorage.setItem('scrollToSelector', category);
-    }
+    e.preventDefault();
 
     if (pathname !== '/') {
+      // Блоків категорій немає на цій сторінці: запам'ятовуємо вибір, закриваємо меню й ідемо
+      // на головну — до категорії прокрутить PendingCategoryScroll після завантаження.
+      try {
+        sessionStorage.setItem(PENDING_CATEGORY_KEY, category);
+      } catch {
+        // без sessionStorage просто відкриється головна
+      }
+      onChange?.();
       router.push('/');
-      setIsRouting(true);
+      return;
     }
 
-    e.preventDefault();
-    //if ((activeIndex === index || index + 1) === idProductGroup) return;
-
-    const gotoBlock = document.querySelector(category) as HTMLDivElement;
-
-    if (gotoBlock) {
-      //const gotoBlockValue = gotoBlock.getBoundingClientRect().top;
-      window.scrollTo({
-        top: isShowByBurgerMenu ? gotoBlock.offsetTop - 140 : gotoBlock.offsetTop - 240,
-        behavior: 'smooth',
-      });
-
+    if (scrollToCategory(category, isShowByBurgerMenu)) {
       setActiveIndex(index);
       setActiveIdProductGroup(index + 1);
 
       onChange?.();
-    } else {
-      setTimeout(() => {
-        const retry = document.querySelector(category) as HTMLDivElement;
-
-        if (retry) {
-          // const gotoBlockValue1 = retry.getBoundingClientRect().top;
-          window.scrollTo({
-            top: isShowByBurgerMenu ? retry.offsetTop - 140 : retry.offsetTop - 240,
-            behavior: 'smooth',
-          });
-
-          setActiveIndex(index);
-          setActiveIdProductGroup(index + 1);
-
-          onChange?.();
-        }
-      }, 200);
     }
   };
 

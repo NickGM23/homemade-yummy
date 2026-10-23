@@ -115,13 +115,13 @@ export const MobileMenu: React.FC<Props> = ({
               <div className="w-full rounded-2xl bg-gray-50 p-4">
                 <p className="font-bold">{session.user?.fullName}</p>
                 <p>
-                  {session.user?.email ?? (session.user?.phone ? `+${session.user.phone}` : '')}
+                  {session.user?.phone ? `+${session.user.phone}` : (session.user?.email ?? '')}
                 </p>
               </div>
               <div className="m-2">
                 <ProfileButton
                   onClickSignIn={onOpenAuthModal}
-                  onClickProfile={onClose}
+                  onNavigate={onClose}
                   isVisibleAll={true}
                 />
               </div>

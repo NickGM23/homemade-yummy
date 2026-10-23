@@ -3,8 +3,15 @@
 import { Order, OrderStatus } from '@/@types/order';
 import { Badge } from '@/components/ui/badge';
 import { STATUS_LABEL, STATUS_CLASSES } from '@/config/order-status';
+import { getDeliveryTypeLabel } from '@/config/delivery-type';
 
-export function OrdersTableMobile({ data }: { data: Order[] }) {
+export function OrdersTableMobile({
+  data,
+  showCustomer = true,
+}: {
+  data: Order[];
+  showCustomer?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-4 md:hidden">
       {data.map((order) => {
@@ -21,14 +28,18 @@ export function OrdersTableMobile({ data }: { data: Order[] }) {
             </div>
 
             <div className="text-sm text-muted-foreground">
+              {showCustomer && (
+                <>
+                  <p>
+                    <strong>Ім&apos;я:</strong> {order.fullName}
+                  </p>
+                  <p>
+                    <strong>Телефон:</strong> {order.phone}
+                  </p>
+                </>
+              )}
               <p>
-                <strong>Ім&apos;я:</strong> {order.fullName}
-              </p>
-              <p>
-                <strong>Телефон:</strong> {order.phone}
-              </p>
-              <p>
-                <strong>Доставка:</strong> {order.deliveryType}
+                <strong>Доставка:</strong> {getDeliveryTypeLabel(order.deliveryType)}
               </p>
               <p>
                 <strong>Сума:</strong> {totalAmount.toFixed(2)} ₴
