@@ -39,7 +39,7 @@ export default function CheckoutPage() {
       phone: '',
       address: '',
       comment: '',
-      deliveryType: 'pickup',
+      deliveryType: 'PICKUP',
     },
   });
 

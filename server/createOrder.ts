@@ -71,7 +71,7 @@ export async function priceOrder(data: CreateOrderInput, db: Db = prisma) {
 
   const itemsTotal = items.reduce((sum, item) => sum + item.amount, 0);
   const shippingAmount =
-    itemsTotal === 0 ? 0 : data.deliveryType === 'pickup' ? 0 : itemsTotal >= 1000 ? 0 : 75;
+    itemsTotal === 0 ? 0 : data.deliveryType === 'PICKUP' ? 0 : itemsTotal >= 1000 ? 0 : 75;
 
   return { items, shippingAmount, totalAmount: itemsTotal + shippingAmount };
 }

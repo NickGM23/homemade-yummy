@@ -36,7 +36,7 @@ const parse = (body: unknown) => createOrderSchema.parse(body);
 const validBody = {
   fullName: 'Test User',
   phone: '380991234567',
-  deliveryType: 'pickup',
+  deliveryType: 'PICKUP',
   items: [{ productId: 4, quantity: 2 }],
   // client-submitted values that must be ignored by the server:
   userId: 999,
@@ -77,7 +77,7 @@ describe('createOrderFromInput', () => {
     mockedPrisma.order.create.mockResolvedValue({ id: 1 } as never);
 
     await createOrderFromInput(
-      parse({ ...validBody, deliveryType: 'address', address: 'вул. Хрещатик, 1' }),
+      parse({ ...validBody, deliveryType: 'ADDRESS', address: 'вул. Хрещатик, 1' }),
       undefined,
     );
 

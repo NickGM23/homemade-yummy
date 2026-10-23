@@ -23,14 +23,14 @@ export const createOrderSchema = z
       .optional(),
     // Нормалізується до 380XXXXXXXXX: саме на цей номер піде SMS з кодом підтвердження.
     phone: uaPhoneSchema,
-    deliveryType: z.enum(['pickup', 'address'], {
+    deliveryType: z.enum(['PICKUP', 'ADDRESS'], {
       required_error: 'Оберіть спосіб доставки',
     }),
     address: z.string().trim().max(200, { message: 'Адреса занадто довга' }).optional(),
     comment: z.string().trim().max(500, { message: 'Коментар занадто довгий' }).optional(),
     items: z.array(orderItemSchema).min(1, { message: 'Кошик порожній' }),
   })
-  .refine((data) => (data.deliveryType === 'address' ? !!data.address : true), {
+  .refine((data) => (data.deliveryType === 'ADDRESS' ? !!data.address : true), {
     message: 'Введіть коректну адресу',
     path: ['address'],
   });

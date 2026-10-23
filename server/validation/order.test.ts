@@ -5,7 +5,7 @@ describe('createOrderSchema', () => {
   const validPickupOrder = {
     fullName: 'Іван Іванов',
     phone: '380991234567',
-    deliveryType: 'pickup' as const,
+    deliveryType: 'PICKUP' as const,
     items: [{ productId: 1, quantity: 2 }],
   };
 
@@ -30,18 +30,18 @@ describe('createOrderSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('rejects deliveryType "address" without an address', () => {
+  it('rejects deliveryType "ADDRESS" without an address', () => {
     const result = createOrderSchema.safeParse({
       ...validPickupOrder,
-      deliveryType: 'address',
+      deliveryType: 'ADDRESS',
     });
     expect(result.success).toBe(false);
   });
 
-  it('accepts deliveryType "address" with an address', () => {
+  it('accepts deliveryType "ADDRESS" with an address', () => {
     const result = createOrderSchema.safeParse({
       ...validPickupOrder,
-      deliveryType: 'address',
+      deliveryType: 'ADDRESS',
       address: 'вул. Хрещатик, 1',
     });
     expect(result.success).toBe(true);

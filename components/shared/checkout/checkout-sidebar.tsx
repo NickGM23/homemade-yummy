@@ -27,7 +27,7 @@ export const CheckoutSidebar: React.FC<Props> = ({
   const shippingAmount =
     totalCartAmount === 0
       ? 0
-      : deliveryType === 'pickup'
+      : deliveryType === 'PICKUP'
         ? 0
         : totalCartAmount >= freeShippingThreshold
           ? 0

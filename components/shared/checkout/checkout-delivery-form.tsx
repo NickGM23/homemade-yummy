@@ -22,20 +22,20 @@ export const CheckoutDeliveryForm: React.FC<Props> = ({ className }) => {
       <Controller
         name="deliveryType"
         control={control}
-        defaultValue="pickup"
+        defaultValue="PICKUP"
         render={({ field }) => (
           <RadioGroupCustom
             {...field}
             options={[
-              { label: 'Самовивіз', value: 'pickup' },
-              { label: 'Адресна доставка', value: 'address' },
+              { label: 'Самовивіз', value: 'PICKUP' },
+              { label: 'Адресна доставка', value: 'ADDRESS' },
             ]}
           />
         )}
       />
 
       {/* Поле для адреси — з’являється лише при виборі адресної доставки */}
-      {deliveryType === 'address' && (
+      {deliveryType === 'ADDRESS' && (
         <div className="mt-5">
           <FormInput
             name="address"

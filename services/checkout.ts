@@ -1,13 +1,14 @@
 import { axiosInstance } from './instance';
 import { ApiRoutes } from './constants';
 import type { CodeSentResponse } from './verification';
+import type { DeliveryType } from '@/@types/order';
 
 /** Дані замовлення, які надсилає клієнт. Ціни й суми сервер рахує сам. */
 export interface CheckoutOrderDraft {
   fullName: string;
   email?: string;
   phone: string;
-  deliveryType: 'pickup' | 'address';
+  deliveryType: DeliveryType;
   address?: string;
   comment?: string;
   items: { productId: number; quantity: number }[];

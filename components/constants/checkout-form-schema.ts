@@ -32,7 +32,7 @@ export const checkoutFormSchema = z
         message: 'Введіть коректний номер телефону',
       }),
 
-    deliveryType: z.enum(['pickup', 'address'], {
+    deliveryType: z.enum(['PICKUP', 'ADDRESS'], {
       required_error: 'Оберіть спосіб доставки',
     }),
 
@@ -54,7 +54,7 @@ export const checkoutFormSchema = z
   })
   .refine(
     (data) =>
-      data.deliveryType === 'address' ? data.address != null && data.address.length >= 5 : true,
+      data.deliveryType === 'ADDRESS' ? data.address != null && data.address.length >= 5 : true,
     {
       message: 'Введіть коректну адресу',
       path: ['address'],

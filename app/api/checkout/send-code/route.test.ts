@@ -32,7 +32,7 @@ const mockedAssertOrderLimit = vi.mocked(assertOrderLimit);
 const validBody = {
   fullName: 'Test User',
   phone: '+380 99 123 45 67',
-  deliveryType: 'pickup',
+  deliveryType: 'PICKUP',
   items: [{ productId: 4, quantity: 2 }],
 };
 

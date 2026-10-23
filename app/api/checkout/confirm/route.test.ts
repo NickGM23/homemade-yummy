@@ -32,7 +32,7 @@ const VERIFICATION_ID = '3f0c9c0e-6f4b-4b1e-9d8a-1b2c3d4e5f60';
 const draft = {
   fullName: 'Test User',
   phone: '380991234567',
-  deliveryType: 'pickup',
+  deliveryType: 'PICKUP',
   items: [{ productId: 4, quantity: 2 }],
 };
 

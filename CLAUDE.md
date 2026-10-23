@@ -74,7 +74,7 @@ Previously five confusingly-similar locations existed (`lib`, `libs`, root `shar
 
 ### Display rules
 
-- `Order.deliveryType` is stored as `'address'` / `'pickup'`, but the UI must never show these raw values: `address` → «Адресна доставка», `pickup` → «Самовивіз». Always render it through `getDeliveryTypeLabel()` from `config/delivery-type.ts` (used in the orders table and the mobile order cards); add any new label there, not inline.
+- `Order.deliveryType` is the Prisma enum `DeliveryType` (`PICKUP` / `ADDRESS`, upper case like `OrderStatus`), and the UI must never show these raw values: `ADDRESS` → «Адресна доставка», `PICKUP` → «Самовивіз». Always render it through `getDeliveryTypeLabel()` from `config/delivery-type.ts` (used in the orders table and the mobile order cards); add any new label there, not inline.
 - `components/shared/` — UI feature components (checkout, orders, modals, product-details, form primitives, etc.), unrelated in purpose to root `config/`.
 
 ## Known gotchas

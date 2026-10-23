@@ -1,5 +1,7 @@
 export type OrderStatus = 'PENDING' | 'ACCEPTED' | 'SUCCEEDED' | 'CANCELLED';
 
+export type DeliveryType = 'PICKUP' | 'ADDRESS';
+
 export interface OrderFilters {
   userId?: number;
   status?: OrderStatus;
@@ -32,7 +34,7 @@ export interface Order {
   fullName: string;
   email: string | null;
   phone: string;
-  deliveryType: string;
+  deliveryType: DeliveryType;
   address: string | null;
   comment: string | null;
 

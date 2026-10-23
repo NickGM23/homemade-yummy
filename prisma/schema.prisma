@@ -123,7 +123,7 @@ model Order {
     fullName     String  @db.VarChar(50)
     email        String? @db.VarChar(100)
     phone        String  @db.VarChar(12)
-    deliveryType String  @db.VarChar(20)
+    deliveryType DeliveryType
     address      String? @db.VarChar(200)
     comment      String? @db.VarChar(500)
 
@@ -190,6 +190,11 @@ enum VerificationPurpose {
 enum ProductType {
     READY_MEAL
     SEMI_FINISHED
+}
+
+enum DeliveryType {
+    PICKUP
+    ADDRESS
 }
 
 enum OrderStatus {
